@@ -54,3 +54,22 @@ Scope 须已创建。整份文档的解析校验是原子的；逐行提交不�
 标准文本投影保存按原列序排列的紧凑 JSON 及完整行元数据，Runtime 保存观察与投影，重启读取不依赖原文件。
 Memory 处理后，使用搜索结果的 `memory_ref`、`entry_id`、`entry_version_id` 构造精确 `MemoryCitation` 回查。
 稳定行身份不表示允许覆盖已采集内容；同一身份下的冲突内容仍遵循 Runtime 的冲突处理规则。
+
+## Pi 会话分支历史
+
+`powercontext.sources.pi_session` 提供 `PiSessionInput`、`parse_pi_session`、
+`PI_EVENT_SOURCE_DEFINITION` 和 `PiSessionConnector(path, leaf_id=None)`。
+解析器验证完整 UTF-8/BOM JSONL v3 会话图，默认选择最后节点，也可显式选择节点，按根到叶返回可见原始事件。
+控制节点保留连接关系但不生成文本；压缩和分支摘要不会替换早先证据。工具结果完整保存，不受 Memory 单条文本长度限制。
+
+用 `SourceDefinitionRegistry((PI_EVENT_SOURCE_DEFINITION,))` resolve/read 事件，
+通过 `manifest_for_definition` 和 `project_source_for_transport` 接入 Runtime ingestion，方式与 CSV 相同。
+Source 身份是 session ID 与 event ID 的 JSON 数组经 SHA-256 得到的摘要，带 `pi:` 前缀，固定 67 字符。
+Source 保留完整原始 record，标准文本投影保存完整正文及事件身份元数据。
+
+增量采集使用现有 `ConnectorLifecycle`，绑定 connector 名 `pi-session-history`、版本 `1`，
+由宿主提供持久化的 sink 和 checkpoint store。每次运行完整读取并校验文件，比较已导入记录的完整 JSON 摘要，
+只提交所选分支的新事件。checkpoint 按 session 保存累计事件 ID 和摘要；键序或 JSON 排版变化不视为改写。
+切分支时共享事件去重，已采集分支继续保留；当前会话中已导入记录改写或消失会拒绝运行。
+成功写入后由 Lifecycle 提交 checkpoint；中途失败可留下已持久化 Source，但不推进 checkpoint，重试依靠 Runtime 幂等提交恢复。
+采集每次扫描整个文件，checkpoint 随已导入事件数增长；它不是仅按新增字节读取的文件尾随器。

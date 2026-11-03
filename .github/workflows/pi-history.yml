@@ -1,0 +1,32 @@
+name: Pi history acceptance
+
+on:
+  push:
+    branches: [task/source-02-pi-history]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pi:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: Install fixed Python 3.12 competition environment
+        run: make -C competition install
+      - name: Check ancestry and run official Pi and CSV acceptance
+        run: make -C competition check-baseline test-pi test-csv
+      - name: Run Pi and CSV boundaries and Source regressions
+        env:
+          PYTHONPATH: src
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
+        run: >-
+          competition/.venv/bin/python -m pytest -q
+          tests/test_pi_session.py tests/test_csv_rows.py tests/test_sources.py tests/test_source_observations.py
+          tests/builtin/persistence/test_sources.py

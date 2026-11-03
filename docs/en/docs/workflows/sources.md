@@ -49,3 +49,25 @@ Runtime retains observations and projections, so restart reads do not require th
 After Memory processing, construct an exact `MemoryCitation` from a search hit's `memory_ref`, `entry_id`,
 and `entry_version_id` to retrieve the entry and its Source evidence.
 Stable record identity does not permit overwriting captured content; conflicting submissions retain Runtime's conflict behavior.
+
+## Pi session branch history
+
+`powercontext.sources.pi_session` provides `PiSessionInput`, `parse_pi_session`,
+`PI_EVENT_SOURCE_DEFINITION`, and `PiSessionConnector(path, leaf_id=None)`.
+The parser validates the complete UTF-8/BOM JSONL v3 graph, selects the last node by default or an explicit node,
+and returns visible raw events from root to leaf. Control nodes retain tree links without producing text.
+Compaction and branch summaries do not replace earlier evidence. Full tool results remain in Sources independently of Memory text limits.
+
+Resolve/read events with `SourceDefinitionRegistry((PI_EVENT_SOURCE_DEFINITION,))`; use
+`manifest_for_definition` and `project_source_for_transport` with Runtime ingestion as for CSV.
+Each identity is `pi:` followed by SHA-256 of the JSON array containing session ID and event ID (67 characters).
+Sources retain complete original records; standard text evidence includes full text and event identity metadata.
+
+Run the Connector through `ConnectorLifecycle` with binding name `pi-session-history`, version `1`,
+and host-provided durable sink and checkpoint store. Each run reads and validates the complete file,
+checks full-record JSON digests, and submits only unseen selected-branch events.
+The opaque checkpoint accumulates imported event IDs and digests by session; JSON layout and key order do not affect equality.
+Shared ancestors are deduplicated across branches. Previously captured branch evidence remains available;
+rewriting or removing an imported record in the current session rejects the run.
+Lifecycle commits progress after successful writes. Partial failures may leave durable Sources but preserve the old checkpoint;
+retry uses Runtime's idempotent acceptance. Each run scans the complete archive and progress storage grows with imported history.
