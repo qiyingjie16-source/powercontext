@@ -73,3 +73,31 @@ Source 保留完整原始 record，标准文本投影保存完整正文及事件
 切分支时共享事件去重，已采集分支继续保留；当前会话中已导入记录改写或消失会拒绝运行。
 成功写入后由 Lifecycle 提交 checkpoint；中途失败可留下已持久化 Source，但不推进 checkpoint，重试依靠 Runtime 幂等提交恢复。
 采集每次扫描整个文件，checkpoint 随已导入事件数增长；它不是仅按新增字节读取的文件尾随器。
+
+## PDF 全文页级采集与检索
+
+`powercontext.sources.pdf_pages` 提供 `PDFDocumentInput`、`PDFPageInput`、
+`parse_pdf_document`、`PDF_PAGE_SOURCE_DEFINITION` 和 `search_pdf_pages`。
+解析依赖 pypdf，比赛固定环境已提供。输入完整原 PDF 字节，逐页提取所有物理页，包括空白页；
+不合并相邻页面，不做 OCR，也不截断正文。空密码即可解密的权限 PDF 可读，需要非空密码或无法完整解析的文件以 `ValueError` 失败。
+
+文档 ID 须非空白。每页记录完整输入字节的 SHA-256 和从 1 开始的物理页码，不能使用财报印刷页码。
+Source 身份是文档 ID、PDF 摘要和物理页码的 JSON 数组经 SHA-256 得到的摘要，带 `pdf:` 前缀。
+PDF 修订产生新身份，旧观察保留原修订。标准文本投影为 `文档ID\n页面正文`，
+元数据恰好包含 `document_id`、`document_sha256` 和 `page_number`。
+通过 Definition registry、manifest、observation 和 Runtime ingestion 保存，接入方式与 CSV 相同。
+
+```python
+from powercontext.sources.pdf_pages import PDFDocumentInput, parse_pdf_document, search_pdf_pages
+
+pages = parse_pdf_document(PDFDocumentInput(document_id="annual-report", content=pdf_bytes))
+# 将 pages 解析成 observation 并提交 ingestion，完成 Memory 处理后：
+citations = await search_pdf_pages(runtime.memory.for_scope(scope_id), question, limit=20)
+```
+
+检索只访问调用方提供的 scoped Memory，使用离线 FTS 查询、通用财务词汇扩展和候选文本 BM25 重排，
+并考虑文档标签中的公司和年份词项。返回前通过 `memory.get` 回查并按页 Source 身份去重，
+不通过扫描原文件、读取标注或生成引用来补齐结果；零上限、空白问题及没有匹配时返回空 tuple。
+每个查询最多执行一次主查询和命中词汇组的扩展查询，每次候选上限为 `max(100, limit * 5)`；
+不维护模块级索引或跨 Scope 缓存。独立页面引用要求一个 Memory 条目关联一个 PDF 页 Source。
+完整提取与可回查引用不等同于问题的证据页召回达标；Recall 与解析质量须由相应带标注评测另行验证。

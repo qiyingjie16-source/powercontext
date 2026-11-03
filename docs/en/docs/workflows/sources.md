@@ -71,3 +71,27 @@ Shared ancestors are deduplicated across branches. Previously captured branch ev
 rewriting or removing an imported record in the current session rejects the run.
 Lifecycle commits progress after successful writes. Partial failures may leave durable Sources but preserve the old checkpoint;
 retry uses Runtime's idempotent acceptance. Each run scans the complete archive and progress storage grows with imported history.
+
+## Whole-document PDF page capture and retrieval
+
+`powercontext.sources.pdf_pages` exposes `PDFDocumentInput`, `PDFPageInput`, `parse_pdf_document`,
+`PDF_PAGE_SOURCE_DEFINITION`, and `search_pdf_pages`. Parsing uses pypdf, supplied by the fixed competition environment.
+Pass the original complete PDF bytes. All physical pages, including blanks, are extracted in order without OCR,
+text truncation, or merging neighboring pages. Empty-password permission PDFs are accepted; password-protected
+or incompletely parseable documents fail with `ValueError` without returning partial pages.
+
+Each page retains a nonblank document ID, SHA-256 of the entire original byte sequence, and one-based physical
+page number, independent of printed page labels. Identity is `pdf:` plus SHA-256 of the JSON array containing
+those three components. Revisions receive new identities and leave old references unchanged.
+Standard text evidence contains `DOCUMENT_ID\nPAGE_TEXT` and exactly `document_id`, `document_sha256`, and
+`page_number` metadata. Resolve pages through the Definition registry and submit manifests/observations through
+Runtime ingestion as for CSV; then process Memory before searching.
+
+`await search_pdf_pages(runtime.memory.for_scope(scope_id), question, limit=20)` returns exact Memory citations.
+It uses offline FTS, general financial vocabulary expansion, and candidate-text BM25 with document-label matching.
+Every returned citation is read back with `memory.get` and deduplicated by PDF Source identity.
+No answers, evidence labels, file scans, synthetic references, module-level indexes, or cross-scope caches are used.
+Empty questions, zero limits, and unmatched queries return an empty tuple. A page citation requires one PDF page
+Source per Memory entry. Each search performs a main query and matching vocabulary-group queries, each requesting
+`max(100, limit * 5)` candidates. Full extraction and valid citations do not establish evidence-page recall;
+quality and Recall thresholds require a separate labeled evaluation.
