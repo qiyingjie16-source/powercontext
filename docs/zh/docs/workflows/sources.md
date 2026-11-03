@@ -101,3 +101,11 @@ citations = await search_pdf_pages(runtime.memory.for_scope(scope_id), question,
 每个查询最多执行一次主查询和命中词汇组的扩展查询，每次候选上限为 `max(100, limit * 5)`；
 不维护模块级索引或跨 Scope 缓存。独立页面引用要求一个 Memory 条目关联一个 PDF 页 Source。
 完整提取与可回查引用不等同于问题的证据页召回达标；Recall 与解析质量须由相应带标注评测另行验证。
+
+## HTTP Memory 重排服务
+
+`powercontext.builtin.artifacts.memory.http_reranker.HTTPMemoryReranker` 接收评分服务 URL、调用方提供的 `httpx.AsyncClient`、正整数 `batch_size` 和策略 ID。通过 Runtime 的 `memory_reranker` 参数接入，不需要修改 Memory 条目或持久化结构。
+
+每批 POST JSON：`{"query":"问题","candidates":[{"rank":1,"text":"原候选正文"}]}`。rank 始终是完整输入的一基序号；响应须恰好为 `{"scores":[{"rank":1,"score":0.75}]}`，可乱序，但每批必须恰好覆盖该批 rank。额外键、遗漏、重复、跨批 rank、非有限数或布尔分数以 `ValueError` 失败。非 2xx 状态和网络错误保持原 `httpx` 异常。
+
+全部批次评分完毕后，按分数降序、原始 rank 升序选择前 `limit` 条；`InferenceUsage.requests` 记录实际发出的 HTTP 请求数。重排返回原 rank，由现有 Memory 服务映射回原候选、条目和版本身份。服务分数决定排序，相关性质量取决于评分服务本身。

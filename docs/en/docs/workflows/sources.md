@@ -95,3 +95,11 @@ Empty questions, zero limits, and unmatched queries return an empty tuple. A pag
 Source per Memory entry. Each search performs a main query and matching vocabulary-group queries, each requesting
 `max(100, limit * 5)` candidates. Full extraction and valid citations do not establish evidence-page recall;
 quality and Recall thresholds require a separate labeled evaluation.
+
+## HTTP Memory reranking
+
+`powercontext.builtin.artifacts.memory.http_reranker.HTTPMemoryReranker` accepts a scoring endpoint, a caller-owned `httpx.AsyncClient`, positive `batch_size`, and policy ID. Pass it through Runtime's `memory_reranker` parameter.
+
+Each POST carries `query` and candidate objects with the original one-based `rank` and `text`. A response must contain exactly `scores`, with each score object containing exactly `rank` and a finite numeric `score`. Scores may be returned out of order, but each batch must cover its own ranks exactly once. Invalid schemas raise `ValueError`; HTTP status and network errors retain the original `httpx` exception.
+
+After every batch has scored its candidates, ranks are sorted by descending score and then ascending original rank. `InferenceUsage.requests` reports the number of HTTP calls. The existing Memory service maps returned original ranks back to unchanged entry and version identities. Relevance quality depends on the scoring service.
