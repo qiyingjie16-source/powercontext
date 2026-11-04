@@ -111,3 +111,9 @@ After every batch has scored its candidates, ranks are sorted by descending scor
 Content is split deterministically at UTF-8 character boundaries, with a default maximum of 512 bytes per item. Wire objects use standard Base64 and sorted compact JSON. The SHA-256 digest covers only `schema` and `items`; `byte_count` includes the serialized field itself. Delta reconstruction uses only serialized base and delta values and validates both digests. Decoding rejects missing or extra fields, invalid Base64 or UTF-8, invalid prefixes, and digest or byte-count mismatches.
 
 Transmission cost includes the first full pack and every later delta as `len(to_bytes())`, including Base64 and JSON overhead. The public tests check the protocol and one real Runtime incremental call; the complete 40-round cost threshold requires its own measurement sequence.
+
+## Source count admission
+
+`RuntimeConfig.memory_source_count_threshold` and `topic_memory_source_count_threshold` default to `None` and accept only strict positive integers when enabled. The global supervisor counts persisted Source journal identities after each scope and family's successful cursor. Duplicate capture and receipt trust upgrades do not add identities. Lineage-only Sources count toward admission while remaining excluded from generation evidence.
+
+Count and time admission are independent alternatives. Explicit `flush()` accepts work directly. Memory consumes one bounded window and rechecks the remaining count after success; an accepted Topic Memory wave continues its existing window sequence. Accepted requests and successful cursors remain durable through failures and restart. Discovery scans bounded pages and checks again approximately one second after a full pass.

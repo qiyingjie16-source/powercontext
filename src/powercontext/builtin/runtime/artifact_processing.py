@@ -47,6 +47,7 @@ else:
     from multiprocessing.popen_spawn_posix import Popen as SpawnPopen
 
 from powercontext._logging import log_safely
+from powercontext.builtin.persistence.cursors import SourceCursorRepository
 from powercontext.builtin.persistence.database import AsyncDatabase
 from powercontext.builtin.persistence.errors import ArtifactProcessingLeadershipLostError
 from powercontext.builtin.persistence.processing_intents import ArtifactProcessingIntentRepository
@@ -57,7 +58,11 @@ from powercontext.builtin.persistence.supervision import (
     ArtifactProcessingLeaseRepository,
     database_utc_now,
 )
-from powercontext.builtin.persistence.tables import ARTIFACT_PROCESSING_INTENTS_TABLE, ARTIFACT_PROCESSING_LEASES_TABLE
+from powercontext.builtin.persistence.tables import (
+    ARTIFACT_PROCESSING_INTENTS_TABLE,
+    ARTIFACT_PROCESSING_LEASES_TABLE,
+    SOURCES_TABLE,
+)
 from powercontext.builtin.runtime.processing_contracts import (
     ArtifactProcessingWorkAssignment,
     ArtifactProcessingWorkerCompletion,
@@ -117,8 +122,9 @@ class ArtifactProcessingBinding:
     # Only automatic admission is filtered; already accepted requests retain
     # their own Worker authorization and domain completion semantics.
     automatic_scope_filter: Callable[[AsyncConnection, tuple[str, ...]], Awaitable[frozenset[str]]] | None = None
+    source_count_threshold: int | None = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self) -> None:  # noqa: C901 - independent binding configuration bounds
         if not self.binding_name or self.binding_name != self.binding_name.strip():
             raise ValueError("binding_name must be nonempty and trimmed")  # noqa: TRY003
         if re.fullmatch(r"[a-z][a-z0-9-]*", self.artifact_family) is None:
@@ -129,6 +135,10 @@ class ArtifactProcessingBinding:
         object.__setattr__(self, "config_prefix", prefix)
         if type(self.max_workers) is not int or self.max_workers < 1:
             raise ValueError("max_workers must be a positive integer")  # noqa: TRY003
+        if self.source_count_threshold is not None and (
+            type(self.source_count_threshold) is not int or self.source_count_threshold <= 0
+        ):
+            raise ValueError("source_count_threshold must be a positive integer")  # noqa: TRY003
         if self.worker_timeout_seconds <= 0:
             raise ValueError("worker_timeout_seconds must be positive")  # noqa: TRY003
         if self.automatic_processing_interval is not None:
@@ -391,6 +401,8 @@ class _FamilyState:
     retry_queued: set[str] = field(default_factory=set)
     running: dict[str, _RunningWorker] = field(default_factory=dict)
     retries: dict[str, _RetryState] = field(default_factory=dict)
+    count_after: int = 0
+    next_count_at: float = 0.0
     requested_after: int = 0
     scan_after: int = 0
     scan_generation: int = 0
@@ -648,6 +660,7 @@ class ArtifactProcessingSupervisor:
                 state.next_discovery_at = loop.time() + _DISCOVERY_PAGE_DELAY_SECONDS
         else:
             state.reconcile_complete = True
+        await self._discover_count(state)
         # Alternate discovery channels so explicit traffic cannot monopolize admission.
         state.automatic_next = not state.automatic_next
         if state.automatic_next:
@@ -656,6 +669,58 @@ class ArtifactProcessingSupervisor:
         else:
             await self._discover_requested(state)
             await self._discover_automatic(state)
+
+    async def _discover_count(self, state: _FamilyState) -> None:
+        threshold = state.binding.source_count_threshold
+        if threshold is None:
+            return
+        capacity = self._fresh_capacity(state)
+        if capacity <= 0:
+            return
+        admitted: list[str] = []
+        async with self._database.transaction() as connection:
+            await self._leases.require_fence(connection, self._require_current_fence())
+            rows = await self._intents.scan(
+                connection,
+                state.binding.binding_name,
+                after_sequence=state.count_after,
+                limit=min(capacity, _DISCOVERY_PAGE_SIZE),
+                dirty_only=True,
+            )
+            cursors = await SourceCursorRepository().load_many(
+                connection,
+                [row.scope_id for row in rows],
+                state.binding.binding_name,
+            )
+            for row in rows:
+                if (
+                    row.scope_id in state.queued
+                    or row.scope_id in state.running
+                    or row.scope_id in state.retries
+                    or row.requested_generation > row.handled_generation
+                ):
+                    continue
+                cursor = cursors.get(row.scope_id)
+                after = 0 if cursor is None else cursor.cursor.sequence
+                # Count persisted identities, including lineage-only Sources.
+                pending = await connection.scalar(
+                    select(func.count())
+                    .select_from(SOURCES_TABLE)
+                    .where(
+                        SOURCES_TABLE.c.scope_id == row.scope_id,
+                        SOURCES_TABLE.c.journal_position > after,
+                    )
+                )
+                if pending is not None and pending >= threshold:
+                    await self._intents.request(connection, row.scope_id, state.binding.binding_name)
+                    admitted.append(row.scope_id)
+        # Publish scan progress only after durable acceptance commits.
+        state.count_after = rows[-1].pending_sequence if len(rows) == min(capacity, _DISCOVERY_PAGE_SIZE) else 0
+        state.next_count_at = asyncio.get_running_loop().time() + (
+            _DISCOVERY_PAGE_DELAY_SECONDS if state.count_after else self._tick
+        )
+        for scope in admitted:
+            self._enqueue(state, scope)
 
     async def _discover_requested(self, state: _FamilyState) -> None:
         capacity = self._fresh_capacity(state)
@@ -1057,6 +1122,8 @@ class ArtifactProcessingSupervisor:
             state.retry_queued.clear()
             state.overflow_not_before = 0.0
             state.retries.clear()
+            state.count_after = 0
+            state.next_count_at = 0.0
             state.requested_after = state.scan_after = state.scan_generation = 0
             state.scan_in_progress = False
             state.discovery_pending = True
@@ -1091,6 +1158,8 @@ class ArtifactProcessingSupervisor:
             if state.overflow_not_before > now:
                 deadlines.append(state.overflow_not_before)
                 continue
+            if state.binding.source_count_threshold is not None:
+                deadlines.append(state.next_count_at)
             if state.next_schedule_at is not None:
                 deadlines.append(state.next_schedule_at)
             if state.discovery_pending or state.scan_in_progress or not state.reconcile_complete or state.degraded:

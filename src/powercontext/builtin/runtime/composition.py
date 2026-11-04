@@ -720,7 +720,8 @@ def _artifact_processing_bindings(  # noqa: C901 - validate and assemble one reg
         "skill": None,
     }
     for family, schedule in automatic.items():
-        if schedule is not None and family not in declared | registered:
+        count_threshold = getattr(config.runtime, f"{family.replace('-', '_')}_source_count_threshold", None)
+        if (schedule is not None or count_threshold is not None) and family not in declared | registered:
             if (
                 family == "topic-memory"
                 and config.runtime.artifact_processing_families is None
@@ -787,6 +788,7 @@ def _artifact_processing_bindings(  # noqa: C901 - validate and assemble one reg
                 if family == "skill"
                 else SourceProcessingPendingProvider(contexts.database, binding, family),
                 automatic_scope_filter=enabled_profile_scopes if family == "profile" else None,
+                source_count_threshold=getattr(config.runtime, f"{prefix}_source_count_threshold", None),
             )
         )
     _validate_processing_registrations(configured)

@@ -117,3 +117,9 @@ citations = await search_pdf_pages(runtime.memory.for_scope(scope_id), question,
 完整包按 UTF-8 字符边界确定性分块，默认每块至多 512 bytes。wire 使用标准 Base64、排序且紧凑的 JSON；SHA-256 摘要只覆盖 `schema` 和 `items`。`byte_count` 包含自身写入后的完整包长度。delta 只保留相同前缀块的个数与目标后缀，接收端从序列化后的 base 与 delta 重建，并校验两个摘要。解码拒绝缺失或额外字段、错误 Base64、非法 UTF-8、非法 prefix 和摘要或字节数不符。
 
 传输收益按首次完整包与后续 delta 的 `len(to_bytes())` 累加，计入 Base64 和 JSON 开销。公开测试验证协议和一次真实 Runtime 增量调用；完整 40 轮成本门槛须用对应测量序列验证。
+
+## 按新增来源数量启动处理
+
+`RuntimeConfig.memory_source_count_threshold` 和 `topic_memory_source_count_threshold` 默认均为 `None`；启用时必须传入严格正整数。全局 supervisor 按 scope 和处理族读取持久化的成功 cursor，统计此后 journal 中的 Source 身份。重复采集和 receipt 信任升级不会增加计数；仅用于 lineage 的 Source 参与计数，但仍不作为生成证据。
+
+数量条件与既有时间条件满足任一项即可接受一次原生处理请求，显式 `flush()` 继续直接接受请求。Memory 每次只消费窗口上限内的输入，成功后根据剩余数量重新判断；Topic Memory 已接受的 wave 继续完成其后续窗口。请求与成功 cursor 均持久化，失败沿用原有重试，重启后恢复。数量发现按有界分页扫描，每轮完整扫描后约一秒重新检查；不同 scope 和 family 独立。
