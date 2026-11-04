@@ -123,3 +123,11 @@ Count and time admission are independent alternatives. Explicit `flush()` accept
 Pass `CoalescingEmbeddingModel` from `powercontext.builtin.inference.coalescing` as `embedding_model` to `open_builtin_contexts`. Calls on one event loop share one wrapper, exposing the underlying model's profile. Defaults are a 5 ms coalescing window, 64 unique texts per provider batch, and an LRU of 1024 successful vectors.
 
 Duplicate texts share pending and running requests. Results preserve each caller's order and duplicates. Setting `cache_size=0` disables reuse across completed calls while retaining in-flight sharing. Failed batches and vector-count mismatches are not cached; independent batches continue. Caller cancellation leaves shared computation alive. Each caller aggregates provider request and token usage once per distinct awaited batch; cache-only calls report zero requests. The cache is local to the wrapper's process.
+
+## Source lifecycle dependency graphs
+
+`runtime.lifecycle.for_scope(scope_id)` binds Sources, Memory citations and Topic Memory references to immutable node registrations. Derived nodes require existing unique parents and an `all` or `any` policy supporting the complete body. Registration immediately computes availability and retains the exact original reference.
+
+Strict events require matching Source revisions and increasing sequences; identical replay is allowed. Graphs and latest events persist per scope. Native Memory state operations preserve body versions. Topic search fusion and browsing exclude unavailable nodes, while exact historical reads remain available. Generation resolution rejects unavailable nodes; audit resolution returns the original reference.
+
+Propagation persists desired state before native synchronization. Same-event retries repair interrupted writes and inspect current states to avoid redundant revisions. Graphs assume one writer per scope and immutable registrations. Each update reads and saves the complete scope graph, intended for the challenge's 16 to 20 nodes rather than unbounded graphs.

@@ -249,6 +249,7 @@ from powercontext.builtin.runtime.recall_sufficiency import (
     build_recall_candidates,
     recall_effort,
 )
+from powercontext.builtin.runtime.source_lifecycle import SourceLifecycleApplication
 from powercontext.builtin.runtime.statistics import RelationalScopedStatistics, overview_selection
 from powercontext.builtin.scope import ScopeApplication, ScopeDescriptor, ScopeSelection
 from powercontext.builtin.scope.subject_sources import SubjectSourceService
@@ -2981,6 +2982,8 @@ def _log_scheduled_processing(
 
 class BuiltinRuntime:
     """Add business-specific operations over composed built-in contexts."""
+
+    lifecycle: SourceLifecycleApplication
 
     def __init__(
         self,

@@ -129,3 +129,11 @@ citations = await search_pdf_pages(runtime.memory.for_scope(scope_id), question,
 `CoalescingEmbeddingModel` 位于 `powercontext.builtin.inference.coalescing`，可直接作为 `embedding_model` 传给 `open_builtin_contexts`。同一事件循环中的调用共享一个包装器；其 `profile` 来自底层模型。默认合并窗口为 5 毫秒、批次上限为 64 个去重文本，LRU 容量为 1024 个成功向量。
 
 重复文本共享待执行或执行中的请求，返回向量恢复每个调用的原始顺序和重复位置。`cache_size=0` 关闭跨调用缓存，仍共享执行中的请求。失败和向量数量错误不缓存，独立批次继续执行；取消调用不会取消共享计算。每个调用按自己等待的不同底层批次累计 provider 的 request 和 token 用量，纯缓存命中的 requests 为 0。缓存仅存在于该包装器进程内。
+
+## 来源生命周期依赖图
+
+`runtime.lifecycle.for_scope(scope_id)` 注册 Source、MemoryCitation 和 Topic Memory ArtifactRef，通过 `SourceLifecycleEvent` 撤回或恢复来源。节点编号在 scope 内唯一；派生节点要求已注册且不重复的父节点，并按 `all` 或 `any` 判断整份正文的可用性。注册时立即计算状态，原始绑定引用保持不变。
+
+事件严格校验，Source 的生命周期 revision 必须匹配，sequence 只允许前进或相同事件重放。图和最近事件持久化。Memory 原生停用与恢复保留正文版本；Topic 检索融合和浏览排除不可用节点，历史读取继续可用。`resolve(..., purpose="generation")` 拒绝不可用节点，`purpose="audit"` 返回原始引用。
+
+传播先提交目标状态，再同步 Memory；中断后同一事件重试可继续，同步检查当前状态避免重复修订。每个 scope 要求单写者，注册后不改绑定。每次更新读取并保存该 scope 的完整图，适用于赛题 16 至 20 节点的规模。

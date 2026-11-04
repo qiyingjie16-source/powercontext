@@ -1,0 +1,41 @@
+name: Source lifecycle acceptance
+
+on:
+  push:
+    branches: [task/memory-01-source-lifecycle]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source_lifecycle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: Install fixed Python 3.12 competition environment
+        run: make -C competition install
+      - name: Check ancestry and run official context, reranker, PDF, Pi and CSV acceptance
+        env:
+          PYTEST_ADDOPTS: "-s"
+        run: make -C competition check-baseline test-lifecycle test-embedding test-count-trigger test-incremental test-rerank test-pdf test-pi test-csv
+      - name: Run context pack, reranker and Source boundaries and Source regressions
+        env:
+          PYTHONPATH: src
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
+        run: >-
+          competition/.venv/bin/python -m pytest -q
+          tests/builtin/runtime/test_source_lifecycle.py
+          tests/builtin/inference/test_coalescing.py
+          tests/builtin/runtime/test_artifact_processing.py
+          tests/builtin/runtime/test_count_trigger_config.py
+          tests/builtin/runtime/test_context_pack.py
+          tests/builtin/artifacts/memory/test_http_reranker.py
+          tests/builtin/artifacts/memory/test_reranking.py
+          tests/test_pdf_pages.py tests/test_pi_session.py tests/test_csv_rows.py tests/test_sources.py tests/test_source_observations.py
+          tests/builtin/persistence/test_sources.py
