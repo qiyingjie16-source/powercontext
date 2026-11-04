@@ -123,3 +123,9 @@ citations = await search_pdf_pages(runtime.memory.for_scope(scope_id), question,
 `RuntimeConfig.memory_source_count_threshold` 和 `topic_memory_source_count_threshold` 默认均为 `None`；启用时必须传入严格正整数。全局 supervisor 按 scope 和处理族读取持久化的成功 cursor，统计此后 journal 中的 Source 身份。重复采集和 receipt 信任升级不会增加计数；仅用于 lineage 的 Source 参与计数，但仍不作为生成证据。
 
 数量条件与既有时间条件满足任一项即可接受一次原生处理请求，显式 `flush()` 继续直接接受请求。Memory 每次只消费窗口上限内的输入，成功后根据剩余数量重新判断；Topic Memory 已接受的 wave 继续完成其后续窗口。请求与成功 cursor 均持久化，失败沿用原有重试，重启后恢复。数量发现按有界分页扫描，每轮完整扫描后约一秒重新检查；不同 scope 和 family 独立。
+
+## Embedding 请求合并与缓存
+
+`CoalescingEmbeddingModel` 位于 `powercontext.builtin.inference.coalescing`，可直接作为 `embedding_model` 传给 `open_builtin_contexts`。同一事件循环中的调用共享一个包装器；其 `profile` 来自底层模型。默认合并窗口为 5 毫秒、批次上限为 64 个去重文本，LRU 容量为 1024 个成功向量。
+
+重复文本共享待执行或执行中的请求，返回向量恢复每个调用的原始顺序和重复位置。`cache_size=0` 关闭跨调用缓存，仍共享执行中的请求。失败和向量数量错误不缓存，独立批次继续执行；取消调用不会取消共享计算。每个调用按自己等待的不同底层批次累计 provider 的 request 和 token 用量，纯缓存命中的 requests 为 0。缓存仅存在于该包装器进程内。
