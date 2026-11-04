@@ -103,3 +103,11 @@ quality and Recall thresholds require a separate labeled evaluation.
 Each POST carries `query` and candidate objects with the original one-based `rank` and `text`. A response must contain exactly `scores`, with each score object containing exactly `rank` and a finite numeric `score`. Scores may be returned out of order, but each batch must cover its own ranks exactly once. Invalid schemas raise `ValueError`; HTTP status and network errors retain the original `httpx` exception.
 
 After every batch has scored its candidates, ranks are sorted by descending score and then ascending original rank. `InferenceUsage.requests` reports the number of HTTP calls. The existing Memory service maps returned original ranks back to unchanged entry and version identities. Relevance quality depends on the scoring service.
+
+## Full and incremental context packs
+
+`powercontext.builtin.runtime.context_pack` provides `ContextPack`, `ContextPackDelta`, `apply_context_pack_delta`, and `ContextPackError`. `ScopedContextApplication.prepare_incremental(request, base_pack=None)` calls the existing `prepare` to obtain the target content. The first call returns a full pack; a call with a base returns a prefix delta. An empty prepared result becomes an empty pack.
+
+Content is split deterministically at UTF-8 character boundaries, with a default maximum of 512 bytes per item. Wire objects use standard Base64 and sorted compact JSON. The SHA-256 digest covers only `schema` and `items`; `byte_count` includes the serialized field itself. Delta reconstruction uses only serialized base and delta values and validates both digests. Decoding rejects missing or extra fields, invalid Base64 or UTF-8, invalid prefixes, and digest or byte-count mismatches.
+
+Transmission cost includes the first full pack and every later delta as `len(to_bytes())`, including Base64 and JSON overhead. The public tests check the protocol and one real Runtime incremental call; the complete 40-round cost threshold requires its own measurement sequence.

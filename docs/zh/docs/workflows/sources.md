@@ -109,3 +109,11 @@ citations = await search_pdf_pages(runtime.memory.for_scope(scope_id), question,
 每批 POST JSON：`{"query":"问题","candidates":[{"rank":1,"text":"原候选正文"}]}`。rank 始终是完整输入的一基序号；响应须恰好为 `{"scores":[{"rank":1,"score":0.75}]}`，可乱序，但每批必须恰好覆盖该批 rank。额外键、遗漏、重复、跨批 rank、非有限数或布尔分数以 `ValueError` 失败。非 2xx 状态和网络错误保持原 `httpx` 异常。
 
 全部批次评分完毕后，按分数降序、原始 rank 升序选择前 `limit` 条；`InferenceUsage.requests` 记录实际发出的 HTTP 请求数。重排返回原 rank，由现有 Memory 服务映射回原候选、条目和版本身份。服务分数决定排序，相关性质量取决于评分服务本身。
+
+## 上下文完整包与增量包
+
+`powercontext.builtin.runtime.context_pack` 提供 `ContextPack`、`ContextPackDelta`、`apply_context_pack_delta` 和 `ContextPackError`。`ScopedContextApplication.prepare_incremental(request, base_pack=None)` 调用既有 `prepare` 获取目标正文：首次返回完整包，提供 base 时返回前缀增量。`content=None` 对应空包。
+
+完整包按 UTF-8 字符边界确定性分块，默认每块至多 512 bytes。wire 使用标准 Base64、排序且紧凑的 JSON；SHA-256 摘要只覆盖 `schema` 和 `items`。`byte_count` 包含自身写入后的完整包长度。delta 只保留相同前缀块的个数与目标后缀，接收端从序列化后的 base 与 delta 重建，并校验两个摘要。解码拒绝缺失或额外字段、错误 Base64、非法 UTF-8、非法 prefix 和摘要或字节数不符。
+
+传输收益按首次完整包与后续 delta 的 `len(to_bytes())` 累加，计入 Base64 和 JSON 开销。公开测试验证协议和一次真实 Runtime 增量调用；完整 40 轮成本门槛须用对应测量序列验证。
