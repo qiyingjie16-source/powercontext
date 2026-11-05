@@ -148,6 +148,40 @@ _FINANCIAL_TERMS = (
     frozenset({"pnl", "earnings", "income", "profit", "loss"}),
     frozenset({"restructuring", "reorganization", "charges", "costs"}),
 )
+# A question can name several sections needed for one calculation. Probe each
+# independently so lexical admission on the full question cannot hide a statement.
+_REPORT_SECTIONS = (
+    (
+        r"income statements?|statements? of (?:income|operations|earnings)|profit and loss|p\s*&\s*l",
+        ("statement income", "statements operations", "statement earnings"),
+        r"(?:(?:consolidated|combined)\s+)?(?:statements? of (?:income|operations|earnings)|income statements?)",
+    ),
+    (
+        r"cash[ -]flow statements?|statements? of cash flows?",
+        ("statement cash flows", "statements cash flows"),
+        r"(?:(?:consolidated|combined)\s+)?(?:statements? of cash flows?|cash flow statements?)",
+    ),
+    (
+        r"balance sheets?|statements? of financial position",
+        ("balance sheets", "statement financial position"),
+        r"(?:(?:consolidated|combined)\s+)?(?:balance sheets?|statements? of financial position)",
+    ),
+    (
+        r"legal (?:battles|proceedings|disputes)|litigation|lawsuits?",
+        ("legal proceedings", "litigation contingencies"),
+        r"(?:item\s+3\.?\s+)?(?:legal proceedings|litigation|legal contingencies)",
+    ),
+)
+
+
+def _requested_sections(question: str) -> tuple[tuple[tuple[str, ...], str], ...]:
+    return tuple(
+        (queries, heading)
+        for trigger, queries, heading in _REPORT_SECTIONS
+        if re.search(rf"\b(?:{trigger})\b", question, re.IGNORECASE)
+    )
+
+
 _STOP_WORDS = frozenset([
     "a",
     "an",
@@ -220,18 +254,18 @@ def _terms(text: str) -> list[str]:
     return re.findall(r"[a-z]+|\d+", text.lower())
 
 
-def _search_queries(question: str) -> tuple[list[str], tuple[str, ...]]:
+def _search_queries(question: str, section_queries: tuple[str, ...]) -> tuple[list[str], tuple[str, ...]]:
     terms = list(dict.fromkeys(t for t in _terms(question) if t not in _STOP_WORDS))
     # Fiscal-year spelling is query syntax, not a different year in the report.
     terms = [t for t in terms if t != "fy"]
     if not terms:
         return [], ()
     expansions = [" ".join(sorted(group)) for group in _FINANCIAL_TERMS if group.intersection(terms)]
-    queries = [" ".join(terms), *expansions]
+    queries = [" ".join(terms), *section_queries, *expansions]
     return terms, tuple(dict.fromkeys(queries))
 
 
-def _rank_pages(hits: list[MemoryHit], terms: list[str]) -> list[MemoryHit]:
+def _rank_pages(hits: list[MemoryHit], terms: list[str], headings: tuple[str, ...]) -> list[MemoryHit]:
     """BM25 over Memory-returned text, retaining original exact hit identities."""
     counts = [Counter(_terms(hit.text)) for hit in hits]
     if not counts:
@@ -255,7 +289,13 @@ def _rank_pages(hits: list[MemoryHit], terms: list[str]) -> list[MemoryHit]:
                     weight * inverse * frequency * 2.2 / (frequency + 1.2 * (0.25 + 0.75 * lengths[index] / average))
                 )
         # Document labels carry company/year scope as well as searchable body text.
-        label_terms = set(_terms(hits[index].text.partition("\n")[0]))
+        label, _, body = hits[index].text.partition("\n")
+        label_terms = set(_terms(label))
+        # A section title is stronger evidence of the requested source than a
+        # passing mention of that section in notes, certifications or a TOC.
+        opening = "\n".join(body.splitlines()[:6])
+        if any(re.search(rf"^\s*(?:{heading})[ \t]*[.:]?[ \t]*$", opening, re.I | re.M) for heading in headings):
+            score += 12
         score += 2 * len(label_terms.intersection(terms))
         scores.append(score)
     return [hits[index] for index in sorted(range(len(hits)), key=lambda i: (-scores[i], i))]
@@ -272,7 +312,9 @@ async def search_pdf_pages(
         raise ValueError("PDF search limit must be a non-negative integer")  # noqa: TRY003
     if limit == 0 or not question.strip():
         return ()
-    terms, queries = _search_queries(question)
+    sections = _requested_sections(question)
+    terms, queries = _search_queries(question, tuple(query for queries, _ in sections for query in queries))
+    headings = tuple(heading for _, heading in sections)
     hits: dict[tuple[str, str, int, str, str], MemoryHit] = {}
     for query in queries:
         result = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=max(100, limit * 5)))
@@ -287,7 +329,7 @@ async def search_pdf_pages(
             hits.setdefault(key, hit)
     citations: list[MemoryCitation] = []
     seen: set[str] = set()
-    for hit in _rank_pages(list(hits.values()), terms):
+    for hit in _rank_pages(list(hits.values()), terms, headings):
         citation = MemoryCitation(
             memory_ref=hit.memory_ref, entry_id=hit.entry_id, entry_version_id=hit.entry_version_id
         )
