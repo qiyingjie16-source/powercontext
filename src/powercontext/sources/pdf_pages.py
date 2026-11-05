@@ -21,10 +21,11 @@ import io
 import json
 import math
 import re
-from collections import Counter, OrderedDict
+from collections import Counter
 from dataclasses import dataclass
 from itertools import combinations
 from typing import TYPE_CHECKING
+from weakref import WeakKeyDictionary
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -145,12 +146,16 @@ PDF_PAGE_SOURCE_DEFINITION: AdapterSourceDefinition[PDFPageInput, PDFPageSource,
     AdapterSourceDefinition(PDFPageAdapter(), projections=(PDFTextEvidenceProjection(),))
 )
 
-_ACRONYM_PATTERN = re.compile(r"\b(?:r&d|d&a|sg&a|sga)\b", re.IGNORECASE)
+_ACRONYM_PATTERN = re.compile(r"\b(?:r&d|d&a|sg&a|sga|pp&e|p&l|cogs|eps)\b", re.IGNORECASE)
 _ACRONYMS = {
     "r&d": "research development",
     "d&a": "depreciation amortization",
     "sg&a": "selling general administrative",
     "sga": "selling general administrative",
+    "pp&e": "property plant equipment",
+    "p&l": "income statement",
+    "cogs": "cost goods sold",
+    "eps": "earnings per share",
 }
 
 # General financial vocabulary, independent of any report, question set, or evidence labels.
@@ -413,6 +418,44 @@ _STOP_WORDS = frozenset([
     "define",
     "defined",
     "fiscal",
+    "year",
+    "years",
+    "annual",
+    "report",
+    "reported",
+    "reporting",
+    "company",
+    "corporation",
+    "inc",
+    "based",
+    "according",
+    "given",
+    "show",
+    "state",
+    "then",
+    "if",
+    "not",
+    "explicitly",
+    "directly",
+    "outlined",
+    "quantity",
+    "amount",
+    "total",
+    "approximately",
+    "dollar",
+    "dollars",
+    "usd",
+    "million",
+    "millions",
+    "billion",
+    "billions",
+    "percentage",
+    "percent",
+    "change",
+    "primarily",
+    "important",
+    "ongoing",
+    "materially",
 ])
 
 
@@ -421,7 +464,8 @@ def _terms(text: str) -> list[str]:
 
 
 def _question_terms(question: str) -> list[str]:
-    normalized = _ACRONYM_PATTERN.sub(lambda match: _ACRONYMS[match.group(0).lower()], question.lower())
+    normalized = re.sub(r"\binvestment analyst\b", "", question.lower())
+    normalized = _ACRONYM_PATTERN.sub(lambda match: _ACRONYMS[match.group(0).lower()], normalized)
     return list(dict.fromkeys(term for term in _terms(normalized) if term not in _STOP_WORDS and term != "fy"))
 
 
@@ -709,7 +753,7 @@ def _rank_pages(
     ]
 
 
-_PAGE_INDEX_CACHE: OrderedDict[tuple[str, str, int], _PageIndex] = OrderedDict()
+_PAGE_INDEX_CACHE: WeakKeyDictionary[ScopedMemoryApplication, _PageIndex] = WeakKeyDictionary()
 
 
 def _page_text_priority(text: str) -> tuple[bool, int, int]:
@@ -726,9 +770,8 @@ async def _load_page_index(memory: ScopedMemoryApplication) -> _PageIndex:
     if listing.memory_ref is None:
         return _PageIndex(cache_key=(memory.scope_id, "", 0), hits=())
     cache_key = (memory.scope_id, listing.memory_ref.artifact_id, listing.memory_ref.revision)
-    cached = _PAGE_INDEX_CACHE.get(cache_key)
-    if cached is not None:
-        _PAGE_INDEX_CACHE.move_to_end(cache_key)
+    cached = _PAGE_INDEX_CACHE.get(memory)
+    if cached is not None and cached.cache_key == cache_key:
         return cached
 
     by_page: dict[str, MemoryHit] = {}
@@ -752,9 +795,7 @@ async def _load_page_index(memory: ScopedMemoryApplication) -> _PageIndex:
         if previous is None or _page_text_priority(hit.text) > _page_text_priority(previous.text):
             by_page[page_ids[0]] = hit
     index = _PageIndex(cache_key=cache_key, hits=tuple(by_page.values()))
-    _PAGE_INDEX_CACHE[cache_key] = index
-    while len(_PAGE_INDEX_CACHE) > 8:
-        _PAGE_INDEX_CACHE.popitem(last=False)
+    _PAGE_INDEX_CACHE[memory] = index
     return index
 
 
