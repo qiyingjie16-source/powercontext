@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import secrets
 import subprocess
 from pathlib import Path
@@ -66,7 +67,12 @@ def main() -> None:
     )
     data = root / "data"
     for name in ("museum", "powercontext"):
-        (data / name).mkdir(parents=True, exist_ok=True)
+        path = data / name
+        path.mkdir(parents=True, exist_ok=True)
+        if os.name != "nt":
+            # Both containers run as UID 10001. The dedicated local test data
+            # directory must be writable without requiring root on Linux CI.
+            path.chmod(0o777)
 
     museum_key = secrets.token_urlsafe(32)
     powercontext_token = secrets.token_urlsafe(32)
