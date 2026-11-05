@@ -131,7 +131,7 @@ def test_identity_distinguishes_document_revision_and_page_and_round_trips():
     asyncio.run(scenario())
 
 
-def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_path):
+def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_path):  # noqa: C901
     class Pipeline:
         async def extract(self, request, /):
             entries = []
@@ -205,7 +205,7 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
             for scope_id in (scope.scope_id, other.scope_id):
                 while (await runtime.memory.for_scope(scope_id).flush()).processed:
                     pass
-        async with open_builtin_runtime(config) as runtime:
+        async with open_builtin_runtime(config, candidate_pipeline=Pipeline()) as runtime:
             memory = runtime.memory.for_scope(scope.scope_id)
             for question, expected in [
                 ("What was ACME capex in 2025?", 1),
@@ -248,6 +248,25 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
                 (await memory.get(GetMemoryEntryRequest(citation=citation))).entry.sources[0].source_id
                 for citation in quick_ratio
             } == {observations[10].name, observations[11].name}
+            added_page = PDFPageInput(
+                document_id="ACME_2025_10K",
+                document_sha256="d" * 64,
+                page_number=13,
+                text="Our workforce includes 12,345 employees.",
+            )
+            added_source = await registry.resolve(added_page)
+            await runtime.ingestion.submit(
+                SubmitSourceObservation(
+                    scope_id=scope.scope_id,
+                    observation=project_source_for_transport(registry, added_source),
+                )
+            )
+            while (await memory.flush()).processed:
+                pass
+            added = await search_pdf_pages(memory, "How large is ACME's workforce?", limit=1)
+            assert len(added) == 1
+            added_entry = (await memory.get(GetMemoryEntryRequest(citation=added[0]))).entry
+            assert added_entry.sources[0].source_id == added_source.name
             assert await search_pdf_pages(memory, "secret scope unique phrase") == ()
             assert await search_pdf_pages(memory, "capital", limit=0) == ()
             assert await search_pdf_pages(memory, "   ") == ()

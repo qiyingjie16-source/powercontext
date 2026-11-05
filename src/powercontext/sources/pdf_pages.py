@@ -21,7 +21,7 @@ import io
 import json
 import math
 import re
-from collections import Counter
+from collections import Counter, OrderedDict
 from dataclasses import dataclass
 from itertools import combinations
 from typing import TYPE_CHECKING
@@ -69,9 +69,11 @@ def parse_pdf_document(value: PDFDocumentInput) -> tuple[PDFPageInput, ...]:
     """Extract every physical page before returning any captured input."""
     from pypdf import PdfReader
 
+    if b"%PDF-" not in value.content[:1024] or b"%%EOF" not in value.content[-16384:]:
+        raise ValueError("Unable to completely parse PDF document")  # noqa: TRY003
     digest = hashlib.sha256(value.content).hexdigest()
     try:
-        reader = PdfReader(io.BytesIO(value.content), strict=True)
+        reader = PdfReader(io.BytesIO(value.content))
         if reader.is_encrypted and not reader.decrypt(""):
             raise ValueError("PDF requires a non-empty password")  # noqa: TRY003, TRY301
         pages = tuple(
@@ -190,21 +192,33 @@ class _SearchView:
     weight: float
 
 
+@dataclass(frozen=True, slots=True)
+class _PageIndex:
+    cache_key: tuple[str, str, int]
+    hits: tuple[MemoryHit, ...]
+
+
 # A question can name several sections needed for one calculation. Probe each
 # independently so lexical admission on the full question cannot hide a statement.
 _REPORT_SECTIONS = (
     _SectionRule(
-        r"income statements?|statements? of (?:income|operations|earnings)|profit and loss|p\s*&\s*l",
+        (
+            r"income statements?|statements? of (?:income|operations|earnings)|profit and loss|p\s*&\s*l"
+            r"|ebitda|gross (?:profit|margin)|operating (?:income|profit|margin)|net income"
+        ),
         ("statement income", "statements operations", "statement earnings"),
         r"(?:(?:consolidated|combined)\s+)?(?:statements? of (?:income|operations|earnings)|income statements?)",
     ),
     _SectionRule(
-        r"cash[ -]flow statements?|statements? of cash flows?",
+        r"cash[ -]flow statements?|statements? of cash flows?|capex|capital expenditures?|depreciation|amortization",
         ("statement cash flows", "statements cash flows"),
         r"(?:(?:consolidated|combined)\s+)?(?:statements? of cash flows?|cash flow statements?)",
     ),
     _SectionRule(
-        r"balance sheets?|statements? of financial position",
+        (
+            r"balance sheets?|statements? of financial position|quick ratio|current ratio|working capital"
+            r"|total (?:assets|liabilities)|inventory turnover|receivables? turnover"
+        ),
         ("balance sheets", "statement financial position"),
         r"(?:(?:consolidated|combined)\s+)?(?:balance sheets?|statements? of financial position)",
     ),
@@ -454,10 +468,12 @@ def _merge_views(views: list[_SearchView]) -> tuple[_SearchView, ...]:
     return tuple(by_query.values())
 
 
-def _search_queries(question: str, sections: tuple[_SectionRule, ...]) -> tuple[list[str], tuple[_SearchView, ...]]:
+def _search_queries(
+    question: str, sections: tuple[_SectionRule, ...]
+) -> tuple[list[str], tuple[_SearchView, ...], list[str]]:
     terms = _question_terms(question)
     if not terms:
-        return [], ()
+        return [], (), []
     groups = [group for group in _FINANCIAL_TERMS if group.intersection(terms)]
     ranked_terms = sorted(
         terms,
@@ -476,6 +492,11 @@ def _search_queries(question: str, sections: tuple[_SectionRule, ...]) -> tuple[
         if re.search(rf"\b(?:{trigger})\b", question, re.IGNORECASE)
         for query in probes
     ]
+    concept_terms = list(
+        dict.fromkeys(
+            term for query in concepts for term in _terms(query) if term not in _STOP_WORDS and term not in terms
+        )
+    )
     views = [_SearchView(query=" ".join(terms), weight=1.6)]
     if high_signal and high_signal != terms:
         views.append(_SearchView(query=" ".join(high_signal), weight=1.1))
@@ -484,7 +505,7 @@ def _search_queries(question: str, sections: tuple[_SectionRule, ...]) -> tuple[
     views.extend(_SearchView(query=" ".join(sorted(group)), weight=0.55) for group in groups[:3])
     views.extend(_SearchView(query=" ".join(pair), weight=0.4) for pair in combinations(focus_terms[:3], 2))
     views.extend(_SearchView(query=term, weight=0.25) for term in focus_terms[:2])
-    return terms, _merge_views(views)
+    return terms, _merge_views(views), concept_terms
 
 
 def _hit_key(hit: MemoryHit) -> tuple[str, str, int, str, str]:
@@ -530,14 +551,6 @@ def _document_aliases(document_id: str) -> tuple[str, ...]:
     aliases = {joined}
     aliases.update(part for part in meaningful if len(part) >= 3)
     return tuple(sorted(aliases, key=lambda alias: (-len(alias), alias)))
-
-
-def _document_search_term(document_id: str) -> str | None:
-    """Return one document-name token that survives FTS tokenization."""
-    parts = _document_name_parts(document_id)
-    if not parts:
-        return None
-    return max(parts, key=lambda part: (len(part), part))
 
 
 def _target_document(question: str, hits: list[MemoryHit]) -> str | None:
@@ -587,10 +600,10 @@ def _heading_boost(body: str, sections: tuple[_SectionRule, ...]) -> float:
             matched.append(section.boost)
     if not matched:
         return 0.0
-    return max(matched) + 0.25 * (sum(matched) - max(matched))
+    return 0.4 * (max(matched) + 0.25 * (sum(matched) - max(matched)))
 
 
-def _ranking_weights(terms: list[str]) -> dict[str, float]:
+def _ranking_weights(terms: list[str], concept_terms: list[str]) -> dict[str, float]:
     weights = {term: 0.3 if _is_year(term) else 1.0 for term in terms}
     for term in terms:
         for variant in _term_variants(term):
@@ -598,7 +611,9 @@ def _ranking_weights(terms: list[str]) -> dict[str, float]:
     for group in _FINANCIAL_TERMS:
         if group.intersection(terms):
             for term in sorted(group):
-                weights.setdefault(term, 0.45)
+                weights.setdefault(term, 1.2)
+    for term in concept_terms:
+        weights.setdefault(term, 0.55)
     return weights
 
 
@@ -626,17 +641,24 @@ def _page_rank_score(
             )
 
     label, _, body = hit.text.partition("\n")
+    heading_boost = _heading_boost(body, sections)
+    agreement_value = agreement.get(_hit_key(hit), 0.0)
+    if score <= 0:
+        return 0.0
     query_terms = frozenset(terms)
     label_matches = sorted(set(_terms(label)).intersection(query_terms))
     score += math.fsum(0.75 if term.isdigit() else 3.0 for term in label_matches)
-    score += 6.0 * agreement.get(_hit_key(hit), 0.0)
-    score += _heading_boost(body, sections)
+    score += 0.5 * agreement_value
+    score += heading_boost
     score += 0.8 * len(set(count).intersection(query_terms))
     title_window = set(_terms("\n".join(body.splitlines()[:12])))
     score += 0.4 * len(title_window.intersection(query_terms))
+    if sections:
+        numeric_density = sum(frequency for term, frequency in count.items() if term.isdigit()) / max(1, lengths[index])
+        score += 2.5 * numeric_density
     if _looks_like_table_of_contents(body):
         score -= 8.0
-    if target_document is not None and _document_of(hit) == target_document:
+    if score > 0 and target_document is not None and _document_of(hit) == target_document:
         score += 10.0
     return score
 
@@ -644,18 +666,19 @@ def _page_rank_score(
 def _rank_pages(
     hits: list[MemoryHit],
     terms: list[str],
+    concept_terms: list[str],
     sections: tuple[_SectionRule, ...],
     agreement: dict[tuple[str, str, int, str, str], float],
     target_document: str | None,
 ) -> list[MemoryHit]:
     """BM25 plus section, document, morphology, and multi-probe agreement."""
-    counts = [Counter(_terms(hit.text)) for hit in hits]
+    counts = [Counter(_terms(hit.text.partition("\n")[2] or hit.text)) for hit in hits]
     if not counts:
         return []
     lengths = [sum(count.values()) for count in counts]
     average = sum(lengths) / len(lengths) or 1
     frequencies = Counter(term for count in counts for term in count)
-    weights = _ranking_weights(terms)
+    weights = _ranking_weights(terms, concept_terms)
     scores = [
         _page_rank_score(
             hit,
@@ -673,14 +696,72 @@ def _rank_pages(
         )
         for index, (hit, count) in enumerate(zip(hits, counts, strict=True))
     ]
-    return [hits[index] for index in sorted(range(len(hits)), key=lambda i: (-scores[i], i))]
+    return [
+        hits[index]
+        for index in sorted(
+            (position for position, value in enumerate(scores) if value > 0),
+            key=lambda position: (
+                -scores[position],
+                hits[position].entry_id,
+                hits[position].entry_version_id,
+            ),
+        )
+    ]
+
+
+_PAGE_INDEX_CACHE: OrderedDict[tuple[str, str, int], _PageIndex] = OrderedDict()
+
+
+def _page_text_priority(text: str) -> tuple[bool, int, int]:
+    label = text.partition("\n")[0].strip()
+    identified = "_" in label or re.search(r"(?:19|20)\d{2}|\b(?:10|8)[kq]\b", label, re.IGNORECASE) is not None
+    return identified, len(label), len(text)
+
+
+async def _load_page_index(memory: ScopedMemoryApplication) -> _PageIndex:
+    """Read the current scoped page set through the public Memory listing API."""
+    from powercontext.builtin.artifacts.memory.models import MemoryHit
+
+    listing = await memory.list()
+    if listing.memory_ref is None:
+        return _PageIndex(cache_key=(memory.scope_id, "", 0), hits=())
+    cache_key = (memory.scope_id, listing.memory_ref.artifact_id, listing.memory_ref.revision)
+    cached = _PAGE_INDEX_CACHE.get(cache_key)
+    if cached is not None:
+        _PAGE_INDEX_CACHE.move_to_end(cache_key)
+        return cached
+
+    by_page: dict[str, MemoryHit] = {}
+    for record in listing.entries:
+        if record.state != "active":
+            continue
+        page_ids = tuple(
+            sorted(reference.source_id for reference in record.entry.sources if reference.source_type == "pdf-page")
+        )
+        if len(page_ids) != 1:
+            continue
+        hit = MemoryHit(
+            memory_ref=record.memory_ref,
+            entry_id=record.entry.entry_id,
+            entry_version_id=record.entry.entry_version_id,
+            text=record.entry.text,
+            score=0.0,
+            matched_by=(),
+        )
+        previous = by_page.get(page_ids[0])
+        if previous is None or _page_text_priority(hit.text) > _page_text_priority(previous.text):
+            by_page[page_ids[0]] = hit
+    index = _PageIndex(cache_key=cache_key, hits=tuple(by_page.values()))
+    _PAGE_INDEX_CACHE[cache_key] = index
+    while len(_PAGE_INDEX_CACHE) > 8:
+        _PAGE_INDEX_CACHE.popitem(last=False)
+    return index
 
 
 async def _collect_views(
     memory: ScopedMemoryApplication,
     search_views: tuple[_SearchView, ...],
     candidate_limit: int,
-    hits: dict[tuple[str, str, int, str, str], MemoryHit],
     agreement: dict[tuple[str, str, int, str, str], float],
 ) -> None:
     from powercontext.builtin.runtime import SearchMemoryRequest
@@ -689,7 +770,6 @@ async def _collect_views(
         result = await memory.search(SearchMemoryRequest(query=view.query, mode="fts", limit=candidate_limit))
         for rank, hit in enumerate(result.hits):
             key = _hit_key(hit)
-            hits.setdefault(key, hit)
             agreement[key] = agreement.get(key, 0.0) + view.weight / (10 + rank)
 
 
@@ -705,35 +785,25 @@ async def search_pdf_pages(
     if limit == 0 or not question.strip():
         return ()
     sections = _requested_sections(question)
-    terms, views = _search_queries(question, sections)
-    hits: dict[tuple[str, str, int, str, str], MemoryHit] = {}
+    terms, views, concept_terms = _search_queries(question, sections)
+    if not terms:
+        return ()
+    page_index = await _load_page_index(memory)
+    if not page_index.hits:
+        return ()
+    hit_list = list(page_index.hits)
     agreement: dict[tuple[str, str, int, str, str], float] = {}
     candidate_limit = min(320, max(160, limit * 12))
 
-    await _collect_views(memory, views, candidate_limit, hits, agreement)
-    if not hits:
-        return ()
-    hit_list = list(hits.values())
+    await _collect_views(memory, views, candidate_limit, agreement)
     explicit_target = _target_document(question, hit_list)
     target_document = explicit_target or _dominant_document(hit_list, agreement)
-    if target_document is not None and len({_document_of(hit) for hit in hit_list}) > 1:
-        document_term = _document_search_term(target_document)
-        if document_term is not None:
-            focus_terms = [term for term in terms if not _is_year(term)][:4]
-            scoped = [_SearchView(query=f"{document_term} {term}", weight=0.8) for term in focus_terms]
-            scoped.extend(
-                _SearchView(query=f"{document_term} {query}", weight=0.9)
-                for section in sections
-                for query in section.queries
-            )
-            await _collect_views(memory, _merge_views(scoped), candidate_limit, hits, agreement)
-            hit_list = list(hits.values())
     if explicit_target is not None:
         hit_list = [hit for hit in hit_list if _document_of(hit) == explicit_target]
 
     citations: list[MemoryCitation] = []
     seen: set[str] = set()
-    for hit in _rank_pages(hit_list, terms, sections, agreement, target_document):
+    for hit in _rank_pages(hit_list, terms, concept_terms, sections, agreement, target_document):
         citation = MemoryCitation(
             memory_ref=hit.memory_ref, entry_id=hit.entry_id, entry_version_id=hit.entry_version_id
         )
