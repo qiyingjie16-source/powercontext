@@ -2,7 +2,7 @@
 
 ## 前置条件
 
-先完成 [第一场样例](session-1.md)，并确认 `pc_remember` 成功。
+先完成 [第一场样例](session-1.md)，并确认 `写入馆藏（HTTP）` 返回成功回执。
 
 建议新建一个 Dify 聊天会话，仍使用同一个应用和同一个 PowerContext Scope。
 
@@ -14,7 +14,7 @@
 
 ## 预期表现
 
-1. `pc_prepare_context` 在 LLM 之前执行，返回 `status=ready`。
+1. `召回旧展品（HTTP）` 在 LLM 之前执行，返回 `status=ready`。
 2. LLM 节点上下文包含第一场的展品记忆。
 3. 新展品会明确引用上一件香菜展品，形成“联动展”或续篇。
 4. 新展品再次写入 PowerContext，成为下一轮可召回的旧馆藏。
@@ -23,9 +23,9 @@
 
 在 Dify 运行详情中核对：
 
-- `pc_prepare_context` 的 `result.content` 非空；
+- `召回旧展品（HTTP）` 的 `memory_context` 非空；
 - 内容包含第一场的展品标题、原始记忆或馆藏标签；
-- “灰灯馆长策展”LLM 节点的上下文来源指向该 `result.content`；
+- “灰灯馆长策展”LLM 节点的上下文来源指向 `prepare_check.memory_context`；
 - 最终回答包含对第一场展品的称呼、续写或呼应，而不是只说“没有历史记录”。
 
 ## 恢复初始状态

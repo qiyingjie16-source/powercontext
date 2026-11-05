@@ -1,12 +1,21 @@
 start: StartNodeData ok
 privacy_guard: CodeNodeData ok
-privacy_branch: IfElseNodeData ok
-prepare_context: ToolNodeData ok
+privacy_gate: IfElseNodeData ok
 privacy_answer: AnswerNodeData ok
-curation_input: CodeNodeData ok
+prepare_body: CodeNodeData ok
+prepare_http: HttpRequestNodeData ok
+prepare_check: CodeNodeData ok
+prepare_gate: IfElseNodeData ok
+prepare_error: AnswerNodeData ok
 curator_llm: LLMNodeData ok
 parse_exhibit: CodeNodeData ok
-remember_memory: ToolNodeData ok
-finalize: CodeNodeData ok
+remember_body: CodeNodeData ok
+remember_gate: IfElseNodeData ok
+remember_error: AnswerNodeData ok
+remember_http: HttpRequestNodeData ok
+receipt_check: CodeNodeData ok
+receipt_gate: IfElseNodeData ok
+receipt_error: AnswerNodeData ok
 answer: AnswerNodeData ok
-{"result": "passed", "graphon_version": "0.7.0", "nodes": 11, "output": "dify\\memory-museum\\evidence\\dify-node-schema.json"}
+transport_error: AnswerNodeData ok
+{"result": "passed", "graphon_version": "0.7.0", "nodes": 20, "output": "evidence\\dify-node-schema.json"}

@@ -1,0 +1,29 @@
+# Merge after the unmodified official Dify 1.17.1 docker-compose.yaml.
+services:
+  nginx:
+    ports: !override
+      - 127.0.0.1:18080:80
+      - 127.0.0.1:18443:443
+  plugin_daemon:
+    ports: !override
+      - 127.0.0.1:15003:5003
+    networks:
+      - default
+      - shared
+  api:
+    networks:
+      - default
+      - shared
+  worker:
+    networks:
+      - default
+      - shared
+  ssrf_proxy:
+    networks:
+      - default
+      - shared
+
+networks:
+  shared:
+    external: true
+    name: museum-shared

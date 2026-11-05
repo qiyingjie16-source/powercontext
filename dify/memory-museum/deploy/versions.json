@@ -1,0 +1,20 @@
+{
+  "competition_base": "d647275c308e09b7b623f322a26f5c4e85734fb0",
+  "competition_branch": "2026-competition-ecosystem",
+  "dify_version": "1.17.1",
+  "dify_commit": "8387590ace4a094de812b7847fc6a4c3a27cd52b",
+  "powercontext_version": "1.5.0",
+  "powercontext_commit": "729dc4c5548f915785a06c318f8cb7ed6cbea45b",
+  "python": "3.12",
+  "databases": {
+    "dify": "official PostgreSQL Compose profile",
+    "museum_identity_mapping": "SQLite",
+    "powercontext": "SQLite"
+  },
+  "model": {
+    "production_default": "gpt-4.1-mini via OpenAI-API-compatible plugin",
+    "automated_engine_fixture": "museum-fixture-v1",
+    "embedding_required": false,
+    "rerank_required": false
+  }
+}

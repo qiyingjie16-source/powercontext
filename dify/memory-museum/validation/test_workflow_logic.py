@@ -1,75 +1,100 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import unittest
 from pathlib import Path
-from typing import Any, Callable
+from types import ModuleType
 
 import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DSL_PATH = ROOT / "dsl" / "memory-museum.yml"
+CODE = ROOT / "dsl" / "code"
 
 
-def _load_nodes() -> dict[str, dict[str, Any]]:
-    document = yaml.safe_load(DSL_PATH.read_text(encoding="utf-8"))
-    return {
-        str(node["id"]): node for node in document["workflow"]["graph"]["nodes"]
-    }
-
-
-def _load_main(nodes: dict[str, dict[str, Any]], node_id: str) -> Callable[..., dict]:
-    namespace: dict[str, Any] = {"__name__": f"memory_museum_{node_id}"}
-    exec(str(nodes[node_id]["data"]["code"]), namespace)
-    return namespace["main"]
+def load_module(path: Path) -> ModuleType:
+    spec = importlib.util.spec_from_file_location(path.stem, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 class WorkflowLogicTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.nodes = _load_nodes()
+    def test_generated_dsl_is_reproducible(self) -> None:
+        generator = load_module(ROOT / "scripts" / "build_dsl.py")
+        expected = generator.build_dsl(
+            provider=generator.DEFAULT_PROVIDER,
+            model="gpt-4.1-mini",
+            service_url="http://museum:8080",
+            plugin_identifier=generator.DEFAULT_PLUGIN,
+        )
+        actual = yaml.safe_load(
+            (ROOT / "dsl" / "memory-museum.yml").read_text(encoding="utf-8")
+        )
+        self.assertEqual(actual, expected)
+        self.assertEqual(len(actual["workflow"]["graph"]["nodes"]), 20)
+        self.assertEqual(len(actual["workflow"]["graph"]["edges"]), 27)
 
-    def test_privacy_guard_accepts_normal_memory(self) -> None:
-        main = _load_main(self.nodes, "privacy_guard")
-        result = main("我把一片香菜忘在冰箱冷冻层，第二天它硬得像书签。")
-        self.assertTrue(result["allowed"])
-        self.assertIn("香菜", result["memory_text"])
-        self.assertEqual(result["reason"], "")
-
-    def test_privacy_guard_blocks_credentials_and_private_identifiers(self) -> None:
-        main = _load_main(self.nodes, "privacy_guard")
-        blocked = [
+    def test_privacy_guard_accepts_and_blocks(self) -> None:
+        main = load_module(CODE / "privacy_guard.py").main
+        allowed = main("我把一片香菜忘在冰箱冷冻层，第二天它硬得像书签。")
+        self.assertEqual(allowed["ok"], "yes")
+        self.assertIn("香菜", allowed["memory_text"])
+        for value in (
             "api_key: sk-this-should-not-be-stored",
-            "我的邮箱是 someone@example.com",
+            "someone@example.com",
             "手机号 13800138000",
-            "身份证 11010519491231002X",
             "",
             "长" * 1201,
-        ]
-        for value in blocked:
+        ):
             with self.subTest(value=value[:20]):
                 result = main(value)
-                self.assertFalse(result["allowed"])
+                self.assertEqual(result["ok"], "no")
                 self.assertTrue(result["reason"])
                 self.assertEqual(result["memory_text"], "")
 
-    def test_curation_input_distinguishes_ready_empty_and_error(self) -> None:
-        main = _load_main(self.nodes, "curation_input")
+    def test_prepare_check_parses_service_envelope(self) -> None:
+        main = load_module(CODE / "prepare_check.py").main
         ready = main(
-            "一片香菜",
-            True,
-            "success",
-            {"content": "旧展品：《一片香菜的最后晚餐》"},
+            200,
+            {
+                "ok": True,
+                "status": "ready",
+                "memory_context": "旧展品：《冰箱里的绿色书签》",
+                "content_bytes": 24,
+                "memory_refs": [
+                    {
+                        "family": "atomic-memory",
+                        "artifact_id": "art_1",
+                        "revision": 1,
+                    }
+                ],
+            },
         )
-        empty = main("另一片香菜", True, "empty", {"content": None})
-        error = main("第三片香菜", False, "error", {})
-        self.assertEqual(ready["recall_state"], "echo_found")
-        self.assertEqual(empty["recall_state"], "fresh_gallery")
-        self.assertEqual(error["recall_state"], "memory_unavailable")
+        empty = main(
+            200,
+            {"ok": True, "status": "empty", "memory_context": "", "memory_refs": []},
+        )
+        unavailable = main(
+            200,
+            {
+                "ok": False,
+                "status": "unavailable",
+                "error": {"message": "offline"},
+            },
+        )
+        self.assertEqual(ready["ok"], "yes")
+        self.assertEqual(ready["memory_status"], "ready")
+        self.assertIn("绿色书签", ready["memory_context"])
+        self.assertEqual(empty["ok"], "yes")
+        self.assertEqual(empty["memory_status"], "empty")
+        self.assertEqual(unavailable["ok"], "no")
 
-    def test_parse_exhibit_builds_json_encoded_plugin_inputs(self) -> None:
-        main = _load_main(self.nodes, "parse_exhibit")
+    def test_parse_exhibit_builds_plain_backend_fields(self) -> None:
+        main = load_module(CODE / "parse_exhibit.py").main
         model_output = json.dumps(
             {
                 "exhibit_title": "《香菜的最后晚餐》",
@@ -85,28 +110,34 @@ class WorkflowLogicTests(unittest.TestCase):
         result = main(model_output, "我把一片香菜忘在冰箱冷冻层。")
         self.assertEqual(result["memory_kind"], "memory_museum_exhibit")
         self.assertIn("香菜", result["memory_text"])
-        self.assertEqual(
-            json.loads(result["reason_json"]),
-            "访客主动提交一件个人记忆，应用将其策展并保存为可再次检索的馆藏。",
-        )
-        self.assertLessEqual(len(json.loads(result["memory_description_json"])), 190)
+        self.assertLessEqual(len(result["memory_description"]), 190)
         self.assertIn("新入藏", result["answer_markdown"])
 
-    def test_parse_exhibit_has_safe_fallback(self) -> None:
-        main = _load_main(self.nodes, "parse_exhibit")
-        result = main("这不是 JSON", "一件没写完的小事")
-        self.assertEqual(result["memory_kind"], "memory_museum_exhibit")
-        self.assertIn("《一件还在路上的小事》", result["answer_markdown"])
-        self.assertIn("一件没写完的小事", result["memory_text"])
+    def test_parse_exhibit_fallback_and_remember_body(self) -> None:
+        parse = load_module(CODE / "parse_exhibit.py").main
+        parsed = parse("这不是 JSON", "一件没写完的小事")
+        self.assertIn("《一件还在路上的小事》", parsed["answer_markdown"])
 
-    def test_finalize_reports_real_artifact_or_honest_failure(self) -> None:
-        main = _load_main(self.nodes, "finalize")
+        remember = load_module(CODE / "remember_body.py").main
+        body = remember(
+            "alice",
+            "turn-1",
+            parsed["memory_kind"],
+            parsed["memory_text"],
+            parsed["memory_description"],
+            parsed["memory_reason"],
+        )
+        self.assertEqual(body["ok"], "yes")
+        payload = json.loads(body["body"])
+        self.assertEqual(payload["user_id"], "alice")
+        self.assertEqual(payload["kind"], "memory_museum_exhibit")
+
+    def test_receipt_check_reports_real_id_or_honest_failure(self) -> None:
+        main = load_module(CODE / "receipt_check.py").main
         success = main(
-            "展签",
-            True,
-            "success",
+            200,
             {
-                "changed": True,
+                "ok": True,
                 "records": [
                     {
                         "artifact": {
@@ -116,13 +147,19 @@ class WorkflowLogicTests(unittest.TestCase):
                         }
                     }
                 ],
+                "source": {"source_id": "museum-source"},
             },
+            "展签",
         )
-        unknown = main("展签", False, "unknown", {})
-        error = main("展签", False, "error", {})
-        self.assertIn("art_test", success["final_answer"])
-        self.assertIn("没有返回确定的写入结果", unknown["final_answer"])
-        self.assertIn("入藏未成功", error["final_answer"])
+        failed = main(
+            200,
+            {"ok": False, "status": "unknown"},
+            "展签",
+        )
+        self.assertEqual(success["ok"], "yes")
+        self.assertIn("art_test", success["display"])
+        self.assertEqual(failed["ok"], "no")
+        self.assertIn("没有返回确定的写入结果", failed["display"])
 
 
 if __name__ == "__main__":

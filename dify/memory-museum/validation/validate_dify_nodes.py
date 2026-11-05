@@ -10,6 +10,7 @@ from typing import Any
 import yaml
 from graphon.nodes.answer.entities import AnswerNodeData
 from graphon.nodes.code.entities import CodeNodeData
+from graphon.nodes.http_request.entities import HttpRequestNodeData
 from graphon.nodes.if_else.entities import IfElseNodeData
 from graphon.nodes.llm.entities import LLMNodeData
 from graphon.nodes.start.entities import StartNodeData
@@ -19,6 +20,7 @@ from graphon.nodes.tool.entities import ToolNodeData
 NODE_MODELS = {
     "answer": AnswerNodeData,
     "code": CodeNodeData,
+    "http-request": HttpRequestNodeData,
     "if-else": IfElseNodeData,
     "llm": LLMNodeData,
     "start": StartNodeData,

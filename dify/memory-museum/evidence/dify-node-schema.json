@@ -1,10 +1,10 @@
 {
   "schema": "memory-museum.dify-node-schema.v1",
-  "generated_at": "2026-11-04T07:08:07.206478+00:00",
+  "generated_at": "2026-11-05T09:56:42.181979+00:00",
   "target_dify_version": "1.17.1",
   "graphon_version": "0.7.0",
   "dsl_path": "dsl\\memory-museum.yml",
-  "node_count": 11,
+  "node_count": 20,
   "nodes": [
     {
       "node_id": "start",
@@ -19,15 +19,9 @@
       "validated": true
     },
     {
-      "node_id": "privacy_branch",
+      "node_id": "privacy_gate",
       "node_type": "if-else",
       "graphon_model": "IfElseNodeData",
-      "validated": true
-    },
-    {
-      "node_id": "prepare_context",
-      "node_type": "tool",
-      "graphon_model": "ToolNodeData",
       "validated": true
     },
     {
@@ -37,9 +31,33 @@
       "validated": true
     },
     {
-      "node_id": "curation_input",
+      "node_id": "prepare_body",
       "node_type": "code",
       "graphon_model": "CodeNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "prepare_http",
+      "node_type": "http-request",
+      "graphon_model": "HttpRequestNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "prepare_check",
+      "node_type": "code",
+      "graphon_model": "CodeNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "prepare_gate",
+      "node_type": "if-else",
+      "graphon_model": "IfElseNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "prepare_error",
+      "node_type": "answer",
+      "graphon_model": "AnswerNodeData",
       "validated": true
     },
     {
@@ -55,19 +73,55 @@
       "validated": true
     },
     {
-      "node_id": "remember_memory",
-      "node_type": "tool",
-      "graphon_model": "ToolNodeData",
-      "validated": true
-    },
-    {
-      "node_id": "finalize",
+      "node_id": "remember_body",
       "node_type": "code",
       "graphon_model": "CodeNodeData",
       "validated": true
     },
     {
+      "node_id": "remember_gate",
+      "node_type": "if-else",
+      "graphon_model": "IfElseNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "remember_error",
+      "node_type": "answer",
+      "graphon_model": "AnswerNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "remember_http",
+      "node_type": "http-request",
+      "graphon_model": "HttpRequestNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "receipt_check",
+      "node_type": "code",
+      "graphon_model": "CodeNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "receipt_gate",
+      "node_type": "if-else",
+      "graphon_model": "IfElseNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "receipt_error",
+      "node_type": "answer",
+      "graphon_model": "AnswerNodeData",
+      "validated": true
+    },
+    {
       "node_id": "answer",
+      "node_type": "answer",
+      "graphon_model": "AnswerNodeData",
+      "validated": true
+    },
+    {
+      "node_id": "transport_error",
       "node_type": "answer",
       "graphon_model": "AnswerNodeData",
       "validated": true

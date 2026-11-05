@@ -12,15 +12,21 @@ from typing import Any
 import yaml
 
 
-EXPECTED_PLUGIN_FILE_SHA256 = (
-    "1c9157b2d3fa6732842191b411f957abbee3879991d70a43da064ad6fab0ebc3"
-)
-EXPECTED_PLUGIN_CHECKSUM = (
-    "47a05503b8aa301ef9ea4d319384ba922634061658fb390848d44d0d54ba1ae1"
+EXPECTED_PLUGIN = (
+    "langgenius/openai_api_compatible:0.0.72@"
+    "87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4"
 )
 
 
-def _check(
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def check(
     checks: list[dict[str, Any]],
     name: str,
     condition: bool,
@@ -31,39 +37,218 @@ def _check(
         raise AssertionError(f"{name}: {detail}")
 
 
-def _sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def _edges_by_source(edges: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
-    index: dict[str, list[dict[str, Any]]] = defaultdict(list)
+def reachable(edges: list[dict[str, Any]], start: str) -> set[str]:
+    by_source: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for edge in edges:
-        index[str(edge["source"])].append(edge)
-    return index
-
-
-def _reachable_targets(
-    edges_by_source: dict[str, list[dict[str, Any]]],
-    start: str,
-) -> set[str]:
+        by_source[str(edge["source"])].append(edge)
     visited = {start}
-    queue = deque([start])
-    while queue:
-        source = queue.popleft()
-        for edge in edges_by_source.get(source, []):
+    pending = deque([start])
+    while pending:
+        source = pending.popleft()
+        for edge in by_source.get(source, []):
             target = str(edge["target"])
             if target not in visited:
                 visited.add(target)
-                queue.append(target)
+                pending.append(target)
     return visited
 
 
+def validate_dsl(
+    checks: list[dict[str, Any]],
+    path: Path,
+    *,
+    expected_model: str,
+) -> dict[str, Any]:
+    text = path.read_text(encoding="utf-8")
+    document = yaml.safe_load(text)
+    check(checks, f"{path.name}:yaml", isinstance(document, dict), "valid YAML mapping")
+    check(checks, f"{path.name}:kind", document.get("kind") == "app", "kind=app")
+    check(
+        checks,
+        f"{path.name}:version",
+        document.get("version") == "0.7.0",
+        "Dify 1.17.1-compatible DSL version 0.7.0",
+    )
+    app = document.get("app") or {}
+    check(
+        checks,
+        f"{path.name}:chatflow",
+        app.get("mode") == "advanced-chat",
+        "advanced-chat mode",
+    )
+    workflow = document["workflow"]
+    graph = workflow["graph"]
+    nodes = graph["nodes"]
+    edges = graph["edges"]
+    node_by_id = {str(node["id"]): node for node in nodes}
+    check(
+        checks,
+        f"{path.name}:unique_nodes",
+        len(node_by_id) == len(nodes),
+        f"{len(nodes)} unique nodes",
+    )
+
+    for edge in edges:
+        source = str(edge["source"])
+        target = str(edge["target"])
+        check(
+            checks,
+            f"{path.name}:endpoints:{edge['id']}",
+            source in node_by_id and target in node_by_id,
+            f"{source} -> {target}",
+        )
+        check(
+            checks,
+            f"{path.name}:source_type:{edge['id']}",
+            edge["data"]["sourceType"] == node_by_id[source]["data"]["type"],
+            edge["data"]["sourceType"],
+        )
+        check(
+            checks,
+            f"{path.name}:target_type:{edge['id']}",
+            edge["data"]["targetType"] == node_by_id[target]["data"]["type"],
+            edge["data"]["targetType"],
+        )
+
+    reachable_ids = reachable(edges, "start")
+    required = {
+        "prepare_http",
+        "remember_http",
+        "curator_llm",
+        "answer",
+        "prepare_error",
+        "receipt_error",
+        "transport_error",
+        "privacy_answer",
+    }
+    check(
+        checks,
+        f"{path.name}:reachability",
+        required.issubset(reachable_ids),
+        "success and failure paths reachable",
+    )
+
+    http_nodes = [
+        node for node in nodes if node["data"].get("type") == "http-request"
+    ]
+    endpoints = {node["data"].get("url") for node in http_nodes}
+    check(
+        checks,
+        f"{path.name}:http_nodes",
+        len(http_nodes) == 2
+        and endpoints
+        == {
+            "http://museum:8080/v1/prepare",
+            "http://museum:8080/v1/remember",
+        },
+        f"found {sorted(str(item) for item in endpoints)}",
+    )
+    for node in http_nodes:
+        data = node["data"]
+        check(
+            checks,
+            f"{path.name}:http_auth:{node['id']}",
+            "X-Museum-Key:{{#env.MUSEUM_SERVICE_KEY#}}" in data.get("headers", ""),
+            "service key is injected through a Dify secret environment variable",
+        )
+        check(
+            checks,
+            f"{path.name}:http_no_retry:{node['id']}",
+            data.get("retry_config", {}).get("retry_enabled") is False,
+            "unknown writes are never retried automatically",
+        )
+
+    llm_nodes = [
+        node for node in nodes if node["data"].get("type") == "llm"
+    ]
+    check(
+        checks,
+        f"{path.name}:llm_count",
+        len(llm_nodes) == 1,
+        f"{len(llm_nodes)} LLM nodes",
+    )
+    llm = llm_nodes[0]["data"]
+    check(
+        checks,
+        f"{path.name}:llm_model",
+        llm["model"]["name"] == expected_model,
+        llm["model"]["name"],
+    )
+    check(
+        checks,
+        f"{path.name}:llm_context",
+        llm.get("context", {}).get("enabled") is True
+        and llm["context"].get("variable_selector")
+        == ["prepare_check", "memory_context"],
+        "LLM context is wired to the checked PowerContext response",
+    )
+
+    code_nodes = [
+        node for node in nodes if node["data"].get("type") == "code"
+    ]
+    for node in code_nodes:
+        compile(str(node["data"]["code"]), str(node["id"]), "exec")
+    check(
+        checks,
+        f"{path.name}:code_compile",
+        len(code_nodes) == 6,
+        f"{len(code_nodes)} code nodes compile",
+    )
+
+    environment = {
+        item.get("name"): item for item in workflow.get("environment_variables", [])
+    }
+    service_key = environment.get("MUSEUM_SERVICE_KEY", {})
+    check(
+        checks,
+        f"{path.name}:secret_env",
+        service_key.get("value_type") == "secret" and service_key.get("value") == "",
+        "service key is a secret placeholder, not a committed value",
+    )
+
+    dependencies = document.get("dependencies") or []
+    dependency_values = [
+        item.get("value", {}).get("marketplace_plugin_unique_identifier")
+        for item in dependencies
+    ]
+    check(
+        checks,
+        f"{path.name}:model_dependency",
+        EXPECTED_PLUGIN in dependency_values,
+        "OpenAI-compatible plugin is pinned",
+    )
+
+    credential_patterns = {
+        "OpenAI secret": r"\bsk-[A-Za-z0-9_-]{20,}\b",
+        "literal bearer token": (
+            r"Authorization:\s*Bearer\s+(?!<|TOKEN|replace)[A-Za-z0-9._-]{16,}"
+        ),
+        "literal museum key": (
+            r"MUSEUM_SERVICE_KEY=[A-Za-z0-9._-]{12,}"
+        ),
+    }
+    found = [
+        label
+        for label, pattern in credential_patterns.items()
+        if re.search(pattern, text, flags=re.IGNORECASE)
+    ]
+    check(
+        checks,
+        f"{path.name}:no_credentials",
+        not found,
+        "no credential-shaped values",
+    )
+    return {
+        "path": str(path.relative_to(path.parents[2])),
+        "sha256": sha256(path),
+        "nodes": len(nodes),
+        "edges": len(edges),
+        "model": llm["model"]["name"],
+    }
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate the Memory Museum Dify submission.")
+    parser = argparse.ArgumentParser(description="Validate Memory Museum submission files.")
     parser.add_argument(
         "--output",
         type=Path,
@@ -74,221 +259,50 @@ def main() -> int:
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[1]
-    dsl_path = root / "dsl" / "memory-museum.yml"
-    plugin_path = root / "plugin" / "powercontext-0.0.1.difypkg"
     checks: list[dict[str, Any]] = []
     evidence: dict[str, Any] = {
-        "schema": "memory-museum.submission-validation.v1",
+        "schema": "memory-museum.submission-validation.v2",
         "generated_at": datetime.now(UTC).isoformat(),
         "checks": checks,
         "result": "running",
     }
-
     try:
-        _check(checks, "dsl_exists", dsl_path.is_file(), str(dsl_path))
-        _check(checks, "plugin_exists", plugin_path.is_file(), str(plugin_path))
-
-        dsl_text = dsl_path.read_text(encoding="utf-8")
-        document = yaml.safe_load(dsl_text)
-        _check(checks, "dsl_yaml", isinstance(document, dict), "DSL parses as a mapping")
-        _check(checks, "app_kind", document.get("kind") == "app", "kind must be app")
-        _check(
+        primary = validate_dsl(
             checks,
-            "dsl_version",
-            document.get("version") == "0.3.1",
-            "DSL version must be 0.3.1",
+            root / "dsl" / "memory-museum.yml",
+            expected_model="gpt-4.1-mini",
         )
-        _check(
+        e2e = validate_dsl(
             checks,
-            "chatflow_mode",
-            document.get("app", {}).get("mode") == "advanced-chat",
-            "application mode must be advanced-chat",
+            root / "dsl" / "memory-museum.e2e.yml",
+            expected_model="museum-fixture-v1",
         )
-
-        workflow = document["workflow"]
-        graph = workflow["graph"]
-        nodes = graph["nodes"]
-        edges = graph["edges"]
-        node_by_id = {str(node["id"]): node for node in nodes}
-        _check(
+        check(
             checks,
-            "unique_node_ids",
-            len(node_by_id) == len(nodes),
-            f"{len(nodes)} nodes",
+            "backend_lockfile",
+            (root / "backend" / "uv.lock").is_file(),
+            "backend dependency lock exists",
         )
-
-        target_types = {
-            str(edge["source"]): node_by_id[str(edge["source"])]["data"]["type"]
-            for edge in edges
-            if str(edge["source"]) in node_by_id
-        }
-        for edge in edges:
-            source = str(edge["source"])
-            target = str(edge["target"])
-            _check(
-                checks,
-                f"edge_endpoints_{edge['id']}",
-                source in node_by_id and target in node_by_id,
-                f"{source} -> {target}",
-            )
-            _check(
-                checks,
-                f"edge_source_type_{edge['id']}",
-                edge["data"]["sourceType"] == node_by_id[source]["data"]["type"],
-                f"edge declares {edge['data']['sourceType']}",
-            )
-            _check(
-                checks,
-                f"edge_target_type_{edge['id']}",
-                edge["data"]["targetType"] == node_by_id[target]["data"]["type"],
-                f"edge declares {edge['data']['targetType']}",
-            )
-
-        edge_index = _edges_by_source(edges)
-        reachable = _reachable_targets(edge_index, "start")
-        _check(
+        check(
             checks,
-            "success_path",
-            {"answer", "prepare_context", "remember_memory", "finalize"}.issubset(
-                reachable
-            ),
-            "normal path reaches both PowerContext tools and final answer",
+            "compose_files",
+            (root / "deploy" / "compose.yaml").is_file()
+            and (root / "deploy" / "dify.override.yaml").is_file(),
+            "Dify and museum Compose definitions exist",
         )
-        _check(
+        check(
             checks,
-            "privacy_path",
-            "privacy_answer" in reachable,
-            "blocked-input branch reaches its answer",
+            "real_e2e_script",
+            (root / "scripts" / "verify_e2e.py").is_file(),
+            "workflow_run_id and node-execution verifier exists",
         )
-
-        branch = node_by_id["privacy_branch"]["data"]
-        _check(
-            checks,
-            "privacy_branch",
-            branch.get("type") == "if-else"
-            and branch.get("cases", [{}])[0].get("case_id") == "true",
-            "boolean true/false branch is present",
-        )
-        branch_handles = {str(edge["sourceHandle"]) for edge in edge_index["privacy_branch"]}
-        _check(
-            checks,
-            "privacy_handles",
-            {"true", "false"}.issubset(branch_handles),
-            "IF/ELSE has both branch edges",
-        )
-
-        tool_nodes = [
-            node
-            for node in nodes
-            if node.get("data", {}).get("type") == "tool"
-            and str(node["data"].get("plugin_id", "")).startswith(
-                "knqiufan/powercontext"
-            )
+        evidence["primary_dsl"] = primary
+        evidence["e2e_dsl"] = e2e
+        evidence["backend_files"] = [
+            "backend/museum/app.py",
+            "backend/museum/powercontext.py",
+            "backend/museum/model_fixture.py",
         ]
-        tool_names = sorted(str(node["data"].get("tool_name")) for node in tool_nodes)
-        _check(
-            checks,
-            "powercontext_tools",
-            tool_names == ["pc_prepare_context", "pc_remember"],
-            f"found {tool_names}",
-        )
-        for node in tool_nodes:
-            data = node["data"]
-            _check(
-                checks,
-                f"plugin_identity_{node['id']}",
-                data.get("provider_id") == "knqiufan/powercontext/powercontext"
-                and data.get("plugin_unique_identifier")
-                == f"knqiufan/powercontext:0.0.1@{EXPECTED_PLUGIN_CHECKSUM}",
-                "provider and plugin unique identifier are pinned",
-            )
-
-        llm_nodes = [
-            node for node in nodes if node.get("data", {}).get("type") == "llm"
-        ]
-        _check(checks, "single_llm", len(llm_nodes) == 1, f"{len(llm_nodes)} LLM node")
-        code_nodes = [
-            node for node in nodes if node.get("data", {}).get("type") == "code"
-        ]
-        for node in code_nodes:
-            compile(str(node["data"]["code"]), str(node["id"]), "exec")
-        _check(
-            checks,
-            "code_nodes_compile",
-            len(code_nodes) == 4,
-            f"{len(code_nodes)} Python code nodes compile",
-        )
-        llm_context = llm_nodes[0]["data"].get("context", {})
-        _check(
-            checks,
-            "context_before_llm",
-            llm_context.get("enabled") is True
-            and llm_context.get("variable_selector")
-            == ["prepare_context", "result", "content"],
-            "LLM context is connected to the prepared PowerContext content",
-        )
-
-        dependencies = document.get("dependencies", [])
-        dependency_values = [
-            item.get("value", {}).get("plugin_unique_identifier")
-            or item.get("value", {}).get("marketplace_plugin_unique_identifier")
-            for item in dependencies
-        ]
-        _check(
-            checks,
-            "powercontext_dependency",
-            f"knqiufan/powercontext:0.0.1@{EXPECTED_PLUGIN_CHECKSUM}"
-            in dependency_values,
-            "PowerContext dependency is pinned",
-        )
-        _check(
-            checks,
-            "model_dependency",
-            any(
-                str(value).startswith("langgenius/openai_api_compatible:0.0.68@")
-                for value in dependency_values
-            ),
-            "OpenAI-compatible model plugin is pinned",
-        )
-
-        secret_patterns = {
-            "OpenAI-like secret": r"\bsk-[A-Za-z0-9_-]{20,}\b",
-            "literal bearer token": r"Authorization:\s*Bearer\s+(?!<|TOKEN|replace)[A-Za-z0-9._-]{16,}",
-            "literal PowerContext token": r"POWERCONTEXT_SERVER_AUTH_TOKEN=(?!replace-)[^\s#]{16,}",
-        }
-        found_secrets = [
-            label
-            for label, pattern in secret_patterns.items()
-            if re.search(pattern, dsl_text, flags=re.IGNORECASE)
-        ]
-        _check(
-            checks,
-            "no_embedded_secrets",
-            not found_secrets,
-            "no credential-shaped values in DSL"
-            if not found_secrets
-            else f"found {found_secrets}",
-        )
-
-        actual_sha = _sha256(plugin_path)
-        _check(
-            checks,
-            "plugin_file_sha256",
-            actual_sha == EXPECTED_PLUGIN_FILE_SHA256,
-            actual_sha,
-        )
-
-        evidence["dsl"] = {
-            "path": str(dsl_path.relative_to(root)),
-            "sha256": _sha256(dsl_path),
-            "node_count": len(nodes),
-            "edge_count": len(edges),
-        }
-        evidence["plugin"] = {
-            "path": str(plugin_path.relative_to(root)),
-            "file_sha256": actual_sha,
-            "dify_plugin_checksum": EXPECTED_PLUGIN_CHECKSUM,
-        }
         evidence["result"] = "passed"
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
@@ -300,8 +314,8 @@ def main() -> int:
                 {
                     "result": "passed",
                     "checks": len(checks),
-                    "nodes": len(nodes),
-                    "edges": len(edges),
+                    "primary_nodes": primary["nodes"],
+                    "e2e_model": e2e["model"],
                     "output": str(args.output),
                 },
                 ensure_ascii=False,

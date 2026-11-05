@@ -1,273 +1,1031 @@
 {
-  "schema": "memory-museum.submission-validation.v1",
-  "generated_at": "2026-11-04T07:10:06.703880+00:00",
+  "schema": "memory-museum.submission-validation.v2",
+  "generated_at": "2026-11-05T09:56:34.658139+00:00",
   "checks": [
     {
-      "name": "dsl_exists",
+      "name": "memory-museum.yml:yaml",
       "ok": true,
-      "detail": "C:\\Users\\11946\\Documents\\ChatGPT\\OceanBase比赛\\powercontext-dify\\dify\\memory-museum\\dsl\\memory-museum.yml"
+      "detail": "valid YAML mapping"
     },
     {
-      "name": "plugin_exists",
+      "name": "memory-museum.yml:kind",
       "ok": true,
-      "detail": "C:\\Users\\11946\\Documents\\ChatGPT\\OceanBase比赛\\powercontext-dify\\dify\\memory-museum\\plugin\\powercontext-0.0.1.difypkg"
+      "detail": "kind=app"
     },
     {
-      "name": "dsl_yaml",
+      "name": "memory-museum.yml:version",
       "ok": true,
-      "detail": "DSL parses as a mapping"
+      "detail": "Dify 1.17.1-compatible DSL version 0.7.0"
     },
     {
-      "name": "app_kind",
+      "name": "memory-museum.yml:chatflow",
       "ok": true,
-      "detail": "kind must be app"
+      "detail": "advanced-chat mode"
     },
     {
-      "name": "dsl_version",
+      "name": "memory-museum.yml:unique_nodes",
       "ok": true,
-      "detail": "DSL version must be 0.3.1"
+      "detail": "20 unique nodes"
     },
     {
-      "name": "chatflow_mode",
-      "ok": true,
-      "detail": "application mode must be advanced-chat"
-    },
-    {
-      "name": "unique_node_ids",
-      "ok": true,
-      "detail": "11 nodes"
-    },
-    {
-      "name": "edge_endpoints_start-source-privacy_guard-target",
+      "name": "memory-museum.yml:endpoints:start-source-privacy_guard",
       "ok": true,
       "detail": "start -> privacy_guard"
     },
     {
-      "name": "edge_source_type_start-source-privacy_guard-target",
+      "name": "memory-museum.yml:source_type:start-source-privacy_guard",
       "ok": true,
-      "detail": "edge declares start"
+      "detail": "start"
     },
     {
-      "name": "edge_target_type_start-source-privacy_guard-target",
+      "name": "memory-museum.yml:target_type:start-source-privacy_guard",
       "ok": true,
-      "detail": "edge declares code"
+      "detail": "code"
     },
     {
-      "name": "edge_endpoints_privacy_guard-source-privacy_branch-target",
+      "name": "memory-museum.yml:endpoints:privacy_guard-source-privacy_gate",
       "ok": true,
-      "detail": "privacy_guard -> privacy_branch"
+      "detail": "privacy_guard -> privacy_gate"
     },
     {
-      "name": "edge_source_type_privacy_guard-source-privacy_branch-target",
+      "name": "memory-museum.yml:source_type:privacy_guard-source-privacy_gate",
       "ok": true,
-      "detail": "edge declares code"
+      "detail": "code"
     },
     {
-      "name": "edge_target_type_privacy_guard-source-privacy_branch-target",
+      "name": "memory-museum.yml:target_type:privacy_guard-source-privacy_gate",
       "ok": true,
-      "detail": "edge declares if-else"
+      "detail": "if-else"
     },
     {
-      "name": "edge_endpoints_privacy_branch-true-prepare_context-target",
+      "name": "memory-museum.yml:endpoints:prepare_body-source-prepare_http",
       "ok": true,
-      "detail": "privacy_branch -> prepare_context"
+      "detail": "prepare_body -> prepare_http"
     },
     {
-      "name": "edge_source_type_privacy_branch-true-prepare_context-target",
+      "name": "memory-museum.yml:source_type:prepare_body-source-prepare_http",
       "ok": true,
-      "detail": "edge declares if-else"
+      "detail": "code"
     },
     {
-      "name": "edge_target_type_privacy_branch-true-prepare_context-target",
+      "name": "memory-museum.yml:target_type:prepare_body-source-prepare_http",
       "ok": true,
-      "detail": "edge declares tool"
+      "detail": "http-request"
     },
     {
-      "name": "edge_endpoints_privacy_branch-false-privacy_answer-target",
+      "name": "memory-museum.yml:endpoints:prepare_http-source-prepare_check",
       "ok": true,
-      "detail": "privacy_branch -> privacy_answer"
+      "detail": "prepare_http -> prepare_check"
     },
     {
-      "name": "edge_source_type_privacy_branch-false-privacy_answer-target",
+      "name": "memory-museum.yml:source_type:prepare_http-source-prepare_check",
       "ok": true,
-      "detail": "edge declares if-else"
+      "detail": "http-request"
     },
     {
-      "name": "edge_target_type_privacy_branch-false-privacy_answer-target",
+      "name": "memory-museum.yml:target_type:prepare_http-source-prepare_check",
       "ok": true,
-      "detail": "edge declares answer"
+      "detail": "code"
     },
     {
-      "name": "edge_endpoints_prepare_context-source-curation_input-target",
+      "name": "memory-museum.yml:endpoints:prepare_check-source-prepare_gate",
       "ok": true,
-      "detail": "prepare_context -> curation_input"
+      "detail": "prepare_check -> prepare_gate"
     },
     {
-      "name": "edge_source_type_prepare_context-source-curation_input-target",
+      "name": "memory-museum.yml:source_type:prepare_check-source-prepare_gate",
       "ok": true,
-      "detail": "edge declares tool"
+      "detail": "code"
     },
     {
-      "name": "edge_target_type_prepare_context-source-curation_input-target",
+      "name": "memory-museum.yml:target_type:prepare_check-source-prepare_gate",
       "ok": true,
-      "detail": "edge declares code"
+      "detail": "if-else"
     },
     {
-      "name": "edge_endpoints_curation_input-source-curator_llm-target",
-      "ok": true,
-      "detail": "curation_input -> curator_llm"
-    },
-    {
-      "name": "edge_source_type_curation_input-source-curator_llm-target",
-      "ok": true,
-      "detail": "edge declares code"
-    },
-    {
-      "name": "edge_target_type_curation_input-source-curator_llm-target",
-      "ok": true,
-      "detail": "edge declares llm"
-    },
-    {
-      "name": "edge_endpoints_curator_llm-source-parse_exhibit-target",
+      "name": "memory-museum.yml:endpoints:curator_llm-source-parse_exhibit",
       "ok": true,
       "detail": "curator_llm -> parse_exhibit"
     },
     {
-      "name": "edge_source_type_curator_llm-source-parse_exhibit-target",
+      "name": "memory-museum.yml:source_type:curator_llm-source-parse_exhibit",
       "ok": true,
-      "detail": "edge declares llm"
+      "detail": "llm"
     },
     {
-      "name": "edge_target_type_curator_llm-source-parse_exhibit-target",
+      "name": "memory-museum.yml:target_type:curator_llm-source-parse_exhibit",
       "ok": true,
-      "detail": "edge declares code"
+      "detail": "code"
     },
     {
-      "name": "edge_endpoints_parse_exhibit-source-remember_memory-target",
+      "name": "memory-museum.yml:endpoints:parse_exhibit-source-remember_body",
       "ok": true,
-      "detail": "parse_exhibit -> remember_memory"
+      "detail": "parse_exhibit -> remember_body"
     },
     {
-      "name": "edge_source_type_parse_exhibit-source-remember_memory-target",
+      "name": "memory-museum.yml:source_type:parse_exhibit-source-remember_body",
       "ok": true,
-      "detail": "edge declares code"
+      "detail": "code"
     },
     {
-      "name": "edge_target_type_parse_exhibit-source-remember_memory-target",
+      "name": "memory-museum.yml:target_type:parse_exhibit-source-remember_body",
       "ok": true,
-      "detail": "edge declares tool"
+      "detail": "code"
     },
     {
-      "name": "edge_endpoints_remember_memory-source-finalize-target",
+      "name": "memory-museum.yml:endpoints:remember_body-source-remember_gate",
       "ok": true,
-      "detail": "remember_memory -> finalize"
+      "detail": "remember_body -> remember_gate"
     },
     {
-      "name": "edge_source_type_remember_memory-source-finalize-target",
+      "name": "memory-museum.yml:source_type:remember_body-source-remember_gate",
       "ok": true,
-      "detail": "edge declares tool"
+      "detail": "code"
     },
     {
-      "name": "edge_target_type_remember_memory-source-finalize-target",
+      "name": "memory-museum.yml:target_type:remember_body-source-remember_gate",
       "ok": true,
-      "detail": "edge declares code"
+      "detail": "if-else"
     },
     {
-      "name": "edge_endpoints_finalize-source-answer-target",
+      "name": "memory-museum.yml:endpoints:remember_http-source-receipt_check",
       "ok": true,
-      "detail": "finalize -> answer"
+      "detail": "remember_http -> receipt_check"
     },
     {
-      "name": "edge_source_type_finalize-source-answer-target",
+      "name": "memory-museum.yml:source_type:remember_http-source-receipt_check",
       "ok": true,
-      "detail": "edge declares code"
+      "detail": "http-request"
     },
     {
-      "name": "edge_target_type_finalize-source-answer-target",
+      "name": "memory-museum.yml:target_type:remember_http-source-receipt_check",
       "ok": true,
-      "detail": "edge declares answer"
+      "detail": "code"
     },
     {
-      "name": "success_path",
+      "name": "memory-museum.yml:endpoints:receipt_check-source-receipt_gate",
       "ok": true,
-      "detail": "normal path reaches both PowerContext tools and final answer"
+      "detail": "receipt_check -> receipt_gate"
     },
     {
-      "name": "privacy_path",
+      "name": "memory-museum.yml:source_type:receipt_check-source-receipt_gate",
       "ok": true,
-      "detail": "blocked-input branch reaches its answer"
+      "detail": "code"
     },
     {
-      "name": "privacy_branch",
+      "name": "memory-museum.yml:target_type:receipt_check-source-receipt_gate",
       "ok": true,
-      "detail": "boolean true/false branch is present"
+      "detail": "if-else"
     },
     {
-      "name": "privacy_handles",
+      "name": "memory-museum.yml:endpoints:privacy_gate-true-prepare_body",
       "ok": true,
-      "detail": "IF/ELSE has both branch edges"
+      "detail": "privacy_gate -> prepare_body"
     },
     {
-      "name": "powercontext_tools",
+      "name": "memory-museum.yml:source_type:privacy_gate-true-prepare_body",
       "ok": true,
-      "detail": "found ['pc_prepare_context', 'pc_remember']"
+      "detail": "if-else"
     },
     {
-      "name": "plugin_identity_prepare_context",
+      "name": "memory-museum.yml:target_type:privacy_gate-true-prepare_body",
       "ok": true,
-      "detail": "provider and plugin unique identifier are pinned"
+      "detail": "code"
     },
     {
-      "name": "plugin_identity_remember_memory",
+      "name": "memory-museum.yml:endpoints:privacy_gate-false-privacy_answer",
       "ok": true,
-      "detail": "provider and plugin unique identifier are pinned"
+      "detail": "privacy_gate -> privacy_answer"
     },
     {
-      "name": "single_llm",
+      "name": "memory-museum.yml:source_type:privacy_gate-false-privacy_answer",
       "ok": true,
-      "detail": "1 LLM node"
+      "detail": "if-else"
     },
     {
-      "name": "code_nodes_compile",
+      "name": "memory-museum.yml:target_type:privacy_gate-false-privacy_answer",
       "ok": true,
-      "detail": "4 Python code nodes compile"
+      "detail": "answer"
     },
     {
-      "name": "context_before_llm",
+      "name": "memory-museum.yml:endpoints:prepare_gate-true-curator_llm",
       "ok": true,
-      "detail": "LLM context is connected to the prepared PowerContext content"
+      "detail": "prepare_gate -> curator_llm"
     },
     {
-      "name": "powercontext_dependency",
+      "name": "memory-museum.yml:source_type:prepare_gate-true-curator_llm",
       "ok": true,
-      "detail": "PowerContext dependency is pinned"
+      "detail": "if-else"
     },
     {
-      "name": "model_dependency",
+      "name": "memory-museum.yml:target_type:prepare_gate-true-curator_llm",
       "ok": true,
-      "detail": "OpenAI-compatible model plugin is pinned"
+      "detail": "llm"
     },
     {
-      "name": "no_embedded_secrets",
+      "name": "memory-museum.yml:endpoints:prepare_gate-false-prepare_error",
       "ok": true,
-      "detail": "no credential-shaped values in DSL"
+      "detail": "prepare_gate -> prepare_error"
     },
     {
-      "name": "plugin_file_sha256",
+      "name": "memory-museum.yml:source_type:prepare_gate-false-prepare_error",
       "ok": true,
-      "detail": "1c9157b2d3fa6732842191b411f957abbee3879991d70a43da064ad6fab0ebc3"
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.yml:target_type:prepare_gate-false-prepare_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:remember_gate-true-remember_http",
+      "ok": true,
+      "detail": "remember_gate -> remember_http"
+    },
+    {
+      "name": "memory-museum.yml:source_type:remember_gate-true-remember_http",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.yml:target_type:remember_gate-true-remember_http",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:remember_gate-false-remember_error",
+      "ok": true,
+      "detail": "remember_gate -> remember_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:remember_gate-false-remember_error",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.yml:target_type:remember_gate-false-remember_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:receipt_gate-true-answer",
+      "ok": true,
+      "detail": "receipt_gate -> answer"
+    },
+    {
+      "name": "memory-museum.yml:source_type:receipt_gate-true-answer",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.yml:target_type:receipt_gate-true-answer",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:receipt_gate-false-receipt_error",
+      "ok": true,
+      "detail": "receipt_gate -> receipt_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:receipt_gate-false-receipt_error",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.yml:target_type:receipt_gate-false-receipt_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:privacy_guard-fail-branch-transport_error",
+      "ok": true,
+      "detail": "privacy_guard -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:privacy_guard-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.yml:target_type:privacy_guard-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:prepare_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "prepare_body -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:prepare_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.yml:target_type:prepare_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:prepare_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "prepare_http -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:prepare_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.yml:target_type:prepare_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:prepare_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "prepare_check -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:prepare_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.yml:target_type:prepare_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:curator_llm-fail-branch-transport_error",
+      "ok": true,
+      "detail": "curator_llm -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:curator_llm-fail-branch-transport_error",
+      "ok": true,
+      "detail": "llm"
+    },
+    {
+      "name": "memory-museum.yml:target_type:curator_llm-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:parse_exhibit-fail-branch-transport_error",
+      "ok": true,
+      "detail": "parse_exhibit -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:parse_exhibit-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.yml:target_type:parse_exhibit-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:remember_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "remember_body -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:remember_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.yml:target_type:remember_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:remember_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "remember_http -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:remember_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.yml:target_type:remember_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:endpoints:receipt_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "receipt_check -> transport_error"
+    },
+    {
+      "name": "memory-museum.yml:source_type:receipt_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.yml:target_type:receipt_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.yml:reachability",
+      "ok": true,
+      "detail": "success and failure paths reachable"
+    },
+    {
+      "name": "memory-museum.yml:http_nodes",
+      "ok": true,
+      "detail": "found ['http://museum:8080/v1/prepare', 'http://museum:8080/v1/remember']"
+    },
+    {
+      "name": "memory-museum.yml:http_auth:prepare_http",
+      "ok": true,
+      "detail": "service key is injected through a Dify secret environment variable"
+    },
+    {
+      "name": "memory-museum.yml:http_no_retry:prepare_http",
+      "ok": true,
+      "detail": "unknown writes are never retried automatically"
+    },
+    {
+      "name": "memory-museum.yml:http_auth:remember_http",
+      "ok": true,
+      "detail": "service key is injected through a Dify secret environment variable"
+    },
+    {
+      "name": "memory-museum.yml:http_no_retry:remember_http",
+      "ok": true,
+      "detail": "unknown writes are never retried automatically"
+    },
+    {
+      "name": "memory-museum.yml:llm_count",
+      "ok": true,
+      "detail": "1 LLM nodes"
+    },
+    {
+      "name": "memory-museum.yml:llm_model",
+      "ok": true,
+      "detail": "gpt-4.1-mini"
+    },
+    {
+      "name": "memory-museum.yml:llm_context",
+      "ok": true,
+      "detail": "LLM context is wired to the checked PowerContext response"
+    },
+    {
+      "name": "memory-museum.yml:code_compile",
+      "ok": true,
+      "detail": "6 code nodes compile"
+    },
+    {
+      "name": "memory-museum.yml:secret_env",
+      "ok": true,
+      "detail": "service key is a secret placeholder, not a committed value"
+    },
+    {
+      "name": "memory-museum.yml:model_dependency",
+      "ok": true,
+      "detail": "OpenAI-compatible plugin is pinned"
+    },
+    {
+      "name": "memory-museum.yml:no_credentials",
+      "ok": true,
+      "detail": "no credential-shaped values"
+    },
+    {
+      "name": "memory-museum.e2e.yml:yaml",
+      "ok": true,
+      "detail": "valid YAML mapping"
+    },
+    {
+      "name": "memory-museum.e2e.yml:kind",
+      "ok": true,
+      "detail": "kind=app"
+    },
+    {
+      "name": "memory-museum.e2e.yml:version",
+      "ok": true,
+      "detail": "Dify 1.17.1-compatible DSL version 0.7.0"
+    },
+    {
+      "name": "memory-museum.e2e.yml:chatflow",
+      "ok": true,
+      "detail": "advanced-chat mode"
+    },
+    {
+      "name": "memory-museum.e2e.yml:unique_nodes",
+      "ok": true,
+      "detail": "20 unique nodes"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:start-source-privacy_guard",
+      "ok": true,
+      "detail": "start -> privacy_guard"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:start-source-privacy_guard",
+      "ok": true,
+      "detail": "start"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:start-source-privacy_guard",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:privacy_guard-source-privacy_gate",
+      "ok": true,
+      "detail": "privacy_guard -> privacy_gate"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:privacy_guard-source-privacy_gate",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:privacy_guard-source-privacy_gate",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_body-source-prepare_http",
+      "ok": true,
+      "detail": "prepare_body -> prepare_http"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_body-source-prepare_http",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_body-source-prepare_http",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_http-source-prepare_check",
+      "ok": true,
+      "detail": "prepare_http -> prepare_check"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_http-source-prepare_check",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_http-source-prepare_check",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_check-source-prepare_gate",
+      "ok": true,
+      "detail": "prepare_check -> prepare_gate"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_check-source-prepare_gate",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_check-source-prepare_gate",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:curator_llm-source-parse_exhibit",
+      "ok": true,
+      "detail": "curator_llm -> parse_exhibit"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:curator_llm-source-parse_exhibit",
+      "ok": true,
+      "detail": "llm"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:curator_llm-source-parse_exhibit",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:parse_exhibit-source-remember_body",
+      "ok": true,
+      "detail": "parse_exhibit -> remember_body"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:parse_exhibit-source-remember_body",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:parse_exhibit-source-remember_body",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:remember_body-source-remember_gate",
+      "ok": true,
+      "detail": "remember_body -> remember_gate"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:remember_body-source-remember_gate",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:remember_body-source-remember_gate",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:remember_http-source-receipt_check",
+      "ok": true,
+      "detail": "remember_http -> receipt_check"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:remember_http-source-receipt_check",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:remember_http-source-receipt_check",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:receipt_check-source-receipt_gate",
+      "ok": true,
+      "detail": "receipt_check -> receipt_gate"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:receipt_check-source-receipt_gate",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:receipt_check-source-receipt_gate",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:privacy_gate-true-prepare_body",
+      "ok": true,
+      "detail": "privacy_gate -> prepare_body"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:privacy_gate-true-prepare_body",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:privacy_gate-true-prepare_body",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:privacy_gate-false-privacy_answer",
+      "ok": true,
+      "detail": "privacy_gate -> privacy_answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:privacy_gate-false-privacy_answer",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:privacy_gate-false-privacy_answer",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_gate-true-curator_llm",
+      "ok": true,
+      "detail": "prepare_gate -> curator_llm"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_gate-true-curator_llm",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_gate-true-curator_llm",
+      "ok": true,
+      "detail": "llm"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_gate-false-prepare_error",
+      "ok": true,
+      "detail": "prepare_gate -> prepare_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_gate-false-prepare_error",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_gate-false-prepare_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:remember_gate-true-remember_http",
+      "ok": true,
+      "detail": "remember_gate -> remember_http"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:remember_gate-true-remember_http",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:remember_gate-true-remember_http",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:remember_gate-false-remember_error",
+      "ok": true,
+      "detail": "remember_gate -> remember_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:remember_gate-false-remember_error",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:remember_gate-false-remember_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:receipt_gate-true-answer",
+      "ok": true,
+      "detail": "receipt_gate -> answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:receipt_gate-true-answer",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:receipt_gate-true-answer",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:receipt_gate-false-receipt_error",
+      "ok": true,
+      "detail": "receipt_gate -> receipt_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:receipt_gate-false-receipt_error",
+      "ok": true,
+      "detail": "if-else"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:receipt_gate-false-receipt_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:privacy_guard-fail-branch-transport_error",
+      "ok": true,
+      "detail": "privacy_guard -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:privacy_guard-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:privacy_guard-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "prepare_body -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "prepare_http -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:prepare_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "prepare_check -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:prepare_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:prepare_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:curator_llm-fail-branch-transport_error",
+      "ok": true,
+      "detail": "curator_llm -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:curator_llm-fail-branch-transport_error",
+      "ok": true,
+      "detail": "llm"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:curator_llm-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:parse_exhibit-fail-branch-transport_error",
+      "ok": true,
+      "detail": "parse_exhibit -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:parse_exhibit-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:parse_exhibit-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:remember_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "remember_body -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:remember_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:remember_body-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:remember_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "remember_http -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:remember_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "http-request"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:remember_http-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:endpoints:receipt_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "receipt_check -> transport_error"
+    },
+    {
+      "name": "memory-museum.e2e.yml:source_type:receipt_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "code"
+    },
+    {
+      "name": "memory-museum.e2e.yml:target_type:receipt_check-fail-branch-transport_error",
+      "ok": true,
+      "detail": "answer"
+    },
+    {
+      "name": "memory-museum.e2e.yml:reachability",
+      "ok": true,
+      "detail": "success and failure paths reachable"
+    },
+    {
+      "name": "memory-museum.e2e.yml:http_nodes",
+      "ok": true,
+      "detail": "found ['http://museum:8080/v1/prepare', 'http://museum:8080/v1/remember']"
+    },
+    {
+      "name": "memory-museum.e2e.yml:http_auth:prepare_http",
+      "ok": true,
+      "detail": "service key is injected through a Dify secret environment variable"
+    },
+    {
+      "name": "memory-museum.e2e.yml:http_no_retry:prepare_http",
+      "ok": true,
+      "detail": "unknown writes are never retried automatically"
+    },
+    {
+      "name": "memory-museum.e2e.yml:http_auth:remember_http",
+      "ok": true,
+      "detail": "service key is injected through a Dify secret environment variable"
+    },
+    {
+      "name": "memory-museum.e2e.yml:http_no_retry:remember_http",
+      "ok": true,
+      "detail": "unknown writes are never retried automatically"
+    },
+    {
+      "name": "memory-museum.e2e.yml:llm_count",
+      "ok": true,
+      "detail": "1 LLM nodes"
+    },
+    {
+      "name": "memory-museum.e2e.yml:llm_model",
+      "ok": true,
+      "detail": "museum-fixture-v1"
+    },
+    {
+      "name": "memory-museum.e2e.yml:llm_context",
+      "ok": true,
+      "detail": "LLM context is wired to the checked PowerContext response"
+    },
+    {
+      "name": "memory-museum.e2e.yml:code_compile",
+      "ok": true,
+      "detail": "6 code nodes compile"
+    },
+    {
+      "name": "memory-museum.e2e.yml:secret_env",
+      "ok": true,
+      "detail": "service key is a secret placeholder, not a committed value"
+    },
+    {
+      "name": "memory-museum.e2e.yml:model_dependency",
+      "ok": true,
+      "detail": "OpenAI-compatible plugin is pinned"
+    },
+    {
+      "name": "memory-museum.e2e.yml:no_credentials",
+      "ok": true,
+      "detail": "no credential-shaped values"
+    },
+    {
+      "name": "backend_lockfile",
+      "ok": true,
+      "detail": "backend dependency lock exists"
+    },
+    {
+      "name": "compose_files",
+      "ok": true,
+      "detail": "Dify and museum Compose definitions exist"
+    },
+    {
+      "name": "real_e2e_script",
+      "ok": true,
+      "detail": "workflow_run_id and node-execution verifier exists"
     }
   ],
   "result": "passed",
-  "dsl": {
-    "path": "dsl\\memory-museum.yml",
-    "sha256": "de1635e937d202febe050e7ab64e1af0f1377bd5ee9e534b1e3cd6cfb01b0e2f",
-    "node_count": 11,
-    "edge_count": 10
+  "primary_dsl": {
+    "path": "memory-museum\\dsl\\memory-museum.yml",
+    "sha256": "1c1b9bd41168b2e7b66a3407d9e9ffafaca2e72e256754c2d8d0017b1f54b113",
+    "nodes": 20,
+    "edges": 27,
+    "model": "gpt-4.1-mini"
   },
-  "plugin": {
-    "path": "plugin\\powercontext-0.0.1.difypkg",
-    "file_sha256": "1c9157b2d3fa6732842191b411f957abbee3879991d70a43da064ad6fab0ebc3",
-    "dify_plugin_checksum": "47a05503b8aa301ef9ea4d319384ba922634061658fb390848d44d0d54ba1ae1"
-  }
+  "e2e_dsl": {
+    "path": "memory-museum\\dsl\\memory-museum.e2e.yml",
+    "sha256": "4d18a07a8724e68b6932eea1593f108fc2072389f701aee329a79dbcd268c632",
+    "nodes": 20,
+    "edges": 27,
+    "model": "museum-fixture-v1"
+  },
+  "backend_files": [
+    "backend/museum/app.py",
+    "backend/museum/powercontext.py",
+    "backend/museum/model_fixture.py"
+  ]
 }

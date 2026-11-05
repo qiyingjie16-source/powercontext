@@ -1,1 +1,1 @@
-{"result": "passed", "checks": 51, "nodes": 11, "edges": 10, "output": "evidence\\submission-validation.json"}
+{"result": "passed", "checks": 201, "primary_nodes": 20, "e2e_model": "museum-fixture-v1", "output": "evidence\\submission-validation.json"}

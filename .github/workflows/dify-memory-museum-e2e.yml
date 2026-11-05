@@ -1,0 +1,103 @@
+name: Dify Memory Museum E2E
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - codex/dify-memory-museum
+    paths:
+      - .github/workflows/dify-memory-museum-e2e.yml
+      - dify/memory-museum/**
+
+jobs:
+  real-dify-engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONUTF8: "1"
+    defaults:
+      run:
+        working-directory: dify/memory-museum
+
+    steps:
+      - name: Check out submission
+        uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          docker system prune -af
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.9.26"
+
+      - name: Test backend and workflow logic
+        run: |
+          uv lock --project backend
+          uv run --project backend --group dev pytest -q
+          uv run --project backend --group dev python validation/validate_submission.py \
+            --output evidence/submission-validation.json
+
+      - name: Fetch pinned Dify and PowerContext
+        run: |
+          uv run --project backend python scripts/bootstrap.py \
+            --root "$RUNNER_TEMP/memory-museum-runtime"
+
+      - name: Start Dify and PowerContext
+        run: |
+          uv run --project backend python scripts/manage.py up \
+            --root "$RUNNER_TEMP/memory-museum-runtime"
+
+      - name: Import, publish, and create app API key
+        run: |
+          uv run --project backend --group dev python scripts/configure_dify.py \
+            --root "$RUNNER_TEMP/memory-museum-runtime" \
+            --dsl dsl/memory-museum.e2e.yml \
+            --clean-reimport
+
+      - name: Execute real Dify workflow twice and inspect nodes
+        run: |
+          uv run --project backend --group dev python scripts/verify_e2e.py \
+            --root "$RUNNER_TEMP/memory-museum-runtime" \
+            --output evidence/dify-e2e.json
+
+      - name: Capture service state and logs
+        if: always()
+        run: |
+          mkdir -p evidence/ci-runtime
+          uv run --project backend python scripts/manage.py status \
+            --root "$RUNNER_TEMP/memory-museum-runtime" \
+            > evidence/ci-runtime/compose-status.txt 2>&1 || true
+          docker compose \
+            -p memory-museum-dify \
+            --project-directory "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker" \
+            --env-file "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker/.env" \
+            -f "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker/docker-compose.yaml" \
+            -f deploy/dify.override.yaml \
+            logs --no-color --tail 500 \
+            > evidence/ci-runtime/dify.log 2>&1 || true
+          docker compose \
+            -p memory-museum \
+            --env-file deploy/.env \
+            -f deploy/compose.yaml \
+            logs --no-color --tail 500 \
+            > evidence/ci-runtime/museum.log 2>&1 || true
+
+      - name: Upload Dify execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: memory-museum-dify-evidence
+          path: dify/memory-museum/evidence/
+          if-no-files-found: error
+          retention-days: 30
