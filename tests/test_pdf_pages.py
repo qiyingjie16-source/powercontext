@@ -156,6 +156,9 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
                     "Capital expenditures for new factories total 128 million.",
                     "Revenue from customers was 512 million. Net sales increased.",
                     "Litigation and legal proceedings remain unresolved.",
+                    "Consolidated Statement of Income",
+                    "Consolidated Statement of Cash Flows",
+                    "Notes to Financial Statements: income and cash flow disclosure, earnings and operations.",
                 ]),
             )
         )
@@ -205,6 +208,13 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
             ]
             assert len(set(locations)) == len(locations) == 2
             assert set(locations) == {observations[0].name, competing.name}
+            combined = await search_pdf_pages(
+                memory, "Use ACME's income statement and statement of cash flows to estimate operating profit.", limit=2
+            )
+            assert {
+                (await memory.get(GetMemoryEntryRequest(citation=citation))).entry.sources[0].source_id
+                for citation in combined
+            } == {observations[3].name, observations[4].name}
             assert await search_pdf_pages(memory, "secret scope unique phrase") == ()
             assert await search_pdf_pages(memory, "capital", limit=0) == ()
             assert await search_pdf_pages(memory, "   ") == ()
