@@ -19,10 +19,11 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import io
+import zlib
 
 import pytest
-from pypdf import PdfWriter
-from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
+from pypdf import PdfReader, PdfWriter
+from pypdf.generic import DecodedStreamObject, DictionaryObject, EncodedStreamObject, NameObject
 
 from powercontext.builtin.artifacts.memory import MemoryEntryInput
 from powercontext.builtin.persistence.sqlite import SQLiteConfig
@@ -103,6 +104,27 @@ def test_password_and_truncated_final_page_fail_without_partial_result():
         parse_pdf_document(PDFDocumentInput(document_id="broken", content=content[:-50]))
 
 
+@pytest.mark.parametrize("damage", ["truncated-flate", "missing-form"])
+def test_corrupt_later_page_streams_fail_even_with_valid_document_trailer(damage):
+    writer = PdfWriter()
+    writer.append_pages_from_reader(PdfReader(io.BytesIO(pdf(["first valid page", "second page"]))))
+    contents = writer.pages[1].get_contents()
+    assert contents is not None
+    text_program = contents.get_data()
+    if damage == "truncated-flate":
+        stream = EncodedStreamObject()
+        stream[NameObject("/Filter")] = NameObject("/FlateDecode")
+        stream._data = zlib.compress(text_program)[:-4]
+    else:
+        stream = DecodedStreamObject()
+        stream.set_data(text_program + b"\n/Missing Do")
+    writer.pages[1][NameObject("/Contents")] = stream
+    buffer = io.BytesIO()
+    writer.write(buffer)
+    with pytest.raises(ValueError):
+        parse_pdf_document(PDFDocumentInput(document_id="damaged", content=buffer.getvalue()))
+
+
 def test_identity_distinguishes_document_revision_and_page_and_round_trips():
     async def scenario():
         registry = SourceDefinitionRegistry((PDF_PAGE_SOURCE_DEFINITION,))
@@ -170,6 +192,7 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
         )
         observations = [project_source_for_transport(registry, await registry.resolve(page)) for page in inputs]
         async with open_builtin_runtime(config, candidate_pipeline=Pipeline()) as runtime:
+            assert runtime.scopes is not None
             scope = await runtime.scopes.create(
                 ScopeDraft(title="Reports", summary="Evidence", idempotency_key="reports")
             )
@@ -272,5 +295,122 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
             assert await search_pdf_pages(memory, "   ") == ()
             with pytest.raises(ValueError):
                 await search_pdf_pages(memory, "capital", limit=-1)
+
+    asyncio.run(scenario())
+
+
+def test_retrieval_routes_abbreviations_and_periods_and_keeps_identical_pages(tmp_path):
+    class Pipeline:
+        async def extract(self, request, /):
+            return tuple(
+                MemoryEntryInput(
+                    kind="page", text=source.projection(TEXT_EVIDENCE_PROJECTION_KEY)["content"], sources=(source,)
+                )
+                for source in request.sources
+            )
+
+    async def scenario():
+        registry = SourceDefinitionRegistry((PDF_PAGE_SOURCE_DEFINITION,))
+        config = BuiltinConfig(database=SQLiteConfig(url=f"sqlite+aiosqlite:///{tmp_path / 'routing.db'}"))
+        statement = "Consolidated Balance Sheets\nCurrent assets 240 current liabilities 120 cash 60 receivables 80."
+        documents = (
+            ("NORTHSTARTECHNOLOGIES_2024_10K", 1, statement),
+            ("NORTHSTARTECHNOLOGIES_2025_10K", 1, statement),
+            ("NORTHSTARTECHNOLOGIES_2025_10K", 2, statement),
+            ("BETA_BETA_2025_10K", 1, statement),
+            ("DECOY_2025_10K", 1, statement),
+        )
+        sources = tuple([
+            await registry.resolve(
+                PDFPageInput(document_id=document, document_sha256="a" * 64, page_number=page, text=text)
+            )
+            for document, page, text in documents
+        ])
+        async with open_builtin_runtime(config, candidate_pipeline=Pipeline()) as runtime:
+            assert runtime.scopes is not None
+            scope = await runtime.scopes.create(
+                ScopeDraft(title="Reports", summary="Reports", idempotency_key="reports")
+            )
+            await runtime.ingestion.register(manifest_for_definition(PDF_PAGE_SOURCE_DEFINITION))
+            for source in sources:
+                await runtime.ingestion.submit(
+                    SubmitSourceObservation(
+                        scope_id=scope.scope_id, observation=project_source_for_transport(registry, source)
+                    )
+                )
+            while (await runtime.memory.for_scope(scope.scope_id).flush()).processed:
+                pass
+        async with open_builtin_runtime(config) as runtime:
+            memory = runtime.memory.for_scope(scope.scope_id)
+            for question, expected in (
+                ("What is NSTE's current ratio for FY25?", {sources[1].name, sources[2].name}),
+                ("What is BnB's current ratio for FY25?", {sources[3].name}),
+                (
+                    "Compare Northstar Technologies and Beta & Beta current ratios for FY25.",
+                    {sources[1].name, sources[2].name, sources[3].name},
+                ),
+                ("What are the current ratios?", {source.name for source in sources}),
+            ):
+                citations = await search_pdf_pages(memory, question, limit=20)
+                actual = {
+                    (await memory.get(GetMemoryEntryRequest(citation=citation))).entry.sources[0].source_id
+                    for citation in citations
+                }
+                assert actual == expected, question
+                assert len(citations) == len(expected)
+
+    asyncio.run(scenario())
+
+
+def test_ratio_retrieval_preserves_complementary_statements_among_narrative_matches(tmp_path):
+    class Pipeline:
+        async def extract(self, request, /):
+            return tuple(
+                MemoryEntryInput(
+                    kind="page", text=source.projection(TEXT_EVIDENCE_PROJECTION_KEY)["content"], sources=(source,)
+                )
+                for source in request.sources
+            )
+
+    async def scenario():
+        registry = SourceDefinitionRegistry((PDF_PAGE_SOURCE_DEFINITION,))
+        config = BuiltinConfig(database=SQLiteConfig(url=f"sqlite+aiosqlite:///{tmp_path / 'statements.db'}"))
+        texts = [
+            f"Capital-intensive business outlook {number}. Capital investment and business growth are important."
+            for number in range(30)
+        ] + [
+            "Consolidated Statements of Income\nNet sales 900 800\nCost of sales 400 300\nNet income 200 180",
+            "Consolidated Balance Sheets\nTotal assets 1200 1100\nProperty plant equipment 700 650\nEquity 500 450",
+            "Consolidated Statements of Cash Flows\nOperating activities 300 250\nCapital expenditures 80 70",
+        ]
+        observations = [
+            project_source_for_transport(
+                registry,
+                await registry.resolve(
+                    PDFPageInput(document_id="OAK_2025_10K", document_sha256="b" * 64, page_number=number, text=text)
+                ),
+            )
+            for number, text in enumerate(texts, 1)
+        ]
+        async with open_builtin_runtime(config, candidate_pipeline=Pipeline()) as runtime:
+            assert runtime.scopes is not None
+            scope = await runtime.scopes.create(
+                ScopeDraft(title="Reports", summary="Reports", idempotency_key="reports")
+            )
+            await runtime.ingestion.register(manifest_for_definition(PDF_PAGE_SOURCE_DEFINITION))
+            for observation in observations:
+                await runtime.ingestion.submit(
+                    SubmitSourceObservation(scope_id=scope.scope_id, observation=observation)
+                )
+            memory = runtime.memory.for_scope(scope.scope_id)
+            while (await memory.flush()).processed:
+                pass
+            citations = await search_pdf_pages(memory, "Is OAK a capital-intensive business in FY2025?", limit=20)
+            actual = {
+                (await memory.get(GetMemoryEntryRequest(citation=citation))).entry.sources[0].source_id
+                for citation in citations
+            }
+            assert {observation.name for observation in observations[-3:]} <= actual
+            assert len(citations) == len(actual) == 20
 
     asyncio.run(scenario())
