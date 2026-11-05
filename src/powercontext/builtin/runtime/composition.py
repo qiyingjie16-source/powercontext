@@ -97,6 +97,7 @@ from powercontext.builtin.persistence.processing_migration import (
     bootstrap_processing_schema,
 )
 from powercontext.builtin.persistence.scope_search_schema import ensure_scope_search_schema
+from powercontext.builtin.persistence.seekdb.memory_index import SeekDBMemoryIndex
 from powercontext.builtin.persistence.seekdb.profile import SeekDBConfig, SeekDBProfile
 from powercontext.builtin.persistence.skill_distribution_schema import ensure_skill_distribution_schema
 from powercontext.builtin.persistence.sqlite.experience_index import SQLiteExperienceFTSIndex
@@ -857,6 +858,14 @@ async def _open_artifact_processing_supervisor(
         yield ArtifactProcessingSupervisors(tuple(supervisors))
 
 
+def _mysql_memory_index(model: EmbeddingModel | None, *, seekdb: bool) -> MemoryIndex:
+    if model is None:
+        return OceanBaseMemoryFTSIndex()
+    if seekdb:
+        return SeekDBMemoryIndex(model.profile)
+    return CompositeMemoryIndex(OceanBaseMemoryFTSIndex(), OceanBaseMemoryVectorIndex(model.profile))
+
+
 @asynccontextmanager
 async def open_builtin_contexts(
     config: BuiltinConfig,
@@ -964,10 +973,7 @@ async def open_builtin_contexts(
                 await contexts.aclose_usage_recorder()
         return
     experience_index = OceanBaseExperienceFTSIndex()
-    indexes = [OceanBaseMemoryFTSIndex()]
-    if embedding_model is not None:
-        indexes.append(OceanBaseMemoryVectorIndex(embedding_model.profile))
-    index = CompositeMemoryIndex(*indexes)
+    index = _mysql_memory_index(embedding_model, seekdb=isinstance(database, SeekDBConfig))
     topic_indexes: list[TopicMemoryIndex] = [OceanBaseTopicMemoryFTSIndex()]
     if embedding_model is not None:
         topic_indexes.append(OceanBaseTopicMemoryVectorIndex(embedding_model.profile))
