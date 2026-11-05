@@ -94,6 +94,22 @@ jobs:
             logs --no-color --tail 500 \
             > evidence/ci-runtime/dify.log 2>&1 || true
           docker compose \
+            -p memory-museum-dify \
+            --project-directory "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker" \
+            --env-file "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker/.env" \
+            -f "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker/docker-compose.yaml" \
+            -f deploy/dify.override.yaml \
+            logs --no-color --tail 2000 plugin_daemon \
+            > evidence/ci-runtime/plugin-daemon.log 2>&1 || true
+          docker compose \
+            -p memory-museum-dify \
+            --project-directory "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker" \
+            --env-file "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker/.env" \
+            -f "$RUNNER_TEMP/memory-museum-runtime/dify-runtime/docker/docker-compose.yaml" \
+            -f deploy/dify.override.yaml \
+            logs --no-color --tail 2000 api worker \
+            > evidence/ci-runtime/dify-api-worker.log 2>&1 || true
+          docker compose \
             -p memory-museum \
             --env-file deploy/.env \
             -f deploy/compose.yaml \

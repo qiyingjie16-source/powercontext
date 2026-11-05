@@ -24,6 +24,9 @@ PLUGIN = (
 PROVIDER = "langgenius/openai_api_compatible/openai_api_compatible"
 FIXTURE_MODEL = "museum-fixture-v1"
 FIXTURE_ENDPOINT = "http://museum:8080/model/v1"
+PLUGIN_INSTALL_TIMEOUT = 900
+PROVIDER_READY_TIMEOUT = 300
+POLL_INTERVAL = 3
 
 
 def read_env(path: Path) -> dict[str, str]:
@@ -62,10 +65,18 @@ class Console:
                 body = response.read()
                 return json.loads(body) if body else {}
         except HTTPError as error:
+            body = error.read().decode("utf-8", errors="replace")
+            detail = body[:2000] or error.reason
             raise RuntimeError(
                 f"Dify {method or ('POST' if payload is not None else 'GET')} "
-                f"{path}: HTTP {error.code}"
+                f"{path}: HTTP {error.code}: {detail}"
             ) from None
+
+
+class PluginInstallError(RuntimeError):
+    def __init__(self, message: str, diagnostic: dict[str, Any]):
+        super().__init__(message)
+        self.diagnostic = diagnostic
 
 
 def login_local(console: Console, root: Path) -> dict[str, str]:
@@ -125,16 +136,108 @@ def wait_http(url: str, *, timeout: float = 600.0) -> None:
     raise RuntimeError(f"Timed out waiting for {url}: {last_error}")
 
 
-def wait_provider(console: Console) -> None:
-    for _ in range(60):
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def wait_provider(console: Console) -> list[str]:
+    deadline = time.monotonic() + PROVIDER_READY_TIMEOUT
+    observed: list[str] = []
+    while time.monotonic() < deadline:
         providers = console.call("/workspaces/current/model-providers")
         items = providers.get("data") if isinstance(providers, dict) else providers
-        if isinstance(items, list) and any(
-            item.get("provider") == PROVIDER for item in items
-        ):
-            return
-        time.sleep(2)
-    raise RuntimeError("OpenAI-API-compatible provider did not become available")
+        if isinstance(items, list):
+            observed = sorted(
+                str(item.get("provider"))
+                for item in items
+                if isinstance(item, dict) and item.get("provider")
+            )
+            if PROVIDER in observed:
+                return observed
+        time.sleep(POLL_INTERVAL)
+    raise RuntimeError(
+        "OpenAI-API-compatible provider did not become available; "
+        f"observed providers: {observed or ['<none>']}"
+    )
+
+
+def install_plugin(console: Console) -> dict[str, Any]:
+    response = console.call(
+        "/workspaces/current/plugin/install/marketplace",
+        {"plugin_unique_identifiers": [PLUGIN]},
+    )
+    if not isinstance(response, dict):
+        raise RuntimeError(f"Unexpected plugin install response: {response!r}")
+
+    diagnostic: dict[str, Any] = {
+        "kind": "real_dify_plugin_install",
+        "created_at": datetime.now(UTC).isoformat(),
+        "plugin": PLUGIN,
+        "install_response": response,
+        "status_history": [],
+        "result": "pending",
+        "credentials_included": False,
+    }
+    task_id = response.get("task_id")
+    if response.get("all_installed"):
+        diagnostic["result"] = "already_installed"
+        return diagnostic
+    if not task_id:
+        diagnostic["result"] = "missing_task_id"
+        raise PluginInstallError(
+            f"Plugin install returned no task ID: {response}",
+            diagnostic,
+        )
+
+    deadline = time.monotonic() + PLUGIN_INSTALL_TIMEOUT
+    last_task: dict[str, Any] | None = None
+    last_status: str | None = None
+    while time.monotonic() < deadline:
+        try:
+            task_response = console.call(
+                f"/workspaces/current/plugin/tasks/{task_id}"
+            )
+        except RuntimeError as error:
+            diagnostic["poll_error"] = str(error)
+            time.sleep(POLL_INTERVAL)
+            continue
+        task = task_response.get("task") if isinstance(task_response, dict) else None
+        if not isinstance(task, dict):
+            diagnostic["poll_error"] = f"Unexpected task response: {task_response!r}"
+            time.sleep(POLL_INTERVAL)
+            continue
+        last_task = task
+        status = str(task.get("status", "unknown"))
+        if status != last_status:
+            diagnostic["status_history"].append(
+                {
+                    "at": datetime.now(UTC).isoformat(),
+                    "status": status,
+                    "completed_plugins": task.get("completed_plugins"),
+                    "total_plugins": task.get("total_plugins"),
+                }
+            )
+            last_status = status
+        if status == "success":
+            diagnostic["result"] = "installed"
+            diagnostic["task"] = task
+            return diagnostic
+        if status == "failed":
+            diagnostic["result"] = "failed"
+            diagnostic["task"] = task
+            raise PluginInstallError(f"Plugin installation failed: {task}", diagnostic)
+        time.sleep(POLL_INTERVAL)
+
+    diagnostic["result"] = "timeout"
+    diagnostic["task"] = last_task
+    raise PluginInstallError(
+        f"Plugin installation timed out after {PLUGIN_INSTALL_TIMEOUT}s: {last_task}",
+        diagnostic,
+    )
 
 
 def configure_fixture_model(console: Console) -> None:
@@ -289,11 +392,36 @@ def main() -> None:
     console = Console(args.base_url)
     login_local(console, root)
 
-    console.call(
-        "/workspaces/current/plugin/install/marketplace",
-        {"plugin_unique_identifiers": [PLUGIN]},
-    )
-    wait_provider(console)
+    plugin_evidence = {
+        "kind": "real_dify_plugin_install",
+        "created_at": datetime.now(UTC).isoformat(),
+        "plugin": PLUGIN,
+        "result": "failed",
+        "credentials_included": False,
+    }
+    try:
+        install_diagnostic = install_plugin(console)
+        plugin_evidence = install_diagnostic
+        observed_providers = wait_provider(console)
+        installed_models = console.call(
+            "/workspaces/current/plugin/installed-ids?category=model"
+        )
+        plugin_evidence["provider"] = PROVIDER
+        plugin_evidence["observed_providers"] = observed_providers
+        plugin_evidence["installed_model_ids"] = installed_models.get(
+            "plugin_ids", []
+        )
+        plugin_evidence["result"] = "provider_ready"
+    except PluginInstallError as error:
+        plugin_evidence = error.diagnostic
+        plugin_evidence["error"] = str(error)
+        raise
+    except Exception as error:
+        plugin_evidence["error"] = str(error)
+        raise
+    finally:
+        write_json(project / "evidence" / "dify-plugin-install.json", plugin_evidence)
+
     configure_fixture_model(console)
 
     state = import_app(
