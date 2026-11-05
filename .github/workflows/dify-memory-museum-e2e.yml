@@ -9,6 +9,13 @@ on:
       - .github/workflows/dify-memory-museum-e2e.yml
       - dify/memory-museum/**
 
+permissions:
+  contents: read
+
+concurrency:
+  group: dify-memory-museum-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   real-dify-engine:
     runs-on: ubuntu-latest
