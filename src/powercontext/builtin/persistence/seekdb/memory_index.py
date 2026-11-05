@@ -35,14 +35,18 @@ from powercontext.builtin.persistence.tags import memory_tag_parameters, memory_
 # Projection revisions are informational: unchanged entries can predate the head.
 _HYBRID_SQL = """
 SELECT candidates.channel, candidates.memory_artifact_id, candidates.head_revision,
-       candidates.entry_id, candidates.entry_version_id, versions.text,
+       candidates.entry_id, candidates.entry_version_id, candidates.text,
        CASE WHEN candidates.channel = 'vector' THEN candidates.metric END AS distance
 FROM (
     SELECT * FROM (
         SELECT 'fts' AS channel, f.memory_artifact_id, f.head_revision,
-               f.entry_id, f.entry_version_id, NULL AS vector_id,
+               f.entry_id, f.entry_version_id, v.text, NULL AS vector_id,
                MATCH(f.searchable_text) AGAINST (:analyzed_query) AS metric
         FROM pc_memory_entry_heads AS f
+        JOIN pc_memory_entry_versions AS v
+          ON v.scope_id = f.scope_id
+         AND v.memory_artifact_id = f.memory_artifact_id
+         AND v.entry_version_id = f.entry_version_id
         WHERE f.scope_id = :scope_id
           AND f.memory_artifact_id IN :memory_artifact_ids
           AND MATCH(f.searchable_text) AGAINST (:analyzed_query)
@@ -53,9 +57,13 @@ FROM (
     UNION ALL
     SELECT * FROM (
         SELECT 'vector' AS channel, m.memory_artifact_id, m.head_revision,
-               m.entry_id, m.entry_version_id, m.vector_id,
+               m.entry_id, m.entry_version_id, v.text, m.vector_id,
                l2_distance(m.embedding, :query_vector) AS metric
         FROM pc_memory_vector_entries AS m
+        JOIN pc_memory_entry_versions AS v
+          ON v.scope_id = m.scope_id
+         AND v.memory_artifact_id = m.memory_artifact_id
+         AND v.entry_version_id = m.entry_version_id
         WHERE m.scope_id = :scope_id
           AND m.memory_artifact_id IN :memory_artifact_ids
           {vector_tags}
@@ -63,10 +71,6 @@ FROM (
         LIMIT :candidate_limit
     ) AS semantic_candidates
 ) AS candidates
-JOIN pc_memory_entry_versions AS versions
-  ON versions.scope_id = :scope_id
- AND versions.memory_artifact_id = candidates.memory_artifact_id
- AND versions.entry_version_id = candidates.entry_version_id
 ORDER BY candidates.channel,
          CASE WHEN candidates.channel = 'fts' THEN -candidates.metric ELSE candidates.metric END,
          candidates.vector_id, candidates.memory_artifact_id, candidates.entry_id, candidates.entry_version_id

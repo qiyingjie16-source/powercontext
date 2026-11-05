@@ -2,7 +2,7 @@ name: Native seekdb hybrid acceptance
 
 on:
   push:
-    branches: [task/retrieval-02-hybrid-search]
+    branches: [task/retrieval-02-hybrid-search, task/competition-combined]
   workflow_dispatch:
 
 permissions:
@@ -19,4 +19,8 @@ jobs:
           fetch-depth: 0
       - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7
       - run: make -C competition install
-      - run: make -C competition check-baseline test-hybrid
+      - run: make -C competition check-baseline test-hybrid test-pdf
+      - run: competition/.venv/bin/python -m pytest -q tests/builtin/persistence/test_seekdb_hybrid_parity.py
+        env:
+          PYTHONPATH: src
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"

@@ -182,6 +182,22 @@ def _requested_sections(question: str) -> tuple[tuple[tuple[str, ...], str], ...
     )
 
 
+# Short probes cover independently reported concepts in a compound question.
+# The alternatives describe standard accounting terminology.
+_CONCEPT_PROBES = (
+    (r"capital expenditures?|capex", ("capital expenditures", "property equipment")),
+    (r"depreciation|amortization|ebitda|d\s*&\s*a", ("depreciation amortization",)),
+    (r"operating (?:income|profit|margin)|ebitda", ("operating income", "operating profit")),
+    (r"free cash flow|operating cash flow|cash from operations", ("operating activities", "cash provided")),
+    (r"restructur\w*|reorgani[sz]\w*", ("restructuring charges", "restructuring costs")),
+    (r"geograph\w*|countr\w*|regions?", ("geographic segments", "business segments", "international operations")),
+    (r"gross (?:profit|margin)|cost of (?:sales|revenue|goods)", ("gross profit", "cost sales", "cost revenue")),
+    (r"dividends?|share repurchases?|buybacks?", ("dividends paid", "share repurchases")),
+    (r"work(?:ing)? capital|current (?:assets|liabilities)|liquidity", ("current assets", "current liabilities")),
+    (r"debt|borrowings|leverage", ("long term debt", "short term borrowings")),
+)
+
+
 _STOP_WORDS = frozenset([
     "a",
     "an",
@@ -261,7 +277,13 @@ def _search_queries(question: str, section_queries: tuple[str, ...]) -> tuple[li
     if not terms:
         return [], ()
     expansions = [" ".join(sorted(group)) for group in _FINANCIAL_TERMS if group.intersection(terms)]
-    queries = [" ".join(terms), *section_queries, *expansions]
+    concepts = [
+        query
+        for trigger, probes in _CONCEPT_PROBES
+        if re.search(rf"\b(?:{trigger})\b", question, re.IGNORECASE)
+        for query in probes
+    ]
+    queries = [" ".join(terms), *section_queries, *concepts, *expansions]
     return terms, tuple(dict.fromkeys(queries))
 
 
@@ -296,7 +318,9 @@ def _rank_pages(hits: list[MemoryHit], terms: list[str], headings: tuple[str, ..
         opening = "\n".join(body.splitlines()[:6])
         if any(re.search(rf"^\s*(?:{heading})[ \t]*[.:]?[ \t]*$", opening, re.I | re.M) for heading in headings):
             score += 12
-        score += 2 * len(label_terms.intersection(terms))
+        # Company tokens in the document ID distinguish identically headed
+        # statements from different issuers. Year matches alone are weaker.
+        score += math.fsum(0.75 if term.isdigit() else 3.0 for term in label_terms.intersection(terms))
         scores.append(score)
     return [hits[index] for index in sorted(range(len(hits)), key=lambda i: (-scores[i], i))]
 
