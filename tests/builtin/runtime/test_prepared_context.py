@@ -997,3 +997,21 @@ def test_code_opt_in_preserves_topic_assembly_selection(assembly, expect_topic) 
     assert result.context.content is not None
     assert ("Title topic-1" in result.context.content) is expect_topic
     assert "BEGIN_POWERCONTEXT_CODE_V1" in result.context.content
+
+
+def test_evidence_selection_keeps_identical_entries_in_distinct_scopes() -> None:
+    hit = _hit("same", "The cobalt sensor records temperature.")
+    groups = tuple(
+        PreparedMemoryCandidates(scope_id=scope, memory_ref=MEMORY_REF, hits=(hit,))
+        for scope in ("scope-a", "scope-b")
+    )
+    result = PreparedContextBuilder().build_scopes_result(
+        request=PrepareContextRequest(query="cobalt sensor", evidence_selection=True, max_bytes=1200),
+        current_scope_id="scope-a",
+        memory_candidates=groups,
+    )
+    assert {fragment.address.memory.scope_id for fragment in result.fragments} == {"scope-a", "scope-b"}
+    assert result.origins == tuple(fragment.address for fragment in result.fragments)
+    assert all(fragment.text == hit.text[fragment.start : fragment.end] for fragment in result.fragments)
+    assert result.context.content is not None
+    assert result.context.content_bytes == len(result.context.content.encode("utf-8")) <= 1200
