@@ -159,6 +159,9 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
                     "Consolidated Statement of Income",
                     "Consolidated Statement of Cash Flows",
                     "Notes to Financial Statements: income and cash flow disclosure, earnings and operations.",
+                    "Our products are sold in more than 200 countries and geographic regions.",
+                    "Inventories are valued using the LIFO method.",
+                    "Income Taxes: The effective tax rate reconciles to the statutory rate.",
                 ]),
             )
         )
@@ -215,6 +218,15 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
                 (await memory.get(GetMemoryEntryRequest(citation=citation))).entry.sources[0].source_id
                 for citation in combined
             } == {observations[3].name, observations[4].name}
+            for question, expected in [
+                ("In which geographic regions does ACME operate?", 7),
+                ("How does ACME value its inventories?", 8),
+                ("What income tax rate applies?", 9),
+            ]:
+                citations = await search_pdf_pages(memory, question, limit=1)
+                assert len(citations) == 1
+                entry = (await memory.get(GetMemoryEntryRequest(citation=citations[0]))).entry
+                assert entry.sources[0].source_id == observations[expected - 1].name
             assert await search_pdf_pages(memory, "secret scope unique phrase") == ()
             assert await search_pdf_pages(memory, "capital", limit=0) == ()
             assert await search_pdf_pages(memory, "   ") == ()
