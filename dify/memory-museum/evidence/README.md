@@ -9,6 +9,7 @@
 | `backend-tests.log` | BFF、用户 Scope 映射、双重敏感输入检查、验证模型和流式兼容测试 |
 | `workflow-logic-tests.log` | DSL Code 节点逻辑及生成器可重复性测试 |
 | `dify-plugin-install.json` | Marketplace 插件安装任务、状态迁移、供应商可见性与失败诊断 |
+| `dify-model-config.json` | 真实 Dify 引擎中的验证模型凭证配置结果 |
 | `dify-import.json` | 真实 Dify 1.17.1 DSL 导入结果 |
 | `dify-reimport.json` | 在一个全新应用中再次导入的结果 |
 | `dify-publish.json` | 真实 Dify 发布与 App API Key 创建结果，不含 Key |
@@ -30,6 +31,7 @@
 ### 真实 Dify 引擎
 
 - `dify-plugin-install.json`
+- `dify-model-config.json`
 - `dify-import.json`
 - `dify-reimport.json`
 - `dify-publish.json`

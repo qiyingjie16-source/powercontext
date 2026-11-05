@@ -84,3 +84,14 @@ def test_install_plugin_accepts_already_installed_response():
 
     assert result["result"] == "already_installed"
     assert len(console.calls) == 1
+
+
+def test_fixture_credential_name_fits_dify_limit():
+    console = FakeConsole([{"result": "success"}])
+
+    configure_dify.configure_fixture_model(console)
+
+    _, payload, _ = console.calls[0]
+    assert len(payload["name"]) <= 30
+    assert payload["model_type"] == "llm"
+    assert payload["credentials"]["endpoint_url"].endswith("/model/v1")

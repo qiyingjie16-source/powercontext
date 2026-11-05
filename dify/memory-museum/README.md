@@ -132,6 +132,7 @@ uv run --project backend --group dev python scripts/build_dsl.py `
 
 真实 E2E 脚本同时保存：
 
+- Dify 插件安装任务和验证模型凭证配置结果。
 - 第一轮和第二轮 Dify 的 `conversation_id`。
 - 每轮真实 `workflow_run_id`。
 - Dify SSE 原始事件流：`evidence/ci-sse-session-*.jsonl`。

@@ -240,13 +240,13 @@ def install_plugin(console: Console) -> dict[str, Any]:
     )
 
 
-def configure_fixture_model(console: Console) -> None:
-    console.call(
+def configure_fixture_model(console: Console) -> Any:
+    return console.call(
         f"/workspaces/current/model-providers/{PROVIDER}/models/credentials",
         {
             "model": FIXTURE_MODEL,
             "model_type": "llm",
-            "name": "Memory Museum deterministic E2E fixture",
+            "name": "Museum E2E fixture",
             "credentials": {
                 "api_key": "museum-fixture-key",
                 "endpoint_url": FIXTURE_ENDPOINT,
@@ -422,7 +422,23 @@ def main() -> None:
     finally:
         write_json(project / "evidence" / "dify-plugin-install.json", plugin_evidence)
 
-    configure_fixture_model(console)
+    model_evidence = {
+        "kind": "real_dify_fixture_model_configuration",
+        "created_at": datetime.now(UTC).isoformat(),
+        "provider": PROVIDER,
+        "model": FIXTURE_MODEL,
+        "model_execution_mode": "deterministic_fixture",
+        "result": "failed",
+        "credentials_included": False,
+    }
+    try:
+        model_evidence["response"] = configure_fixture_model(console)
+        model_evidence["result"] = "configured"
+    except Exception as error:
+        model_evidence["error"] = str(error)
+        raise
+    finally:
+        write_json(project / "evidence" / "dify-model-config.json", model_evidence)
 
     state = import_app(
         console=console,
