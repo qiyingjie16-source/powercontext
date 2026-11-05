@@ -1,6 +1,6 @@
 {
   "schema": "memory-museum.submission-validation.v2",
-  "generated_at": "2026-11-05T09:56:34.658139+00:00",
+  "generated_at": "2026-11-05T10:00:47.433011+00:00",
   "checks": [
     {
       "name": "memory-museum.yml:yaml",
@@ -1011,14 +1011,14 @@
   "result": "passed",
   "primary_dsl": {
     "path": "memory-museum\\dsl\\memory-museum.yml",
-    "sha256": "1c1b9bd41168b2e7b66a3407d9e9ffafaca2e72e256754c2d8d0017b1f54b113",
+    "sha256": "d4a4b14500fe230e1238b105b1dd5ec82564d89fa41e0ed000f0f6841c5c6485",
     "nodes": 20,
     "edges": 27,
     "model": "gpt-4.1-mini"
   },
   "e2e_dsl": {
     "path": "memory-museum\\dsl\\memory-museum.e2e.yml",
-    "sha256": "4d18a07a8724e68b6932eea1593f108fc2072389f701aee329a79dbcd268c632",
+    "sha256": "9496a8de0a07e0b01d481695a547eedb85a2a7a16d5268b6645db9ac58d038fa",
     "nodes": 20,
     "edges": 27,
     "model": "museum-fixture-v1"

@@ -98,7 +98,7 @@ workflow:
           : (\n                    reason\n                    + \" 请换一件不包含隐私或凭据的小事；本次不会写入 PowerContext。\"\
           \n                ),\n                \"memory_text\": \"\",\n            }\n    return {\n\
           \        \"ok\": \"yes\",\n        \"reason\": \"\",\n        \"memory_text\": compact,\n  \
-          \  }\n\n"
+          \  }\n"
         variables:
         - variable: text
           value_selector:
@@ -193,8 +193,7 @@ workflow:
           \ or \"\").split()).strip()[:2000]\n    return {\n        \"body\": json.dumps(\n          \
           \  {\n                \"user_id\": user,\n                \"conversation_id\": conversation,\n\
           \                \"turn_id\": turn,\n                \"query\": clean_query,\n             \
-          \   \"max_bytes\": 8000,\n            },\n            ensure_ascii=False,\n        )\n    }\n\
-          \n"
+          \   \"max_bytes\": 8000,\n            },\n            ensure_ascii=False,\n        )\n    }\n"
         variables:
         - variable: user_id
           value_selector:
@@ -300,7 +299,7 @@ workflow:
           \        \"state_json\": json.dumps(\n            {\n                \"memory_status\": status,\n\
           \                \"content_bytes\": data.get(\"content_bytes\") or len(context.encode(\"utf-8\"\
           )),\n                \"memory_refs\": refs,\n            },\n            ensure_ascii=False,\n\
-          \        ),\n        \"error\": \"\",\n    }\n\n"
+          \        ),\n        \"error\": \"\",\n    }\n"
         variables:
         - variable: status_code
           value_selector:
@@ -494,7 +493,7 @@ workflow:
           \ + title.strip(\"《》\") + \"》：\" + source_memory,\n        190,\n    )\n    return {\n     \
           \   \"answer_markdown\": answer_markdown,\n        \"memory_description\": description,\n  \
           \      \"memory_kind\": \"memory_museum_exhibit\",\n        \"memory_text\": memory,\n     \
-          \   \"memory_reason\": \"访客主动提交一件个人记忆，应用将其策展并保存为可再次检索的馆藏。\",\n    }\n\n"
+          \   \"memory_reason\": \"访客主动提交一件个人记忆，应用将其策展并保存为可再次检索的馆藏。\",\n    }\n"
         variables:
         - variable: raw_llm
           value_selector:
@@ -550,7 +549,7 @@ workflow:
           \      \"kind\": str(memory_kind or \"memory_museum_exhibit\"),\n                \"text\": text,\n\
           \                \"description\": str(memory_description or \"\")[:200] or None,\n         \
           \       \"reason\": str(memory_reason or \"\")[:512] or None,\n            },\n            ensure_ascii=False,\n\
-          \        ),\n        \"error\": \"\",\n    }\n\n"
+          \        ),\n        \"error\": \"\",\n    }\n"
         variables:
         - variable: user_id
           value_selector:
@@ -717,7 +716,7 @@ workflow:
           \ 灰灯馆长已把这件小事封存进 PowerContext。\\n\"\n        \"馆藏编号：`\" + (artifact_id or \"已返回成功\") + \"`\\\
           n\"\n        \"来源编号：`\" + (str(source_id) or \"已返回来源回执\") + \"`\"\n    )\n    return {\n   \
           \     \"ok\": \"yes\",\n        \"display\": answer_markdown.strip() + receipt,\n        \"\
-          error\": \"\",\n    }\n\n"
+          error\": \"\",\n    }\n"
         variables:
         - variable: status_code
           value_selector:
