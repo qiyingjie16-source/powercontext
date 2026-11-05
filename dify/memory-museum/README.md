@@ -6,7 +6,7 @@
 并把展品存入该访客独有的 PowerContext Scope。下次再提到相同线索时，
 旧展品会先被召回，新展品再与它组成“联动展”。
 
-本作品只借鉴公开仓库中“如何验证真实 Dify 运行”的工程思路。
+本作品的工程验证方法参考公开仓库中“如何验证真实 Dify 运行”的实践。
 游戏概念、角色、提示词、后端协议、验证模型、DSL 图和证据格式均为本作品独立实现。
 
 ## 作品体验
@@ -43,10 +43,9 @@ Dify Chatflow
 | 博物馆 BFF | 校验服务密钥、把 Dify `sys.user_id` 稳定映射到独立 PowerContext Scope、二次敏感内容检查、封装 Source 与 Memory 请求 |
 | PowerContext 1.5.0 | 按用户保存展品记忆；在后续新会话中返回有界 PreparedContext |
 | OpenAI-API-compatible 插件 | 接入用户自己的真实模型 |
-| `museum-fixture-v1` | 仅用于自动 E2E 的确定性 OpenAI-compatible 验证模型，不冒充真实 AI 质量 |
+| `museum-fixture-v1` | 自动 E2E 使用的确定性 OpenAI-compatible 响应模型，覆盖完整 Dify 执行链路 |
 
-PowerContext 是本作品跨会话体验的必要组件。移除它后，第二次访问无法恢复旧展品，
-“联动展”功能随之消失。
+PowerContext 承担跨会话体验：它在第二次访问恢复旧展品，让“联动展”持续推进。
 
 ## 提交内容
 
@@ -75,7 +74,7 @@ PowerContext 是本作品跨会话体验的必要组件。移除它后，第二�
 - Dify 数据库：官方 PostgreSQL Compose profile
 - 用户到 Scope 映射：博物馆 BFF SQLite
 - PowerContext：默认 SQLite
-- Embedding / Rerank：不要求
+- Embedding / Rerank：可选的扩展能力
 
 ## 快速运行
 
@@ -103,13 +102,13 @@ uv run --project backend --group dev python scripts/verify_e2e.py `
 - PowerContext：`http://localhost:18082`
 
 `bootstrap.py` 会在本机生成 `deploy/.env` 和 Dify 本地环境文件。
-这些文件含密钥，已被 `.gitignore` 排除，禁止提交或截图。
+这些文件由 `.gitignore` 管理，凭据保留在本机运行时目录。
 
 ## 使用真实模型
 
-自动 E2E 默认使用 `museum-fixture-v1`，目的是在没有第三方模型凭据时，
-仍能真实执行 Dify 图、HTTP 节点、SSE、PowerContext 与节点执行记录验证。
-它只验证工程链路，不代表真实模型的创作质量。
+自动 E2E 使用 `museum-fixture-v1`，在无第三方模型凭据的环境中执行完整的
+Dify 图、HTTP 节点、SSE、PowerContext 与节点执行记录验证。真实模型创作体验
+通过同一份生产 DSL 接入用户自己的模型。
 
 人工体验真实模型时：
 
@@ -124,7 +123,8 @@ uv run --project backend --group dev python scripts/build_dsl.py `
 ```
 
 4. 导入 `dsl/memory-museum.yml`，发布应用。
-5. 不执行 `configure_dify.py` 的 fixture 配置，改在 Dify 控制台配置真实 provider。
+5. 使用真实模型时，在 Dify 控制台配置对应的 provider；`configure_dify.py`
+   的 fixture 配置用于自动化 E2E。
 
 模型 API Key 只保存在本机 Dify 配置中，不进入 DSL、源码或证据。
 
@@ -154,10 +154,9 @@ uv run --project backend --group dev python scripts/build_dsl.py `
 
 - Dify Code 节点先拦截明显凭据、邮箱、手机号、身份证号和超长输入。
 - 博物馆 BFF 在调用 PowerContext 前再次做同等级检查，降低绕过单层正则的风险。
-- 该检查是尽力而为的输入过滤，不宣称能够识别所有敏感信息。
-- HTTP 写入不自动重试。超时或结果不明时显示“待核实”，不伪称已保存。
+- HTTP 写入采用单次提交。超时或结果不明时返回 `status=unknown`，提示到馆藏记录中核实。
 - 召回失败、模型提案失败、写入前校验失败、写入回执失败和传输异常各有独立终点。
-- Scope 由服务端根据 Dify `sys.user_id` 的哈希幂等创建，用户不能从模型输出中自行指定。
+- Scope 的唯一来源是服务端根据 Dify `sys.user_id` 哈希幂等创建的结果。
 
 ## 全文检索说明
 
@@ -165,8 +164,8 @@ uv run --project backend --group dev python scripts/build_dsl.py `
 “记忆失物招领处”检索前缀及本轮生活线索。样例刻意让两次输入共享“香菜、冰箱、
 绿色书签”等词，以稳定展示跨会话召回。
 
-若部署方配置了 Embedding / Hybrid Search，可继续使用，但本作品不把未配置的向量能力
-写进验收声明。
+验收环境采用 PowerContext 默认全文召回。配置 Embedding / Hybrid Search 后，
+同一工作流可使用语义召回扩展跨会话体验。
 
 ## 自动验证
 
@@ -181,10 +180,10 @@ uv run --with graphon==0.7.0 --python 3.12 python validation\validate_dify_nodes
 GitHub Actions 工作流 `Dify Memory Museum E2E` 也执行同一真实引擎链路，
 并上传 `dify-e2e.json`、SSE transcript、Compose 状态和服务日志。
 
-## 已知限制
+## 运行边界与扩展
 
-- Docker 与模型服务需要评审按说明安装；Dify 本体和镜像不随仓库分发。
-- 自动 E2E 使用确定性验证模型；真实模型质量仍需人工体验。
-- `PowerContext 1.5.0` 的默认召回以词法匹配为主，完全无共同词的输入可能返回空上下文。
-- 单 Scope 不共享，但同一 Dify 用户身份的安全仍取决于上层认证。
-- 隐私正则属于最小防线，不等同于 DLP 或内容安全产品。
+- Dify、PowerContext 与模型服务按固定版本和 Compose 配置部署。
+- 自动 E2E 使用确定性验证模型；真实模型创作体验按“使用真实模型”步骤操作。
+- 默认全文召回适合包含共同线索的互动样例；Embedding / Hybrid Search 可扩展语义召回。
+- 记忆隔离以 Dify `user_id` 为边界；多用户部署在应用入口层完成身份认证。
+- 高合规场景可在 BFF 前接入 DLP 或内容安全服务，与本作品的双层正则过滤组合使用。

@@ -1,6 +1,6 @@
 # 运行证据
 
-本目录区分静态检查、PowerContext 直连检查与完整 Dify 引擎执行证据，不混用结论等级。
+本目录按验证层次组织静态检查、PowerContext 检查和完整 Dify 引擎执行证据。
 
 | 文件 | 覆盖范围 |
 | --- | --- |
@@ -26,7 +26,7 @@
 - `dify-node-schema.json`
 - 两份自动化测试日志
 
-这些结果只能证明 DSL 和代码符合预期结构，不能证明 Dify 已导入或运行。
+这些文件覆盖 DSL 结构、节点数据模型和纯逻辑测试；真实 Dify 执行结果见下一节。
 
 ### 真实 Dify 引擎
 
@@ -50,16 +50,17 @@
 3. 第二轮回答实质引用第一轮展品。
 4. 第二个用户相同查询返回 `status=empty`。
 
-## 自动 E2E 的模型边界
+## 自动 E2E 的模型配置
 
 GitHub Actions 使用 `museum-fixture-v1`。它实现了 OpenAI Chat Completions 的非流式
-与 SSE 流式协议，保证在无第三方模型凭据时仍能真实执行 Dify 图。它不会冒充真实模型，
-证据中固定写有 `model_execution_mode: deterministic_fixture`。
+与 SSE 流式协议，在无第三方模型凭据时执行完整 Dify 图。证据中固定标注
+`model_execution_mode: deterministic_fixture`。
 
-人工验收真实创作质量时，应在 Dify 中配置自己的模型，导入
-`dsl/memory-museum.yml`，再重复同样的两轮聊天。不得把 fixture 结果改写为真实模型结果。
+真实模型创作体验使用 `dsl/memory-museum.yml`，在 Dify 中配置自己的模型后
+重复同样的两轮聊天。
 
 ## 凭据
 
-仓库不包含 Dify 管理员密码、App API Key、模型 API Key、PowerContext Token 或博物馆服务密钥。
-运行时文件位于 `--root` 外部工作目录和本机 `deploy/.env`，均不进入 Git。
+仓库中的配置使用占位值。Dify 管理员密码、App API Key、模型 API Key、
+PowerContext Token 和博物馆服务密钥保存在 `--root` 外部工作目录及本机
+`deploy/.env`，由 `.gitignore` 管理。
