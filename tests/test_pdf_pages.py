@@ -159,6 +159,12 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
                     "Consolidated Statement of Income",
                     "Consolidated Statement of Cash Flows",
                     "Notes to Financial Statements: income and cash flow disclosure, earnings and operations.",
+                    "Our products are sold in more than 200 countries and geographic regions.",
+                    "Inventories are valued using the LIFO method.",
+                    "Income Taxes: The effective tax rate reconciles to the statutory rate.",
+                    "Research and development and depreciation and amortization expense are disclosed together.",
+                    "Current assets were 200 million and current liabilities were 100 million.",
+                    "Accounts receivable were 50 million and net revenue was 500 million.",
                 ]),
             )
         )
@@ -183,6 +189,14 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
             )
             competing = project_source_for_transport(registry, await registry.resolve(competing_page))
             await runtime.ingestion.submit(SubmitSourceObservation(scope_id=scope.scope_id, observation=competing))
+            johnson_page = PDFPageInput(
+                document_id="JOHNSON_JOHNSON_2025_10K",
+                document_sha256="c" * 64,
+                page_number=1,
+                text="Material litigation and legal proceedings are disclosed by Johnson & Johnson.",
+            )
+            johnson = project_source_for_transport(registry, await registry.resolve(johnson_page))
+            await runtime.ingestion.submit(SubmitSourceObservation(scope_id=scope.scope_id, observation=johnson))
             private_page = PDFPageInput(
                 document_id="private", document_sha256="a" * 64, page_number=1, text="secret scope unique phrase"
             )
@@ -196,12 +210,16 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
             for question, expected in [
                 ("What was ACME capex in 2025?", 1),
                 ("How much revenue did ACME earn?", 2),
-                ("What lawsuits are pending?", 3),
+                ("What lawsuits are pending at ACME?", 3),
             ]:
                 citations = await search_pdf_pages(memory, question, limit=1)
                 assert len(citations) == 1
                 entry = (await memory.get(GetMemoryEntryRequest(citation=citations[0]))).entry
-                assert entry.sources[0].source_id == observations[expected - 1].name
+                assert entry.sources[0].source_id == observations[expected - 1].name, question
+            johnson_citations = await search_pdf_pages(memory, "What litigation does Johnson & Johnson face?", limit=1)
+            assert len(johnson_citations) == 1
+            johnson_entry = (await memory.get(GetMemoryEntryRequest(citation=johnson_citations[0]))).entry
+            assert johnson_entry.sources[0].source_id == johnson.name
             citations = await search_pdf_pages(memory, "capital expenditures capex spending", limit=20)
             locations = [
                 (await memory.get(GetMemoryEntryRequest(citation=c))).entry.sources[0].source_id for c in citations
@@ -215,6 +233,21 @@ def test_retrieval_uses_real_memory_distinct_pages_and_scope_after_restart(tmp_p
                 (await memory.get(GetMemoryEntryRequest(citation=citation))).entry.sources[0].source_id
                 for citation in combined
             } == {observations[3].name, observations[4].name}
+            for question, expected in [
+                ("In which geographic regions does ACME operate?", 7),
+                ("How does ACME value its inventories?", 8),
+                ("What income tax rate applies?", 9),
+                ("What were ACME R&D and D&A expenses?", 10),
+            ]:
+                citations = await search_pdf_pages(memory, question, limit=1)
+                assert len(citations) == 1
+                entry = (await memory.get(GetMemoryEntryRequest(citation=citations[0]))).entry
+                assert entry.sources[0].source_id == observations[expected - 1].name
+            quick_ratio = await search_pdf_pages(memory, "What is ACME's quick ratio?", limit=2)
+            assert {
+                (await memory.get(GetMemoryEntryRequest(citation=citation))).entry.sources[0].source_id
+                for citation in quick_ratio
+            } == {observations[10].name, observations[11].name}
             assert await search_pdf_pages(memory, "secret scope unique phrase") == ()
             assert await search_pdf_pages(memory, "capital", limit=0) == ()
             assert await search_pdf_pages(memory, "   ") == ()

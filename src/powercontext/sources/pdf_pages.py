@@ -22,6 +22,8 @@ import json
 import math
 import re
 from collections import Counter
+from dataclasses import dataclass
+from itertools import combinations
 from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field, field_validator, model_validator
@@ -72,7 +74,7 @@ def parse_pdf_document(value: PDFDocumentInput) -> tuple[PDFPageInput, ...]:
         reader = PdfReader(io.BytesIO(value.content), strict=True)
         if reader.is_encrypted and not reader.decrypt(""):
             raise ValueError("PDF requires a non-empty password")  # noqa: TRY003, TRY301
-        return tuple(
+        pages = tuple(
             PDFPageInput(
                 document_id=value.document_id,
                 document_sha256=digest,
@@ -84,6 +86,9 @@ def parse_pdf_document(value: PDFDocumentInput) -> tuple[PDFPageInput, ...]:
     except Exception as error:
         # Normalize parser/codec failures at the document boundary; never return partial pages.
         raise ValueError("Unable to completely parse PDF document") from error  # noqa: TRY003
+    if not pages:
+        raise ValueError("PDF must contain at least one page")  # noqa: TRY003
+    return pages
 
 
 def _identity(page: PDFPageInput) -> str:
@@ -138,47 +143,154 @@ PDF_PAGE_SOURCE_DEFINITION: AdapterSourceDefinition[PDFPageInput, PDFPageSource,
     AdapterSourceDefinition(PDFPageAdapter(), projections=(PDFTextEvidenceProjection(),))
 )
 
+_ACRONYM_PATTERN = re.compile(r"\b(?:r&d|d&a|sg&a|sga)\b", re.IGNORECASE)
+_ACRONYMS = {
+    "r&d": "research development",
+    "d&a": "depreciation amortization",
+    "sg&a": "selling general administrative",
+    "sga": "selling general administrative",
+}
+
 # General financial vocabulary, independent of any report, question set, or evidence labels.
 _FINANCIAL_TERMS = (
     frozenset({"geographies", "geography", "geographic", "geographical", "regions", "countries", "international"}),
-    frozenset({"litigation", "legal", "lawsuit", "lawsuits", "battles", "proceedings", "contingencies"}),
-    frozenset({"capex", "capital", "expenditures", "spending"}),
+    frozenset({"litigation", "legal", "lawsuit", "lawsuits", "battles", "proceedings", "disputes", "claims"}),
+    frozenset({"capex", "capital", "expenditures", "spending", "investment", "investments"}),
     frozenset({"ebitda", "operating", "income", "depreciation", "amortization"}),
     frozenset({"sales", "revenue", "revenues", "turnover"}),
-    frozenset({"pnl", "earnings", "income", "profit", "loss"}),
-    frozenset({"restructuring", "reorganization", "charges", "costs"}),
+    frozenset({"pnl", "earnings", "income", "profit", "loss", "margin"}),
+    frozenset({"restructuring", "reorganization", "charges", "costs", "expenses"}),
+    frozenset({"inventory", "inventories", "stock", "lifo", "fifo"}),
+    frozenset({"receivables", "receivable", "accounts", "notes"}),
+    frozenset({"debt", "borrowings", "loans", "notes", "credit", "liquidity"}),
+    frozenset({"tax", "taxes", "taxation", "deferred"}),
+    frozenset({"pension", "retirement", "postretirement", "benefit", "benefits"}),
+    frozenset({"lease", "leases", "rent", "rental"}),
+    frozenset({"acquisition", "acquisitions", "divestiture", "divestitures", "merger", "mergers"}),
+    frozenset({"segment", "segments", "division", "divisions"}),
+    frozenset({"assets", "liabilities", "equity", "capitalization"}),
+    frozenset({"dividend", "dividends", "repurchase", "repurchases", "buyback", "buybacks"}),
+    frozenset({"risk", "risks", "uncertainty", "uncertainties", "exposure", "exposures"}),
 )
+
+
+@dataclass(frozen=True, slots=True)
+class _SectionRule:
+    """A question trigger, independent Memory probes, and a page-title prior."""
+
+    trigger: str
+    queries: tuple[str, ...]
+    heading: str
+    boost: float = 12.0
+
+
+@dataclass(frozen=True, slots=True)
+class _SearchView:
+    query: str
+    weight: float
+
+
 # A question can name several sections needed for one calculation. Probe each
 # independently so lexical admission on the full question cannot hide a statement.
 _REPORT_SECTIONS = (
-    (
+    _SectionRule(
         r"income statements?|statements? of (?:income|operations|earnings)|profit and loss|p\s*&\s*l",
         ("statement income", "statements operations", "statement earnings"),
         r"(?:(?:consolidated|combined)\s+)?(?:statements? of (?:income|operations|earnings)|income statements?)",
     ),
-    (
+    _SectionRule(
         r"cash[ -]flow statements?|statements? of cash flows?",
         ("statement cash flows", "statements cash flows"),
         r"(?:(?:consolidated|combined)\s+)?(?:statements? of cash flows?|cash flow statements?)",
     ),
-    (
+    _SectionRule(
         r"balance sheets?|statements? of financial position",
         ("balance sheets", "statement financial position"),
         r"(?:(?:consolidated|combined)\s+)?(?:balance sheets?|statements? of financial position)",
     ),
-    (
+    _SectionRule(
         r"legal (?:battles|proceedings|disputes)|litigation|lawsuits?",
         ("legal proceedings", "litigation contingencies"),
         r"(?:item\s+3\.?\s+)?(?:legal proceedings|litigation|legal contingencies)",
     ),
+    _SectionRule(
+        r"geograph\w*|countries|regions|primarily operates?|where .{0,20}\boperates?\b",
+        ("geographic regions countries markets", "our divisions reportable segments"),
+        r"(?:our )?(?:business|geograph\w*|divisions|reportable segments)",
+        9.0,
+    ),
+    _SectionRule(
+        r"segments?|divisions?",
+        ("reportable segments divisions",),
+        r"(?:our )?(?:divisions|reportable segments|segment information)",
+        10.0,
+    ),
+    _SectionRule(
+        r"restructuring|reorganization|productivity plan|severance",
+        ("restructuring productivity severance",),
+        r"(?:restructuring|productivity|severance)",
+        8.0,
+    ),
+    _SectionRule(
+        r"inventor(?:y|ies)|\blifo\b|\bfifo\b",
+        ("inventory lifo fifo",),
+        r"(?:inventor(?:y|ies)|inventory valuation)",
+        7.0,
+    ),
+    _SectionRule(
+        r"receivables?|accounts and notes receivable",
+        ("accounts notes receivable",),
+        r"(?:receivables?|accounts and notes receivable)",
+        7.0,
+    ),
+    _SectionRule(
+        r"property,? plant (?:and|&) equipment|ppe|fixed assets?",
+        ("property plant equipment",),
+        r"(?:property,? plant (?:and|&) equipment|fixed assets?)",
+        8.0,
+    ),
+    _SectionRule(
+        r"debt|borrowings?|liquidity|credit facilities?|long-term notes?",
+        ("debt borrowings liquidity credit",),
+        r"(?:debt|borrowings?|liquidity|credit facilities?)",
+        7.0,
+    ),
+    _SectionRule(
+        r"income taxes?|tax rate|effective tax",
+        ("income taxes effective tax",),
+        r"(?:income taxes?|taxes on income)",
+        7.0,
+    ),
+    _SectionRule(
+        r"pension|retirement benefits?|postretirement",
+        ("pension retirement benefits",),
+        r"(?:pension|retirement benefits?|postretirement)",
+        7.0,
+    ),
+    _SectionRule(
+        r"leases?|rent expense",
+        ("leases rent",),
+        r"(?:leases?|lease cost)",
+        6.0,
+    ),
+    _SectionRule(
+        r"acquisitions?|divestitures?|mergers?",
+        ("acquisitions divestitures",),
+        r"(?:acquisitions?|divestitures?|business combinations)",
+        7.0,
+    ),
+    _SectionRule(
+        r"shareholders.? equity|stockholders.? equity|dividends?|repurchases?|buybacks?",
+        ("shareholders equity dividends repurchases",),
+        r"(?:shareholders.? equity|stockholders.? equity|dividends|share repurchases?)",
+        7.0,
+    ),
 )
 
 
-def _requested_sections(question: str) -> tuple[tuple[tuple[str, ...], str], ...]:
+def _requested_sections(question: str) -> tuple[_SectionRule, ...]:
     return tuple(
-        (queries, heading)
-        for trigger, queries, heading in _REPORT_SECTIONS
-        if re.search(rf"\b(?:{trigger})\b", question, re.IGNORECASE)
+        section for section in _REPORT_SECTIONS if re.search(rf"\b(?:{section.trigger})\b", question, re.IGNORECASE)
     )
 
 
@@ -195,6 +307,25 @@ _CONCEPT_PROBES = (
     (r"dividends?|share repurchases?|buybacks?", ("dividends paid", "share repurchases")),
     (r"work(?:ing)? capital|current (?:assets|liabilities)|liquidity", ("current assets", "current liabilities")),
     (r"debt|borrowings|leverage", ("long term debt", "short term borrowings")),
+    (r"quick ratio|acid[- ]test", ("cash short term investments", "accounts receivable", "current liabilities")),
+    (r"current ratio", ("current assets", "current liabilities")),
+    (r"inventory turnover|days inventory|inventory days", ("inventory", "cost sales", "cost revenue")),
+    (
+        r"receivable turnover|days sales outstanding|\bdso\b",
+        ("accounts receivable", "net revenue", "sales"),
+    ),
+    (r"asset turnover", ("total assets", "net revenue", "sales")),
+    (
+        r"return on (?:assets|equity|invested capital)|\broa\b|\broe\b|\broic\b",
+        ("net income", "total assets", "equity"),
+    ),
+    (r"interest coverage", ("interest expense", "operating income")),
+    (r"payables?|days payable", ("accounts payable", "cost sales")),
+    (r"employees?|headcount|workforce", ("employees workforce", "number employees")),
+    (r"cyclical|seasonal", ("seasonal cyclical", "economic conditions")),
+    (r"customer concentration|major customers?", ("largest customers", "percentage net revenue")),
+    (r"product categor\w*|brands?", ("product categories", "brand portfolio")),
+    (r"climate|environmental", ("climate environmental", "emissions sustainability")),
 )
 
 
@@ -263,6 +394,11 @@ _STOP_WORDS = frozenset([
     "use",
     "only",
     "calculate",
+    "rely",
+    "relying",
+    "define",
+    "defined",
+    "fiscal",
 ])
 
 
@@ -270,59 +406,291 @@ def _terms(text: str) -> list[str]:
     return re.findall(r"[a-z]+|\d+", text.lower())
 
 
-def _search_queries(question: str, section_queries: tuple[str, ...]) -> tuple[list[str], tuple[str, ...]]:
-    terms = list(dict.fromkeys(t for t in _terms(question) if t not in _STOP_WORDS))
-    # Fiscal-year spelling is query syntax, not a different year in the report.
-    terms = [t for t in terms if t != "fy"]
+def _question_terms(question: str) -> list[str]:
+    normalized = _ACRONYM_PATTERN.sub(lambda match: _ACRONYMS[match.group(0).lower()], question.lower())
+    return list(dict.fromkeys(term for term in _terms(normalized) if term not in _STOP_WORDS and term != "fy"))
+
+
+def _is_year(term: str) -> bool:
+    return re.fullmatch(r"(?:19|20)\d{2}", term) is not None
+
+
+def _term_variants(term: str) -> tuple[str, ...]:
+    """Return a small morphological expansion without a model or lexicon dependency."""
+    if not term.isalpha() or len(term) < 4:
+        return ()
+    variants: set[str] = set()
+    if term.endswith("ies") and len(term) > 5:
+        variants.add(term[:-3] + "y")
+    elif term.endswith("ing") and len(term) > 5:
+        root = term[:-3]
+        variants.update({root, root + "e", root + "ion", root + "ions"})
+        if len(root) > 2 and root[-1] == root[-2]:
+            variants.add(root[:-1])
+    elif term.endswith("ed") and len(term) > 4:
+        root = term[:-2]
+        variants.update({root, root + "ing", root + "ion", root + "ions"})
+        if len(root) > 2 and root[-1] == root[-2]:
+            variants.add(root[:-1])
+    elif term.endswith("es") and len(term) > 4:
+        variants.add(term[:-2])
+        variants.add(term[:-1])
+    elif term.endswith("s") and not term.endswith("ss") and len(term) > 3:
+        variants.add(term[:-1])
+    else:
+        variants.update({term + "s", term + "ed", term + "ing"})
+    return tuple(sorted(variant for variant in variants if len(variant) >= 3))
+
+
+def _merge_views(views: list[_SearchView]) -> tuple[_SearchView, ...]:
+    by_query: dict[str, _SearchView] = {}
+    for view in views:
+        query = " ".join(view.query.split())
+        if not query:
+            continue
+        previous = by_query.get(query)
+        if previous is None or view.weight > previous.weight:
+            by_query[query] = _SearchView(query=query, weight=view.weight)
+    return tuple(by_query.values())
+
+
+def _search_queries(question: str, sections: tuple[_SectionRule, ...]) -> tuple[list[str], tuple[_SearchView, ...]]:
+    terms = _question_terms(question)
     if not terms:
         return [], ()
-    expansions = [" ".join(sorted(group)) for group in _FINANCIAL_TERMS if group.intersection(terms)]
+    groups = [group for group in _FINANCIAL_TERMS if group.intersection(terms)]
+    ranked_terms = sorted(
+        terms,
+        key=lambda term: (
+            any(term in group for group in groups),
+            len(term),
+            term,
+        ),
+        reverse=True,
+    )
+    focus_terms = [term for term in ranked_terms if not _is_year(term) and len(term) >= 4]
+    high_signal = focus_terms[:8]
     concepts = [
         query
         for trigger, probes in _CONCEPT_PROBES
         if re.search(rf"\b(?:{trigger})\b", question, re.IGNORECASE)
         for query in probes
     ]
-    queries = [" ".join(terms), *section_queries, *concepts, *expansions]
-    return terms, tuple(dict.fromkeys(queries))
+    views = [_SearchView(query=" ".join(terms), weight=1.6)]
+    if high_signal and high_signal != terms:
+        views.append(_SearchView(query=" ".join(high_signal), weight=1.1))
+    views.extend(_SearchView(query=query, weight=1.0) for section in sections for query in section.queries)
+    views.extend(_SearchView(query=query, weight=0.75) for query in concepts[:3])
+    views.extend(_SearchView(query=" ".join(sorted(group)), weight=0.55) for group in groups[:3])
+    views.extend(_SearchView(query=" ".join(pair), weight=0.4) for pair in combinations(focus_terms[:3], 2))
+    views.extend(_SearchView(query=term, weight=0.25) for term in focus_terms[:2])
+    return terms, _merge_views(views)
 
 
-def _rank_pages(hits: list[MemoryHit], terms: list[str], headings: tuple[str, ...]) -> list[MemoryHit]:
-    """BM25 over Memory-returned text, retaining original exact hit identities."""
+def _hit_key(hit: MemoryHit) -> tuple[str, str, int, str, str]:
+    return (
+        hit.memory_ref.family,
+        hit.memory_ref.artifact_id,
+        hit.memory_ref.revision,
+        hit.entry_id,
+        hit.entry_version_id,
+    )
+
+
+def _document_of(hit: MemoryHit) -> str:
+    return hit.text.partition("\n")[0].strip()
+
+
+def _candidate_documents(hits: list[MemoryHit]) -> set[str]:
+    documents = {_document_of(hit) for hit in hits}
+    identified = {
+        document
+        for document in documents
+        if "_" in document or re.search(r"(?:19|20)\d{2}|\b(?:10|8)[kq]\b", document, re.IGNORECASE)
+    }
+    return identified or documents
+
+
+def _document_name_parts(document_id: str) -> list[str]:
+    parts = re.findall(r"[a-z0-9]+", document_id.casefold())
+    return [
+        part
+        for part in parts
+        if part not in {"annual", "company", "corp", "corporation", "earnings", "group", "inc", "report", "k", "q"}
+        and not _is_year(part)
+        and not re.fullmatch(r"(?:10|8)[kq]", part)
+    ]
+
+
+def _document_aliases(document_id: str) -> tuple[str, ...]:
+    meaningful = _document_name_parts(document_id)
+    if not meaningful:
+        return ()
+    joined = "".join(meaningful)
+    aliases = {joined}
+    aliases.update(part for part in meaningful if len(part) >= 3)
+    return tuple(sorted(aliases, key=lambda alias: (-len(alias), alias)))
+
+
+def _document_search_term(document_id: str) -> str | None:
+    """Return one document-name token that survives FTS tokenization."""
+    parts = _document_name_parts(document_id)
+    if not parts:
+        return None
+    return max(parts, key=lambda part: (len(part), part))
+
+
+def _target_document(question: str, hits: list[MemoryHit]) -> str | None:
+    compact = re.sub(r"[^a-z0-9]", "", question.casefold())
+    matched = []
+    for document in sorted(_candidate_documents(hits)):
+        aliases = _document_aliases(document)
+        if any(len(alias) >= 2 and alias in compact for alias in aliases):
+            matched.append((max((len(alias) for alias in aliases), default=0), document))
+    if not matched:
+        return None
+    matched.sort(reverse=True)
+    return matched[0][1] if len(matched) == 1 or matched[0][0] > matched[1][0] else None
+
+
+def _dominant_document(hits: list[MemoryHit], agreement: dict[tuple[str, str, int, str, str], float]) -> str | None:
+    mass: dict[str, float] = {}
+    candidates = _candidate_documents(hits)
+    for hit in hits:
+        document = _document_of(hit)
+        if document not in candidates:
+            continue
+        mass[document] = mass.get(document, 0.0) + agreement.get(_hit_key(hit), 0.0)
+    ranked = sorted(mass.items(), key=lambda item: (-item[1], item[0]))
+    if len(ranked) == 1:
+        return ranked[0][0]
+    return ranked[0][0] if len(ranked) > 1 and ranked[0][1] >= 1.75 * ranked[1][1] else None
+
+
+def _looks_like_table_of_contents(body: str) -> bool:
+    lines = [line.strip() for line in body.splitlines() if line.strip()][:100]
+    section_entries = sum(1 for line in lines if re.match(r"^(?:item|note)\s+\d+(?:[a-z])?\b", line, re.IGNORECASE))
+    return section_entries >= 4
+
+
+def _heading_boost(body: str, sections: tuple[_SectionRule, ...]) -> float:
+    # Financial reports frequently place Item 3 after a property table. Scan
+    # enough of the page to see a section start without treating body prose as a title.
+    lines = [line.strip() for line in body.splitlines() if line.strip()][:64]
+    matched = []
+    for section in sections:
+        heading = re.compile(
+            rf"(?:{section.heading})(?:\s*[.:])?(?:\s*\(continued\))?(?:\s*\(in [^)]*\))?",
+            re.IGNORECASE,
+        )
+        if any(heading.fullmatch(line) for line in lines):
+            matched.append(section.boost)
+    if not matched:
+        return 0.0
+    return max(matched) + 0.25 * (sum(matched) - max(matched))
+
+
+def _ranking_weights(terms: list[str]) -> dict[str, float]:
+    weights = {term: 0.3 if _is_year(term) else 1.0 for term in terms}
+    for term in terms:
+        for variant in _term_variants(term):
+            weights.setdefault(variant, 0.35)
+    for group in _FINANCIAL_TERMS:
+        if group.intersection(terms):
+            for term in sorted(group):
+                weights.setdefault(term, 0.45)
+    return weights
+
+
+def _page_rank_score(
+    hit: MemoryHit,
+    count: Counter[str],
+    terms: list[str],
+    sections: tuple[_SectionRule, ...],
+    agreement: dict[tuple[str, str, int, str, str], float],
+    weights: dict[str, float],
+    lengths: list[int],
+    average_length: float,
+    frequencies: Counter[str],
+    hit_count: int,
+    index: int,
+    target_document: str | None,
+) -> float:
+    score = 0.0
+    for term, weight in weights.items():
+        frequency = count[term]
+        if frequency:
+            inverse = math.log(1 + (hit_count - frequencies[term] + 0.5) / (frequencies[term] + 0.5))
+            score += (
+                weight * inverse * frequency * 2.2 / (frequency + 1.2 * (0.25 + 0.75 * lengths[index] / average_length))
+            )
+
+    label, _, body = hit.text.partition("\n")
+    query_terms = frozenset(terms)
+    label_matches = sorted(set(_terms(label)).intersection(query_terms))
+    score += math.fsum(0.75 if term.isdigit() else 3.0 for term in label_matches)
+    score += 6.0 * agreement.get(_hit_key(hit), 0.0)
+    score += _heading_boost(body, sections)
+    score += 0.8 * len(set(count).intersection(query_terms))
+    title_window = set(_terms("\n".join(body.splitlines()[:12])))
+    score += 0.4 * len(title_window.intersection(query_terms))
+    if _looks_like_table_of_contents(body):
+        score -= 8.0
+    if target_document is not None and _document_of(hit) == target_document:
+        score += 10.0
+    return score
+
+
+def _rank_pages(
+    hits: list[MemoryHit],
+    terms: list[str],
+    sections: tuple[_SectionRule, ...],
+    agreement: dict[tuple[str, str, int, str, str], float],
+    target_document: str | None,
+) -> list[MemoryHit]:
+    """BM25 plus section, document, morphology, and multi-probe agreement."""
     counts = [Counter(_terms(hit.text)) for hit in hits]
     if not counts:
         return []
     lengths = [sum(count.values()) for count in counts]
     average = sum(lengths) / len(lengths) or 1
     frequencies = Counter(term for count in counts for term in count)
-    weights = dict.fromkeys(terms, 1.0)
-    for group in _FINANCIAL_TERMS:
-        if group.intersection(terms):
-            for term in group:
-                weights.setdefault(term, 0.4)
-    scores = []
-    for index, count in enumerate(counts):
-        score = 0.0
-        for term, weight in weights.items():
-            frequency = count[term]
-            if frequency:
-                inverse = math.log(1 + (len(counts) - frequencies[term] + 0.5) / (frequencies[term] + 0.5))
-                score += (
-                    weight * inverse * frequency * 2.2 / (frequency + 1.2 * (0.25 + 0.75 * lengths[index] / average))
-                )
-        # Document labels carry company/year scope as well as searchable body text.
-        label, _, body = hits[index].text.partition("\n")
-        label_terms = set(_terms(label))
-        # A section title is stronger evidence of the requested source than a
-        # passing mention of that section in notes, certifications or a TOC.
-        opening = "\n".join(body.splitlines()[:6])
-        if any(re.search(rf"^\s*(?:{heading})[ \t]*[.:]?[ \t]*$", opening, re.I | re.M) for heading in headings):
-            score += 12
-        # Company tokens in the document ID distinguish identically headed
-        # statements from different issuers. Year matches alone are weaker.
-        score += math.fsum(0.75 if term.isdigit() else 3.0 for term in label_terms.intersection(terms))
-        scores.append(score)
+    weights = _ranking_weights(terms)
+    scores = [
+        _page_rank_score(
+            hit,
+            count,
+            terms,
+            sections,
+            agreement,
+            weights,
+            lengths,
+            average,
+            frequencies,
+            len(counts),
+            index,
+            target_document,
+        )
+        for index, (hit, count) in enumerate(zip(hits, counts, strict=True))
+    ]
     return [hits[index] for index in sorted(range(len(hits)), key=lambda i: (-scores[i], i))]
+
+
+async def _collect_views(
+    memory: ScopedMemoryApplication,
+    search_views: tuple[_SearchView, ...],
+    candidate_limit: int,
+    hits: dict[tuple[str, str, int, str, str], MemoryHit],
+    agreement: dict[tuple[str, str, int, str, str], float],
+) -> None:
+    from powercontext.builtin.runtime import SearchMemoryRequest
+
+    for view in search_views:
+        result = await memory.search(SearchMemoryRequest(query=view.query, mode="fts", limit=candidate_limit))
+        for rank, hit in enumerate(result.hits):
+            key = _hit_key(hit)
+            hits.setdefault(key, hit)
+            agreement[key] = agreement.get(key, 0.0) + view.weight / (10 + rank)
 
 
 async def search_pdf_pages(
@@ -330,30 +698,42 @@ async def search_pdf_pages(
 ) -> tuple[MemoryCitation, ...]:
     """Retrieve distinct page citations exclusively from the caller's scoped Memory."""
     from powercontext.builtin.artifacts.memory.models import MemoryCitation
-    from powercontext.builtin.runtime import GetMemoryEntryRequest, SearchMemoryRequest
+    from powercontext.builtin.runtime import GetMemoryEntryRequest
 
     if isinstance(limit, bool) or not isinstance(limit, int) or limit < 0:
         raise ValueError("PDF search limit must be a non-negative integer")  # noqa: TRY003
     if limit == 0 or not question.strip():
         return ()
     sections = _requested_sections(question)
-    terms, queries = _search_queries(question, tuple(query for queries, _ in sections for query in queries))
-    headings = tuple(heading for _, heading in sections)
+    terms, views = _search_queries(question, sections)
     hits: dict[tuple[str, str, int, str, str], MemoryHit] = {}
-    for query in queries:
-        result = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=max(100, limit * 5)))
-        for hit in result.hits:
-            key = (
-                hit.memory_ref.family,
-                hit.memory_ref.artifact_id,
-                hit.memory_ref.revision,
-                hit.entry_id,
-                hit.entry_version_id,
+    agreement: dict[tuple[str, str, int, str, str], float] = {}
+    candidate_limit = min(320, max(160, limit * 12))
+
+    await _collect_views(memory, views, candidate_limit, hits, agreement)
+    if not hits:
+        return ()
+    hit_list = list(hits.values())
+    explicit_target = _target_document(question, hit_list)
+    target_document = explicit_target or _dominant_document(hit_list, agreement)
+    if target_document is not None and len({_document_of(hit) for hit in hit_list}) > 1:
+        document_term = _document_search_term(target_document)
+        if document_term is not None:
+            focus_terms = [term for term in terms if not _is_year(term)][:4]
+            scoped = [_SearchView(query=f"{document_term} {term}", weight=0.8) for term in focus_terms]
+            scoped.extend(
+                _SearchView(query=f"{document_term} {query}", weight=0.9)
+                for section in sections
+                for query in section.queries
             )
-            hits.setdefault(key, hit)
+            await _collect_views(memory, _merge_views(scoped), candidate_limit, hits, agreement)
+            hit_list = list(hits.values())
+    if explicit_target is not None:
+        hit_list = [hit for hit in hit_list if _document_of(hit) == explicit_target]
+
     citations: list[MemoryCitation] = []
     seen: set[str] = set()
-    for hit in _rank_pages(list(hits.values()), terms, headings):
+    for hit in _rank_pages(hit_list, terms, sections, agreement, target_document):
         citation = MemoryCitation(
             memory_ref=hit.memory_ref, entry_id=hit.entry_id, entry_version_id=hit.entry_version_id
         )
