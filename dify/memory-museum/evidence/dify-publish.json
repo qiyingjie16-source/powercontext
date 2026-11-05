@@ -1,0 +1,11 @@
+{
+  "kind": "real_dify_local_publish",
+  "created_at": "2026-11-05T10:36:44.211326+00:00",
+  "app_id": "645058e4-bc3b-44e5-a745-e20f5b816de1",
+  "provider": "langgenius/openai_api_compatible/openai_api_compatible",
+  "plugin": "langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4",
+  "model": "museum-fixture-v1",
+  "model_execution_mode": "deterministic_fixture",
+  "published": true,
+  "credentials_included": false
+}

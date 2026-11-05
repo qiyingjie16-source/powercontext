@@ -1,0 +1,1341 @@
+worker-1            | Running migrations
+worker-1            | Preparing database migration...
+worker-1            | Database migration skipped
+worker-1            | Starting Celery worker with queues: api_token,dataset,dataset_summary,priority_dataset,priority_pipeline,pipeline,mail,ops_trace,app_deletion,app_rbac,plugin,workflow_storage,conversation,workflow,schedule_poller,schedule_executor,triggered_workflow_dispatcher,trigger_refresh_publisher,trigger_refresh_executor,retention,workflow_based_app_execution
+worker-1            | gRPC patched with gevent.
+worker-1            | psycopg2 patched with gevent.
+worker-1            |
+worker-1            |  -------------- celery@06b802719def v5.6.3 (recovery)
+worker-1            | --- ***** -----
+worker-1            | -- ******* ---- Linux-7.0.0-1017-azure-x86_64-with-glibc2.36 2026-11-05 10:36:32
+worker-1            | - *** --- * ---
+worker-1            | - ** ---------- [config]
+worker-1            | - ** ---------- .> app:         app_factory:0x7f283ddf4680
+worker-1            | - ** ---------- .> transport:   redis://:**@redis:6379/1
+worker-1            | - ** ---------- .> results:     redis://:**@redis:6379/1
+worker-1            | - *** --- * --- .> concurrency: 4 (gevent)
+worker-1            | -- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+worker-1            | --- ***** -----
+worker-1            |  -------------- [queues]
+worker-1            |                 .> api_token        exchange=api_token(direct) key=api_token
+worker-1            |                 .> app_deletion     exchange=app_deletion(direct) key=app_deletion
+worker-1            |                 .> app_rbac         exchange=app_rbac(direct) key=app_rbac
+worker-1            |                 .> conversation     exchange=conversation(direct) key=conversation
+worker-1            |                 .> dataset          exchange=dataset(direct) key=dataset
+worker-1            |                 .> dataset_summary  exchange=dataset_summary(direct) key=dataset_summary
+worker-1            |                 .> mail             exchange=mail(direct) key=mail
+worker-1            |                 .> ops_trace        exchange=ops_trace(direct) key=ops_trace
+worker-1            |                 .> pipeline         exchange=pipeline(direct) key=pipeline
+worker-1            |                 .> plugin           exchange=plugin(direct) key=plugin
+worker-1            |                 .> priority_dataset exchange=priority_dataset(direct) key=priority_dataset
+worker-1            |                 .> priority_pipeline exchange=priority_pipeline(direct) key=priority_pipeline
+worker-1            |                 .> retention        exchange=retention(direct) key=retention
+worker-1            |                 .> schedule_executor exchange=schedule_executor(direct) key=schedule_executor
+worker-1            |                 .> schedule_poller  exchange=schedule_poller(direct) key=schedule_poller
+worker-1            |                 .> trigger_refresh_executor exchange=trigger_refresh_executor(direct) key=trigger_refresh_executor
+worker-1            |                 .> trigger_refresh_publisher exchange=trigger_refresh_publisher(direct) key=trigger_refresh_publisher
+worker-1            |                 .> triggered_workflow_dispatcher exchange=triggered_workflow_dispatcher(direct) key=triggered_workflow_dispatcher
+worker-1            |                 .> workflow         exchange=workflow(direct) key=workflow
+worker-1            |                 .> workflow_based_app_execution exchange=workflow_based_app_execution(direct) key=workflow_based_app_execution
+worker-1            |                 .> workflow_storage exchange=workflow_storage(direct) key=workflow_storage
+worker-1            |
+worker-1            | [tasks]
+worker-1            |   . community_telemetry.send_heartbeat
+worker-1            |   . human_input_form_timeout.check_and_resume
+worker-1            |   . resume_agent_app_execution
+worker-1            |   . resume_app_execution
+worker-1            |   . resume_workflow_execution
+worker-1            |   . schedule.check_upgradable_plugin_task.check_upgradable_plugin_task
+worker-1            |   . schedule.clean_oauth_access_tokens_task.clean_oauth_access_tokens_task
+worker-1            |   . schedule.trigger_provider_refresh_task.trigger_provider_refresh
+worker-1            |   . schedule.update_api_token_last_used_task.batch_update_api_token_last_used
+worker-1            |   . schedule.workflow_schedule_task.poll_workflow_schedules
+worker-1            |   . tasks.add_document_to_index_task.add_document_to_index_task
+worker-1            |   . tasks.annotation.add_annotation_to_index_task.add_annotation_to_index_task
+worker-1            |   . tasks.annotation.batch_import_annotations_task.batch_import_annotations_task
+worker-1            |   . tasks.annotation.delete_annotation_index_task.delete_annotation_index_task
+worker-1            |   . tasks.annotation.disable_annotation_reply_task.disable_annotation_reply_task
+worker-1            |   . tasks.annotation.enable_annotation_reply_task.enable_annotation_reply_task
+worker-1            |   . tasks.annotation.update_annotation_to_index_task.update_annotation_to_index_task
+worker-1            |   . tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task
+worker-1            |   . tasks.async_workflow_tasks.execute_workflow_professional
+worker-1            |   . tasks.async_workflow_tasks.execute_workflow_sandbox
+worker-1            |   . tasks.async_workflow_tasks.execute_workflow_team
+worker-1            |   . tasks.batch_clean_document_task.batch_clean_document_task
+worker-1            |   . tasks.batch_create_segment_to_index_task.batch_create_segment_to_index_task
+worker-1            |   . tasks.clean_dataset_task.clean_dataset_task
+worker-1            |   . tasks.clean_document_task.clean_document_task
+worker-1            |   . tasks.clean_notion_document_task.clean_notion_document_task
+worker-1            |   . tasks.collect_agent_resources_task.collect_agent_resources
+worker-1            |   . tasks.deal_dataset_index_update_task.deal_dataset_index_update_task
+worker-1            |   . tasks.deal_dataset_vector_index_task.deal_dataset_vector_index_task
+worker-1            |   . tasks.delete_account_task.delete_account_task
+worker-1            |   . tasks.delete_conversation_task.delete_conversation_related_data
+worker-1            |   . tasks.delete_conversation_task.sweep_deleted_conversations
+worker-1            |   . tasks.delete_segment_from_index_task.delete_segment_from_index_task
+worker-1            |   . tasks.disable_segment_from_index_task.disable_segment_from_index_task
+worker-1            |   . tasks.disable_segments_from_index_task.disable_segments_from_index_task
+worker-1            |   . tasks.document_indexing_sync_task.document_indexing_sync_task
+worker-1            |   . tasks.document_indexing_task.document_indexing_task
+worker-1            |   . tasks.document_indexing_task.normal_document_indexing_task
+worker-1            |   . tasks.document_indexing_task.priority_document_indexing_task
+worker-1            |   . tasks.document_indexing_update_task.document_indexing_update_task
+worker-1            |   . tasks.duplicate_document_indexing_task.duplicate_document_indexing_task
+worker-1            |   . tasks.duplicate_document_indexing_task.normal_duplicate_document_indexing_task
+worker-1            |   . tasks.duplicate_document_indexing_task.priority_duplicate_document_indexing_task
+worker-1            |   . tasks.enable_segments_to_index_task.enable_segments_to_index_task
+worker-1            |   . tasks.generate_summary_index_task.generate_summary_index_task
+worker-1            |   . tasks.initialize_created_app_rbac_access_task.initialize_created_app_rbac_access_task
+worker-1            |   . tasks.initialize_created_app_rbac_access_task.sync_joined_workspace_member_rbac_access_task
+worker-1            |   . tasks.install_default_plugins_task.configure_default_models_task
+worker-1            |   . tasks.install_default_plugins_task.install_default_plugins_task
+worker-1            |   . tasks.mail_account_deletion_task.send_account_deletion_verification_code
+worker-1            |   . tasks.mail_account_deletion_task.send_deletion_success_task
+worker-1            |   . tasks.mail_change_mail_task.send_change_mail_completed_notification_task
+worker-1            |   . tasks.mail_change_mail_task.send_change_mail_task
+worker-1            |   . tasks.mail_email_code_login.send_email_code_login_mail_task
+worker-1            |   . tasks.mail_human_input_delivery_task.dispatch_human_input_email_task
+worker-1            |   . tasks.mail_inner_task.send_inner_email_task
+worker-1            |   . tasks.mail_invite_member_task.send_invite_member_mail_task
+worker-1            |   . tasks.mail_owner_transfer_task.send_new_owner_transfer_notify_email_task
+worker-1            |   . tasks.mail_owner_transfer_task.send_old_owner_transfer_notify_email_task
+worker-1            |   . tasks.mail_owner_transfer_task.send_owner_transfer_confirm_task
+worker-1            |   . tasks.mail_register_task.send_email_register_mail_task
+worker-1            |   . tasks.mail_register_task.send_email_register_mail_task_when_account_exist
+worker-1            |   . tasks.mail_reset_password_task.send_reset_password_mail_task
+worker-1            |   . tasks.mail_reset_password_task.send_reset_password_mail_task_when_account_not_exist
+worker-1            |   . tasks.mail_workflow_comment_task.send_workflow_comment_mention_email_task
+worker-1            |   . tasks.new_agent_beta_task.ensure_new_agent_beta_participation_task
+worker-1            |   . tasks.ops_trace_task.process_trace_tasks
+worker-1            |   . tasks.process_tenant_plugin_autoupgrade_check_task.process_tenant_plugin_autoupgrade_check_task
+worker-1            |   . tasks.rag_pipeline.priority_rag_pipeline_run_task.priority_rag_pipeline_run_task
+worker-1            |   . tasks.rag_pipeline.rag_pipeline_run_task.rag_pipeline_run_task
+worker-1            |   . tasks.recover_document_indexing_task.recover_document_indexing_task
+worker-1            |   . tasks.refresh_billing_vector_space_task.refresh_billing_vector_space_task
+worker-1            |   . tasks.regenerate_summary_index_task.regenerate_summary_index_task
+worker-1            |   . tasks.remove_app_and_related_data_task.remove_app_and_related_data_task
+worker-1            |   . tasks.remove_document_from_index_task.remove_document_from_index_task
+worker-1            |   . tasks.retry_document_indexing_task.retry_document_indexing_task
+worker-1            |   . tasks.sync_website_document_indexing_task.sync_website_document_indexing_task
+worker-1            |   . tasks.trigger_processing_tasks.dispatch_triggered_workflows_async
+worker-1            |   . tasks.trigger_subscription_refresh_tasks.trigger_subscription_refresh
+worker-1            |   . tasks.workflow_execution_tasks.save_workflow_execution_task
+worker-1            |   . tasks.workflow_node_execution_tasks.save_workflow_node_execution_task
+worker-1            |   . tasks.workflow_run_archive_download_tasks.prepare_workflow_run_archive_download_task
+worker-1            |   . tasks.workflow_schedule_tasks.run_schedule_trigger
+worker-1            |
+worker-1            | 2026-11-05 10:36:32.411 INFO [MainThread] [connection.py:22]  - Connected to redis://:**@redis:6379/1
+worker-1            | 2026-11-05 10:36:32.418 INFO [MainThread] [mingle.py:40]  - mingle: searching for neighbors
+worker-1            | 2026-11-05 10:36:33.541 INFO [MainThread] [mingle.py:49]  - mingle: all alone
+worker-1            | 2026-11-05 10:36:33.592 INFO [MainThread] [worker.py:182]  - celery@06b802719def ready.
+worker-1            | 2026-11-05 10:36:33.601 INFO [MainThread] [strategy.py:161]  - Task community_telemetry.send_heartbeat[eb49ca8b-31fe-4acc-8cbc-5f94d3d4931c] received
+worker-1            | 2026-11-05 10:36:33.608 INFO [Dummy-1] [pidbox.py:111]  - pidbox: Connected to redis://:**@redis:6379/1.
+worker-1            | 2026-11-05 10:36:34.384 INFO [Dummy-2] [trace.py:128] 4b67208b13a855acb99c572420559a50 - Task community_telemetry.send_heartbeat[eb49ca8b-31fe-4acc-8cbc-5f94d3d4931c] succeeded in 0.780778812000051s: None
+worker-1            | 2026-11-05 10:36:44.393 INFO [MainThread] [strategy.py:161]  - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[57ccaccd-5886-432a-8860-65c5786e7a5c] received
+worker-1            | 2026-11-05 10:36:44.394 INFO [Dummy-3] [workflow_execute_task.py:478] 5779fc684a175cf59aea20245954956b - workflow_based_app_execution_task run with params: app_id='645058e4-bc3b-44e5-a745-e20f5b816de1' workflow_id='1fba22fc-65af-4794-ac9a-bdbcd66f4d9c' tenant_id='5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' app_mode=<AppMode.ADVANCED_CHAT: 'advanced-chat'> user=_EndUser(TYPE=<_UserType.END_USER: 'end_user'>, end_user_id='26037463-0075-4537-9ea3-e5c8579b5c77') args={'inputs': {}, 'query': '我把一片香菜忘在冰箱冷冻层，第二天它硬得像一枚绿色书签。', 'response_mode': 'streaming', 'retriever_from': 'dev', 'auto_generate_name': True} invoke_from=<InvokeFrom.SERVICE_API: 'service-api'> streaming=True call_depth=0 root_node_id=None workflow_run_id='505ac722-4eb3-4fba-a2c4-d585f9627e0f'
+worker-1            | 2026-11-05 10:36:44.739 INFO [Thread-5 (_generate_worker)] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:44.945 INFO [GraphWorker-0] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.092 INFO [GraphWorker-0] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.572 INFO [Thread-6] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.589 INFO [Thread-6] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.696 INFO [GraphWorker-1] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://museum:8080/v1/prepare "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.784 INFO [GraphWorker-2] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.850 INFO [GraphWorker-3] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.930 INFO [GraphWorker-2] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:45.988 INFO [GraphWorker-0] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:46.089 INFO [GraphWorker-2] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://museum:8080/v1/remember "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:46.148 INFO [GraphWorker-1] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+local_sandbox-1     | 2026/11/05 10:35:36 shellctl serving on 0.0.0.0:5004
+local_sandbox-1     | 2026/11/05 10:35:41 GET /healthz -> 200 (0s)
+local_sandbox-1     | 2026/11/05 10:36:11 GET /healthz -> 200 (0s)
+local_sandbox-1     | 2026/11/05 10:36:41 GET /healthz -> 200 (0s)
+init_permissions-1  | Initializing permissions for /app/api/storage
+init_permissions-1  | Permissions initialized. Exiting.
+plugin_daemon-1     |
+plugin_daemon-1     | 2026/11/05 10:35:39 [35m/app/internal/db/pg/pg.go:40
+plugin_daemon-1     | [0m[31m[error] [0mfailed to initialize database, got error failed to connect to `user=postgres database=dify_plugin`: 172.21.0.5:5432 (db_postgres): server error: FATAL: database "dify_plugin" does not exist (SQLSTATE 3D000)
+plugin_daemon-1     | 2026/11/05 10:35:39 INFO dify plugin db initialized
+plugin_daemon-1     | database migration completed successfully
+plugin_daemon-1     | 2026/11/05 10:35:39 INFO dify plugin db closed
+plugin_daemon-1     | 2026-11-05T10:35:42.08973547Z INFO dify-plugin-daemon pool.go:34 init routine pool size=10000
+plugin_daemon-1     | 2026-11-05T10:35:42.191672607Z INFO dify-plugin-daemon init.go:120 dify plugin db initialized
+plugin_daemon-1     | 2026-11-05T10:35:42.192445806Z INFO dify-plugin-daemon manager.go:121 start plugin manager daemon
+plugin_daemon-1     | 2026-11-05T10:35:42.195357101Z INFO dify-plugin-daemon init.go:20 persistence initialized
+plugin_daemon-1     | 2026-11-05T10:35:42.195509742Z INFO dify-plugin-daemon logger.go:27 Launching gnet with 8 event-loops, listening on: tcp://0.0.0.0:5003
+plugin_daemon-1     | 2026-11-05T10:35:42.195978401Z INFO dify-plugin-daemon server_local.go:18 start to handle new plugins path=plugin
+plugin_daemon-1     | 2026-11-05T10:35:42.195994155Z INFO dify-plugin-daemon server_local.go:19 launch plugins with max concurrency concurrency=2
+plugin_daemon-1     | 2026-11-05T10:35:42.697052685Z INFO dify-plugin-daemon cluster_lifetime.go:114 current node has become the master of the cluster
+plugin_daemon-1     |
+plugin_daemon-1     | 2026/11/05 10:36:39 [31;1m/app/internal/db/executor.go:259 [35;1mrecord not found
+plugin_daemon-1     | [0m[33m[5.374ms] [34;1m[rows:0][0m SELECT * FROM "plugin_declarations" WHERE plugin_unique_identifier = 'langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4' ORDER BY "plugin_declarations"."id" LIMIT 1
+plugin_daemon-1     |
+plugin_daemon-1     | 2026/11/05 10:36:39 [31;1m/app/internal/db/executor.go:259 [35;1mrecord not found
+plugin_daemon-1     | [0m[33m[1.154ms] [34;1m[rows:0][0m SELECT * FROM "plugins" WHERE plugin_unique_identifier = 'langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4' AND install_type = 'remote' ORDER BY "plugins"."id" LIMIT 1
+plugin_daemon-1     | 2026-11-05T10:36:39.832821883Z INFO dify-plugin-daemon middleware.go:83 trace_id=ad7a40d0586f01479958a3035c328a71 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request latency_ms=7 client_ip=172.21.0.11 method=GET path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/fetch/manifest?plugin_unique_identifier=langgenius%2Fopenai_api_compatible%3A0.0.72%4087f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 status=200
+plugin_daemon-1     |
+plugin_daemon-1     | 2026/11/05 10:36:40 [31;1m/app/internal/db/executor.go:259 [35;1mrecord not found
+plugin_daemon-1     | [0m[33m[0.499ms] [34;1m[rows:0][0m SELECT * FROM "plugin_declarations" WHERE plugin_unique_identifier = 'langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4' ORDER BY "plugin_declarations"."id" LIMIT 1
+plugin_daemon-1     | 2026-11-05T10:36:40.647886912Z INFO dify-plugin-daemon middleware.go:83 trace_id=ee69018dcb5a4b65cc3ac99266893254 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/upload/package status=200 latency_ms=30 client_ip=172.21.0.11
+plugin_daemon-1     |
+plugin_daemon-1     | 2026/11/05 10:36:40 [31;1m/app/internal/db/executor.go:259 [35;1mrecord not found
+plugin_daemon-1     | [0m[33m[0.277ms] [34;1m[rows:0][0m SELECT * FROM "plugins" WHERE plugin_unique_identifier = 'langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4' ORDER BY "plugins"."id" LIMIT 1
+plugin_daemon-1     | 2026-11-05T10:36:40.654598284Z INFO dify-plugin-daemon middleware.go:83 trace_id=0fa78d8b1c2d31a65140b4731bafef92 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request latency_ms=3 client_ip=172.21.0.11 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/identifiers status=200
+plugin_daemon-1     | 2026-11-05T10:36:40.654646302Z INFO dify-plugin-daemon recycle.go:22 start new install task task_id=01a1ab48-3d4d-7a35-be01-ebe0998cc764
+plugin_daemon-1     | 2026-11-05T10:36:40.664228182Z INFO dify-plugin-daemon logger.go:15 local runtime starting plugin=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:40.664609177Z INFO dify-plugin-daemon middleware.go:83 trace_id=366d9a60bf676453d75afc320ea139b7 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request method=GET path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 status=200 latency_ms=0 client_ip=172.21.0.11
+plugin_daemon-1     | 2026-11-05T10:36:40.677686012Z INFO dify-plugin-daemon launcher_local.go:78 acquiring distributed init lock plugin=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 expire=15m0s
+plugin_daemon-1     | 2026-11-05T10:36:40.751329349Z INFO dify-plugin-daemon setup_python_environment.go:447 detected dependency file plugin=langgenius/openai_api_compatible:0.0.72 file=pyproject.toml
+plugin_daemon-1     | 2026-11-05T10:36:40.751414789Z INFO dify-plugin-daemon setup_python_environment.go:188 installing plugin dependencies plugin=langgenius/openai_api_compatible:0.0.72 method="uv sync" file=pyproject.toml frozen=true
+plugin_daemon-1     | 2026-11-05T10:36:40.751430863Z INFO dify-plugin-daemon setup_python_environment.go:200 uv command cmd=/usr/local/bin/uv args=[sync --no-dev --frozen -v]
+plugin_daemon-1     | 2026-11-05T10:36:41.354415426Z WARN dify-plugin-daemon setup_python_environment.go:241 failed to kill python process error="os: process already finished"
+plugin_daemon-1     | 2026-11-05T10:36:41.387240794Z INFO dify-plugin-daemon setup_python_environment.go:564 pre-compiling plugin file="Listing '.'..." more=true plugin=langgenius/openai_api_compatible:0.0.72
+plugin_daemon-1     | 2026-11-05T10:36:41.397059731Z INFO dify-plugin-daemon setup_python_environment.go:564 pre-compiling plugin plugin=langgenius/openai_api_compatible:0.0.72 file="Listing './.venv/lib/python3.12/site-packages/itsdangerous'..." more=true
+plugin_daemon-1     | 2026-11-05T10:36:41.406944338Z INFO dify-plugin-daemon setup_python_environment.go:564 pre-compiling plugin plugin=langgenius/openai_api_compatible:0.0.72 file="Listing './.venv/lib/python3.12/site-packages/openai/types/containers/files'..." more=true
+plugin_daemon-1     | 2026-11-05T10:36:41.43200921Z INFO dify-plugin-daemon setup_python_environment.go:564 pre-compiling plugin plugin=langgenius/openai_api_compatible:0.0.72 file="Listing './.venv/lib/python3.12/site-packages/setuptools/_vendor/wheel-0.46.3.dist-info'..." more=true
+plugin_daemon-1     | 2026-11-05T10:36:41.437790053Z INFO dify-plugin-daemon setup_python_environment.go:597 pre-loaded the plugin plugin=langgenius/openai_api_compatible:0.0.72
+plugin_daemon-1     | 2026-11-05T10:36:42.465590503Z INFO dify-plugin-daemon logger.go:76 local runtime scale up plugin=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 instance_nums=1
+plugin_daemon-1     | 2026-11-05T10:36:42.465861173Z INFO dify-plugin-daemon launcher_local.go:93 released distributed init lock plugin=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:43.297598743Z INFO dify-plugin-daemon logger.go:61 plugin instance log plugin=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 instance=01a1ab48 message="Installed model: openai_api_compatible"
+plugin_daemon-1     | 2026-11-05T10:36:43.29949197Z INFO dify-plugin-daemon subprocess.go:136 local runtime instance ready instances_before=0 instances_after=1 plugin=langgenius/openai_api_compatible:0.0.72 instance=01a1ab48 pid=96
+plugin_daemon-1     | 2026-11-05T10:36:43.299553914Z INFO dify-plugin-daemon logger.go:20 local runtime ready plugin=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     |
+plugin_daemon-1     | 2026/11/05 10:36:43 [31;1m/app/internal/db/executor.go:259 [35;1mrecord not found
+plugin_daemon-1     | [0m[33m[1.603ms] [34;1m[rows:0][0m SELECT * FROM "plugin_installations" WHERE plugin_id = 'langgenius/openai_api_compatible' AND tenant_id = '5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' ORDER BY "plugin_installations"."id" LIMIT 1
+plugin_daemon-1     |
+plugin_daemon-1     | 2026/11/05 10:36:43 [31;1m/app/internal/db/executor.go:259 [35;1mrecord not found
+plugin_daemon-1     | [0m[33m[0.271ms] [34;1m[rows:0][0m SELECT * FROM "plugin_installations" WHERE plugin_id = 'langgenius/openai_api_compatible' AND tenant_id = '5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' ORDER BY "plugin_installations"."id" LIMIT 1
+plugin_daemon-1     | 2026-11-05T10:36:43.306077984Z INFO dify-plugin-daemon recycle.go:29 install task finished task_id=01a1ab48-3d4d-7a35-be01-ebe0998cc764
+plugin_daemon-1     | 2026-11-05T10:36:43.674270815Z INFO dify-plugin-daemon middleware.go:83 trace_id=99c1256fb23bbf2ea93a4ce8b044f626 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 status=200 latency_ms=0 client_ip=172.21.0.11 method=GET
+plugin_daemon-1     | 2026-11-05T10:36:43.691588698Z INFO dify-plugin-daemon middleware.go:83 trace_id=0a6a4b1f1a8bdfbd3ca69a3706fd04fa tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request latency_ms=0 client_ip=172.21.0.11 method=GET path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/models?page=1&page_size=256 status=200
+plugin_daemon-1     | 2026-11-05T10:36:43.694804602Z INFO dify-plugin-daemon middleware.go:83 trace_id=8995b63fbd06a062c0ed73b543f435a1 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/installation/fetch/batch status=200 latency_ms=0 client_ip=172.21.0.11
+plugin_daemon-1     | 2026-11-05T10:36:43.715843907Z INFO dify-plugin-daemon middleware.go:83 trace_id=427d86aae1fc8786be444cc4990c4d69 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request method=GET path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/installation/ids?category=model status=200 latency_ms=1 client_ip=172.21.0.11
+plugin_daemon-1     | 2026-11-05T10:36:43.730734214Z WARN dify-plugin-daemon session.go:140 trace_id=72eeb21f2778019e8d99e2d97e140d2a tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached session_id=e94a7394-37c4-4d00-91ee-69c34de0f84f cache_key=session_info:e94a7394-37c4-4d00-91ee-69c34de0f84f cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:43.751043248Z INFO dify-plugin-daemon session.go:227 trace_id=72eeb21f2778019e8d99e2d97e140d2a tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache session_id=e94a7394-37c4-4d00-91ee-69c34de0f84f cache_key=session_info:e94a7394-37c4-4d00-91ee-69c34de0f84f cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:43.751109649Z INFO dify-plugin-daemon middleware.go:83 trace_id=72eeb21f2778019e8d99e2d97e140d2a tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request latency_ms=21 client_ip=172.21.0.11 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/validate_model_credentials status=200
+plugin_daemon-1     | 2026-11-05T10:36:44.737124941Z WARN dify-plugin-daemon session.go:140 trace_id=8be6029b88f9a789678894261c5586e9 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 session_id=b8536125-45a4-43d8-b0b6-214eba238978 cache_key=session_info:b8536125-45a4-43d8-b0b6-214eba238978
+plugin_daemon-1     | 2026-11-05T10:36:44.739108946Z INFO dify-plugin-daemon session.go:227 trace_id=8be6029b88f9a789678894261c5586e9 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache session_id=b8536125-45a4-43d8-b0b6-214eba238978 cache_key=session_info:b8536125-45a4-43d8-b0b6-214eba238978 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:44.739159462Z INFO dify-plugin-daemon middleware.go:83 trace_id=8be6029b88f9a789678894261c5586e9 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request status=200 latency_ms=2 client_ip=172.21.0.12 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema
+plugin_daemon-1     | 2026-11-05T10:36:45.570812427Z WARN dify-plugin-daemon session.go:140 trace_id=1582d76970b4b24e588837512f9173f4 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached session_id=f25dd0cb-c05c-40af-a99a-1fc367edcc2d cache_key=session_info:f25dd0cb-c05c-40af-a99a-1fc367edcc2d cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:45.572428374Z INFO dify-plugin-daemon session.go:227 trace_id=1582d76970b4b24e588837512f9173f4 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 session_id=f25dd0cb-c05c-40af-a99a-1fc367edcc2d cache_key=session_info:f25dd0cb-c05c-40af-a99a-1fc367edcc2d cluster_id=556928db-6ad5-4804-b333-cf958599cb4e
+plugin_daemon-1     | 2026-11-05T10:36:45.572467954Z INFO dify-plugin-daemon middleware.go:83 trace_id=1582d76970b4b24e588837512f9173f4 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request latency_ms=2 client_ip=172.21.0.12 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema status=200
+plugin_daemon-1     | 2026-11-05T10:36:45.584214153Z WARN dify-plugin-daemon session.go:140 trace_id=c13645845b3c50fd1988a064f08c75d0 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 session_id=e4f607c7-348c-4386-b3d9-6ae763ba09ae cache_key=session_info:e4f607c7-348c-4386-b3d9-6ae763ba09ae cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e
+plugin_daemon-1     | 2026-11-05T10:36:45.589125196Z INFO dify-plugin-daemon session.go:227 trace_id=c13645845b3c50fd1988a064f08c75d0 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache session_id=e4f607c7-348c-4386-b3d9-6ae763ba09ae cache_key=session_info:e4f607c7-348c-4386-b3d9-6ae763ba09ae cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:45.589175382Z INFO dify-plugin-daemon middleware.go:83 trace_id=c13645845b3c50fd1988a064f08c75d0 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke status=200 latency_ms=5 client_ip=172.21.0.12
+plugin_daemon-1     | 2026-11-05T10:36:45.845348084Z WARN dify-plugin-daemon session.go:140 trace_id=b9c07bfce7bd94bdd67f0f68474f494e tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached cache_key=session_info:cd07f963-b7bf-4f9d-a705-6cd686238f8c cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 session_id=cd07f963-b7bf-4f9d-a705-6cd686238f8c
+plugin_daemon-1     | 2026-11-05T10:36:45.850639765Z INFO dify-plugin-daemon session.go:227 trace_id=b9c07bfce7bd94bdd67f0f68474f494e tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache session_id=cd07f963-b7bf-4f9d-a705-6cd686238f8c cache_key=session_info:cd07f963-b7bf-4f9d-a705-6cd686238f8c cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:45.850690352Z INFO dify-plugin-daemon middleware.go:83 trace_id=b9c07bfce7bd94bdd67f0f68474f494e tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request latency_ms=5 client_ip=172.21.0.12 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke status=200
+plugin_daemon-1     | 2026-11-05T10:36:46.873458627Z WARN dify-plugin-daemon session.go:140 trace_id=4c457933f226408c7bb7b783e1be5a39 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached session_id=b5b81f98-1b9e-4a10-8cf1-d6483d298d39 cache_key=session_info:b5b81f98-1b9e-4a10-8cf1-d6483d298d39 cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:46.878518165Z INFO dify-plugin-daemon session.go:227 trace_id=4c457933f226408c7bb7b783e1be5a39 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache session_id=b5b81f98-1b9e-4a10-8cf1-d6483d298d39 cache_key=session_info:b5b81f98-1b9e-4a10-8cf1-d6483d298d39 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:46.878565887Z INFO dify-plugin-daemon middleware.go:83 trace_id=4c457933f226408c7bb7b783e1be5a39 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke status=200 latency_ms=5 client_ip=172.21.0.12
+plugin_daemon-1     | 2026-11-05T10:36:47.298476584Z WARN dify-plugin-daemon session.go:140 trace_id=9f0cbe27b6048e86d557e69cd4025575 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached session_id=04c3f361-1d91-4377-9a75-ff1ea879dd7c cache_key=session_info:04c3f361-1d91-4377-9a75-ff1ea879dd7c cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:47.303378834Z INFO dify-plugin-daemon session.go:227 trace_id=9f0cbe27b6048e86d557e69cd4025575 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 session_id=04c3f361-1d91-4377-9a75-ff1ea879dd7c cache_key=session_info:04c3f361-1d91-4377-9a75-ff1ea879dd7c
+plugin_daemon-1     | 2026-11-05T10:36:47.303440668Z INFO dify-plugin-daemon middleware.go:83 trace_id=9f0cbe27b6048e86d557e69cd4025575 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request latency_ms=5 client_ip=172.21.0.12 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke status=200
+plugin_daemon-1     | 2026-11-05T10:36:47.57194527Z WARN dify-plugin-daemon session.go:140 trace_id=859d720ff6813b82eb0373c389104a17 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached session_id=15166aee-50d9-4f3b-b2d3-0da06a96a793 cache_key=session_info:15166aee-50d9-4f3b-b2d3-0da06a96a793 cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:47.573511477Z INFO dify-plugin-daemon session.go:227 trace_id=859d720ff6813b82eb0373c389104a17 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache session_id=15166aee-50d9-4f3b-b2d3-0da06a96a793 cache_key=session_info:15166aee-50d9-4f3b-b2d3-0da06a96a793 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:47.573557577Z INFO dify-plugin-daemon middleware.go:83 trace_id=859d720ff6813b82eb0373c389104a17 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request client_ip=172.21.0.12 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema status=200 latency_ms=2
+plugin_daemon-1     | 2026-11-05T10:36:48.095932745Z WARN dify-plugin-daemon session.go:140 trace_id=69e4b91174353498697ac566ec1115db tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached session_id=c38ed6f3-c3c2-4aa1-a0d9-6769ddb34a1f cache_key=session_info:c38ed6f3-c3c2-4aa1-a0d9-6769ddb34a1f cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:48.104189971Z INFO dify-plugin-daemon session.go:227 trace_id=69e4b91174353498697ac566ec1115db tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache cache_key=session_info:c38ed6f3-c3c2-4aa1-a0d9-6769ddb34a1f cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 session_id=c38ed6f3-c3c2-4aa1-a0d9-6769ddb34a1f
+plugin_daemon-1     | 2026-11-05T10:36:48.104244053Z INFO dify-plugin-daemon middleware.go:83 trace_id=69e4b91174353498697ac566ec1115db tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke status=200 latency_ms=9 client_ip=172.21.0.12
+plugin_daemon-1     | 2026-11-05T10:36:48.547153407Z WARN dify-plugin-daemon session.go:140 trace_id=874eed3430064d485e0341742067a2a6 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info cached session_id=3e833901-9dbd-4af8-ab4e-7a66e21f8a08 cache_key=session_info:3e833901-9dbd-4af8-ab4e-7a66e21f8a08 cache_ttl_seconds=1800 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:48.55194945Z INFO dify-plugin-daemon session.go:227 trace_id=874eed3430064d485e0341742067a2a6 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb session info deleted from cache session_id=3e833901-9dbd-4af8-ab4e-7a66e21f8a08 cache_key=session_info:3e833901-9dbd-4af8-ab4e-7a66e21f8a08 cluster_id=556928db-6ad5-4804-b333-cf958599cb4e plugin_unique_identifier=langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4
+plugin_daemon-1     | 2026-11-05T10:36:48.552007858Z INFO dify-plugin-daemon middleware.go:83 trace_id=874eed3430064d485e0341742067a2a6 tenant_id=5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb HTTP request status=200 latency_ms=5 client_ip=172.21.0.12 method=POST path=/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke
+agent_ssrf_proxy-1  | [ENTRYPOINT] replacing environment variables in the templates
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/squid.conf (depth 0)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_common.conf (depth 1)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_allow_private.conf (depth 1)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Created PID file (/run/squid.pid)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Creating missing swap directories
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| No cache_dir stores are configured.
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Removing PID file (/run/squid.pid)
+agent_ssrf_proxy-1  | [ENTRYPOINT] starting squid
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/squid.conf (depth 0)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_common.conf (depth 1)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+worker_beat-1       | Running migrations
+worker_beat-1       | Preparing database migration...
+worker_beat-1       | Database migration skipped
+worker_beat-1       | celery beat v5.6.3 (recovery) is starting.
+worker_beat-1       | __    -    ... __   -        _
+worker_beat-1       | LocalTime -> 2026-11-05 10:36:32
+worker_beat-1       | Configuration ->
+worker_beat-1       |     . broker -> redis://:**@redis:6379/1
+worker_beat-1       |     . loader -> celery.loaders.app.AppLoader
+worker_beat-1       |     . scheduler -> celery.beat.PersistentScheduler
+worker_beat-1       |     . db -> celerybeat-schedule
+worker_beat-1       |     . logfile -> [stderr]@%INFO
+worker_beat-1       |     . maxinterval -> 5.00 minutes (300s)
+worker_beat-1       | 2026-11-05 10:36:32.968 INFO [MainThread] [beat.py:634]  - beat: Starting...
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_allow_private.conf (depth 1)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Created PID file (/run/squid.pid)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Creating missing swap directories
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| No cache_dir stores are configured.
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Removing PID file (/run/squid.pid)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/squid.conf (depth 0)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_common.conf (depth 1)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_allow_private.conf (depth 1)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Created PID file (/run/squid.pid)
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Starting Squid Cache version 6.13 for x86_64-pc-linux-gnu...
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Service Name: squid
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Process ID 17
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Process Roles: master worker
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| With 65536 file descriptors available
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Initializing IP Cache...
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| DNS IPv6 socket created at [::], FD 8
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| DNS IPv4 socket created at 0.0.0.0, FD 9
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Adding nameserver 127.0.0.11 from /etc/resolv.conf
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Adding domain r3gv55co0vserpzgji3gvzdlob.gx.internal.cloudapp.net from /etc/resolv.conf
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Adding ndots 1 from /etc/resolv.conf
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Logfile: opening log daemon:/var/log/squid/access.log
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Logfile Daemon: opening log /var/log/squid/access.log
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Local cache digest enabled; rebuild/rewrite every 3600/3600 sec
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Store logging disabled
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Swap maxSize 0 + 262144 KB, estimated 20164 objects
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Target number of buckets: 1008
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Using 8192 Store buckets
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Max Mem  size: 262144 KB
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Max Swap size: 0 KB
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Using Least Load store dir selection
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Finished loading MIME types and icons.
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| HTCP Disabled.
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Pinger socket opened on FD 14
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36 pinger| Initialising ICMP pinger ...
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36 pinger| ICMP socket opened.
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36 pinger| ICMPv6 socket opened
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Squid plugin modules loaded: 0
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Adaptation support is off.
+agent_ssrf_proxy-1  | 2026/11/05 10:35:36| Accepting HTTP Socket connections at conn3 local=[::]:3128 remote=[::] FD 12 flags=9
+agent_ssrf_proxy-1  |     listening port: 3128
+agent_ssrf_proxy-1  | 2026/11/05 10:35:37| storeLateRelease: released 0 objects
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: using the "epoll" event method
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: nginx/1.31.8
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: built by gcc 14.2.0 (Debian 14.2.0-19)
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: OS: Linux 7.0.0-1017-azure
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: getrlimit(RLIMIT_NOFILE): 65536:65536
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: start worker processes
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: start worker process 19
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: start worker process 20
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: start worker process 21
+nginx-1             | 2026/11/05 10:35:40 [notice] 10#10: start worker process 22
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:39 +0000] "GET /console/api/setup HTTP/1.1" 200 38 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:39 +0000] "GET /console/api/setup HTTP/1.1" 200 38 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:39 +0000] "POST /console/api/setup HTTP/1.1" 201 20 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:39 +0000] "POST /console/api/login HTTP/1.1" 200 32 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:40 +0000] "POST /console/api/workspaces/current/plugin/install/marketplace HTTP/1.1" 200 85 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:40 +0000] "GET /console/api/workspaces/current/plugin/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 HTTP/1.1" 200 679 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:43 +0000] "GET /console/api/workspaces/current/plugin/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 HTTP/1.1" 200 680 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:43 +0000] "GET /console/api/workspaces/current/model-providers HTTP/1.1" 200 18801 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:43 +0000] "GET /console/api/workspaces/current/plugin/installed-ids?category=model HTTP/1.1" 200 53 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:43 +0000] "POST /console/api/workspaces/current/model-providers/langgenius/openai_api_compatible/openai_api_compatible/models/credentials HTTP/1.1" 201 21 "-" "Python-urllib/3.12" "-"
+nginx-1             | 2026/11/05 10:36:43 [warn] 19#19: *25 a client request body is buffered to a temporary file /var/cache/nginx/client_temp/0000000001, client: 172.21.0.1, server: _, request: "POST /console/api/apps/imports HTTP/1.1", host: "localhost:18080"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:43 +0000] "POST /console/api/apps/imports HTTP/1.1" 200 249 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:43 +0000] "GET /console/api/apps/3c5487a5-7561-41eb-b056-e2e02f294aaa/workflows/draft HTTP/1.1" 200 36697 "-" "Python-urllib/3.12" "-"
+nginx-1             | 2026/11/05 10:36:44 [warn] 19#19: *29 a client request body is buffered to a temporary file /var/cache/nginx/client_temp/0000000002, client: 172.21.0.1, server: _, request: "POST /console/api/apps/imports HTTP/1.1", host: "localhost:18080"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:44 +0000] "POST /console/api/apps/imports HTTP/1.1" 200 249 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:44 +0000] "GET /console/api/apps/645058e4-bc3b-44e5-a745-e20f5b816de1/workflows/draft HTTP/1.1" 200 36697 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:44 +0000] "POST /console/api/apps/645058e4-bc3b-44e5-a745-e20f5b816de1/workflows/publish HTTP/1.1" 200 45 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:44 +0000] "POST /console/api/apps/645058e4-bc3b-44e5-a745-e20f5b816de1/api-keys HTTP/1.1" 201 159 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:44 +0000] "GET /console/api/apps/645058e4-bc3b-44e5-a745-e20f5b816de1 HTTP/1.1" 200 2136 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:44 +0000] "GET /console/api/setup HTTP/1.1" 200 52 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:44 +0000] "POST /console/api/login HTTP/1.1" 200 32 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:46 +0000] "POST /v1/chat-messages HTTP/1.1" 200 38125 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:46 +0000] "GET /console/api/apps/645058e4-bc3b-44e5-a745-e20f5b816de1/workflow-runs/505ac722-4eb3-4fba-a2c4-d585f9627e0f/node-executions HTTP/1.1" 200 31474 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:47 +0000] "POST /v1/chat-messages HTTP/1.1" 200 45411 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:47 +0000] "GET /console/api/apps/645058e4-bc3b-44e5-a745-e20f5b816de1/workflow-runs/e73af9b9-660d-4128-b652-c9710556147c/node-executions HTTP/1.1" 200 41579 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:48 +0000] "POST /v1/chat-messages HTTP/1.1" 200 37152 "-" "Python-urllib/3.12" "-"
+nginx-1             | 172.21.0.1 - - [05/Nov/2026:10:36:48 +0000] "GET /console/api/apps/645058e4-bc3b-44e5-a745-e20f5b816de1/workflow-runs/5ba7b941-0d31-46a2-9318-53b0e4c6f1aa/node-executions HTTP/1.1" 200 29634 "-" "Python-urllib/3.12" "-"
+agent_backend-1     | INFO:     Started server process [1]
+agent_backend-1     | INFO:     Waiting for application startup.
+agent_backend-1     | INFO:     Application startup complete.
+agent_backend-1     | INFO:     Uvicorn running on http://0.0.0.0:5050 (Press CTRL+C to quit)
+web-1               | ▲ Next.js 16.3.4
+web-1               | - Local:         http://74ea03a74437:3000
+web-1               | - Network:       http://74ea03a74437:3000
+web-1               | ✓ Ready in 0ms
+web-1               | ✓ Running next.config took 1.7ms
+api-1               | Running migrations
+api-1               | Preparing database migration...
+api-1               | Database migration skipped
+api-1               | [2026-11-05 10:36:18 +0000] [1] [INFO] Starting gunicorn 26.2.0
+api-1               | [2026-11-05 10:36:18 +0000] [1] [INFO] Listening at: http://0.0.0.0:5001 (1)
+api-1               | [2026-11-05 10:36:18 +0000] [1] [INFO] Using worker: gevent
+api-1               | [2026-11-05 10:36:18 +0000] [55] [INFO] Booting worker with pid: 55
+api-1               | gRPC patched with gevent.
+api-1               | psycopg2 patched with gevent.
+api-1               | 2026-11-05 10:36:39.798 INFO [Dummy-1] [_client.py:1025] bcd881c9a227591589efc1effeb0faa0 - HTTP Request: POST https://otel.dify.ai/v1/events "HTTP/1.1 202 Accepted"
+api_websocket-1     | Running migrations
+api_websocket-1     | Preparing database migration...
+api_websocket-1     | Starting database migration.
+api_websocket-1     | INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+redis-1             | 1:C 05 Nov 2026 10:35:36.471 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+redis-1             | 1:C 05 Nov 2026 10:35:36.472 # Redis version=6.2.24, bits=64, commit=00000000, modified=0, pid=1, just started
+redis-1             | 1:C 05 Nov 2026 10:35:36.472 # Configuration loaded
+redis-1             | 1:M 05 Nov 2026 10:35:36.472 * monotonic clock: POSIX clock_gettime
+redis-1             | 1:M 05 Nov 2026 10:35:36.473 * Running mode=standalone, port=6379.
+redis-1             | 1:M 05 Nov 2026 10:35:36.473 # Server initialized
+redis-1             | 1:M 05 Nov 2026 10:35:36.473 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+redis-1             | 1:M 05 Nov 2026 10:35:36.473 * Ready to accept connections
+api-1               | 2026-11-05 10:36:39.833 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/fetch/manifest?plugin_unique_identifier=langgenius%2Fopenai_api_compatible%3A0.0.72%4087f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:40.216 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: GET https://marketplace.dify.ai/api/v1/plugins/download-url?unique_identifier=langgenius%2Fopenai_api_compatible%3A0.0.72%4087f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 "HTTP/1.1 302 Found"
+api-1               | 2026-11-05 10:36:40.596 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: GET https://dify-plugin-saas.305dbc7da819eb47bb3f3f3bc8927046.r2.cloudflarestorage.com/langgenius/packages/openai_api_compatible/versions/0.0.72.difypkg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=[REDACTED]&X-Amz-Date=20261105T100509Z&X-Amz-Expires=18000&X-Amz-SignedHeaders=host&response-content-type=application%2Foctet-stream&x-id=GetObject&X-Amz-Signature=[REDACTED] "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:40.648 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/upload/package "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:40.654 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/identifiers "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:40.664 INFO [Dummy-3] [_client.py:1025] a31f2da3f23a5cd58d4fd51a5206cbdb - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:43.674 INFO [Dummy-4] [_client.py:1025] a4784240bbce5e6ea816c967b2a8758d - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:43.691 INFO [Dummy-5] [_client.py:1025] 30c175766dac5ed992dc3c7809a7b677 - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/models?page=1&page_size=256 "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:43.694 INFO [Dummy-5] [_client.py:1025] 30c175766dac5ed992dc3c7809a7b677 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/installation/fetch/batch "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:43.716 INFO [Dummy-6] [_client.py:1025] c6d5f173dfb85f45b3dea2f2e886d087 - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/installation/ids?category=model "HTTP/1.1 200 OK"
+api-1               | 2026-11-05 10:36:43.751 INFO [Dummy-7] [_client.py:1025] c7da8e3010205a1a8b442381056642bc - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/validate_model_credentials "HTTP/1.1 200 OK"
+db_postgres-1       | The files belonging to this database system will be owned by user "postgres".
+db_postgres-1       | This user must also own the server process.
+db_postgres-1       |
+db_postgres-1       | The database cluster will be initialized with locale "en_US.utf8".
+db_postgres-1       | The default database encoding has accordingly been set to "UTF8".
+db_postgres-1       | The default text search configuration will be set to "english".
+db_postgres-1       |
+db_postgres-1       | Data page checksums are disabled.
+db_postgres-1       |
+db_postgres-1       | fixing permissions on existing directory /var/lib/postgresql/data/pgdata ... ok
+db_postgres-1       | creating subdirectories ... ok
+db_postgres-1       | selecting dynamic shared memory implementation ... posix
+db_postgres-1       | selecting default max_connections ... 100
+db_postgres-1       | selecting default shared_buffers ... 128MB
+db_postgres-1       | selecting default time zone ... UTC
+db_postgres-1       | creating configuration files ... ok
+db_postgres-1       | running bootstrap script ... ok
+db_postgres-1       | sh: locale: not found
+db_postgres-1       | 2026-11-05 10:35:37.051 UTC [36] WARNING:  no usable system locales were found
+db_postgres-1       | performing post-bootstrap initialization ... ok
+db_postgres-1       | initdb: warning: enabling "trust" authentication for local connections
+db_postgres-1       | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+db_postgres-1       | syncing data to disk ... ok
+db_postgres-1       |
+db_postgres-1       |
+db_postgres-1       | Success. You can now start the database server using:
+db_postgres-1       |
+db_postgres-1       |     pg_ctl -D /var/lib/postgresql/data/pgdata -l logfile start
+db_postgres-1       |
+db_postgres-1       | waiting for server to start....2026-11-05 10:35:37.660 UTC [48] LOG:  starting PostgreSQL 15.19 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db_postgres-1       | 2026-11-05 10:35:37.661 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db_postgres-1       | 2026-11-05 10:35:37.663 UTC [51] LOG:  database system was shut down at 2026-11-05 10:35:37 UTC
+db_postgres-1       | 2026-11-05 10:35:37.668 UTC [48] LOG:  database system is ready to accept connections
+db_postgres-1       |  done
+db_postgres-1       | server started
+db_postgres-1       | CREATE DATABASE
+db_postgres-1       |
+db_postgres-1       |
+db_postgres-1       | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+db_postgres-1       |
+db_postgres-1       | waiting for server to shut down....2026-11-05 10:35:37.806 UTC [48] LOG:  received fast shutdown request
+db_postgres-1       | 2026-11-05 10:35:37.807 UTC [48] LOG:  aborting any active transactions
+db_postgres-1       | 2026-11-05 10:35:37.812 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+db_postgres-1       | 2026-11-05 10:35:37.813 UTC [49] LOG:  shutting down
+db_postgres-1       | 2026-11-05 10:35:37.813 UTC [49] LOG:  checkpoint starting: shutdown immediate
+db_postgres-1       | 2026-11-05 10:35:37.856 UTC [49] LOG:  checkpoint complete: wrote 922 buffers (5.6%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.040 s, sync=0.002 s, total=0.044 s; sync files=301, longest=0.001 s, average=0.001 s; distance=4249 kB, estimate=4249 kB
+db_postgres-1       | 2026-11-05 10:35:37.864 UTC [48] LOG:  database system is shut down
+db_postgres-1       |  done
+db_postgres-1       | server stopped
+db_postgres-1       |
+db_postgres-1       | PostgreSQL init process complete; ready for start up.
+db_postgres-1       |
+db_postgres-1       | 2026-11-05 10:35:37.928 UTC [1] LOG:  starting PostgreSQL 15.19 on x86_64-pc-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+db_postgres-1       | 2026-11-05 10:35:37.929 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+db_postgres-1       | 2026-11-05 10:35:37.929 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+db_postgres-1       | 2026-11-05 10:35:37.930 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+db_postgres-1       | 2026-11-05 10:35:37.933 UTC [64] LOG:  database system was shut down at 2026-11-05 10:35:37 UTC
+db_postgres-1       | 2026-11-05 10:35:37.937 UTC [1] LOG:  database system is ready to accept connections
+db_postgres-1       | 2026-11-05 10:35:39.262 UTC [75] FATAL:  database "dify_plugin" does not exist
+worker-1            | 2026-11-05 10:36:46.216 INFO [Dummy-3] [execution_coordinator.py:163] 5779fc684a175cf59aea20245954956b - App response listener detached while execution continues task=c7318b83-6df3-4f14-bb4b-a20782b63b34 attempt=380ff30a-c5c6-4e0b-b2d5-cd1d85bf285f
+worker-1            | 2026-11-05 10:36:46.232 INFO [Dummy-3] [trace.py:128] 5779fc684a175cf59aea20245954956b - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[57ccaccd-5886-432a-8860-65c5786e7a5c] succeeded in 1.8381229889999986s: None
+worker-1            | 2026-11-05 10:36:46.261 INFO [MainThread] [strategy.py:161]  - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[27850520-6b3e-4c8c-94fd-0115074c1ab6] received
+worker-1            | 2026-11-05 10:36:46.262 INFO [Dummy-8] [workflow_execute_task.py:478] 48dfe6368b0d5b46adcbd60355e2b938 - workflow_based_app_execution_task run with params: app_id='645058e4-bc3b-44e5-a745-e20f5b816de1' workflow_id='1fba22fc-65af-4794-ac9a-bdbcd66f4d9c' tenant_id='5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' app_mode=<AppMode.ADVANCED_CHAT: 'advanced-chat'> user=_EndUser(TYPE=<_UserType.END_USER: 'end_user'>, end_user_id='26037463-0075-4537-9ea3-e5c8579b5c77') args={'inputs': {}, 'query': '我又从冰箱拿出了那片香菜标本，它看起来像在等一个结局。', 'response_mode': 'streaming', 'retriever_from': 'dev', 'auto_generate_name': True} invoke_from=<InvokeFrom.SERVICE_API: 'service-api'> streaming=True call_depth=0 root_node_id=None workflow_run_id='e73af9b9-660d-4128-b652-c9710556147c'
+worker-1            | 2026-11-05 10:36:46.471 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:46.618 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:46.666 INFO [GraphWorker-1] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://museum:8080/v1/prepare "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:46.767 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:46.878 INFO [GraphWorker-1] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:46.982 INFO [GraphWorker-3] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.087 INFO [GraphWorker-2] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.227 INFO [GraphWorker-1] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://museum:8080/v1/remember "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.303 INFO [Thread-10] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.329 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.470 INFO [Dummy-8] [execution_coordinator.py:163] 48dfe6368b0d5b46adcbd60355e2b938 - App response listener detached while execution continues task=d46ffbac-937a-4478-ad32-0646d765ac42 attempt=63d69a8a-5c0e-483b-8b57-318dd2add2d5
+worker-1            | 2026-11-05 10:36:47.490 INFO [Dummy-8] [trace.py:128] 48dfe6368b0d5b46adcbd60355e2b938 - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[27850520-6b3e-4c8c-94fd-0115074c1ab6] succeeded in 1.2284067200000095s: None
+worker-1            | 2026-11-05 10:36:47.505 INFO [MainThread] [strategy.py:161]  - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[a4ff0488-68a0-4170-bbfc-3f0c109a4c97] received
+worker-1            | 2026-11-05 10:36:47.506 INFO [Dummy-12] [workflow_execute_task.py:478] 151b7d44b4465e84a58140270f22a138 - workflow_based_app_execution_task run with params: app_id='645058e4-bc3b-44e5-a745-e20f5b816de1' workflow_id='1fba22fc-65af-4794-ac9a-bdbcd66f4d9c' tenant_id='5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' app_mode=<AppMode.ADVANCED_CHAT: 'advanced-chat'> user=_EndUser(TYPE=<_UserType.END_USER: 'end_user'>, end_user_id='55201ad3-a3a4-4554-89ff-54c29846d24c') args={'inputs': {}, 'query': '冰箱里的香菜绿色书签', 'response_mode': 'streaming', 'retriever_from': 'dev', 'auto_generate_name': True} invoke_from=<InvokeFrom.SERVICE_API: 'service-api'> streaming=True call_depth=0 root_node_id=None workflow_run_id='5ba7b941-0d31-46a2-9318-53b0e4c6f1aa'
+worker-1            | 2026-11-05 10:36:47.573 INFO [Thread-13 (_generate_worker)] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.727 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.872 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:47.934 INFO [GraphWorker-1] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://museum:8080/v1/prepare "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:48.018 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:48.104 INFO [GraphWorker-2] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:48.167 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:48.240 INFO [GraphWorker-3] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:48.357 INFO [GraphWorker-2] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://museum:8080/v1/remember "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:48.415 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1            | 2026-11-05 10:36:48.474 INFO [Dummy-12] [execution_coordinator.py:163] 151b7d44b4465e84a58140270f22a138 - App response listener detached while execution continues task=3468114a-b1b1-4d8c-909c-a2df183251d1 attempt=5c967a37-af3c-4484-84a8-b36bd2b576f5
+worker-1            | 2026-11-05 10:36:48.489 INFO [Dummy-12] [trace.py:128] 151b7d44b4465e84a58140270f22a138 - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[a4ff0488-68a0-4170-bbfc-3f0c109a4c97] succeeded in 0.9833593320000205s: None
+worker-1            | 2026-11-05 10:36:48.552 INFO [Thread-14] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+api_websocket-1     | INFO  [alembic.runtime.migration] Will assume transactional DDL.
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade  -> 64b051264f32, init
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 64b051264f32 -> 9f4e3427ea84, add created by role
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 9f4e3427ea84 -> a45f4dfde53b, add language to recommend apps
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a45f4dfde53b -> 614f77cecc48, add last active at
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 614f77cecc48 -> e32f6ccb87c6, e08af0a69ccefbb59fa80c778efee300bb780980
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e32f6ccb87c6 -> d3d503a3471c, add is_deleted to conversations
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d3d503a3471c -> a5b56fb053ef, app config add speech_to_text
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a5b56fb053ef -> 2beac44e5f5f, add is_universal in apps
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2beac44e5f5f -> 7ce5a52e4eee, add tool providers
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7ce5a52e4eee -> 8d2d099ceb74, add_qa_model_support
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8d2d099ceb74 -> 16fa53d9faec, add provider model support
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 16fa53d9faec -> e35ed59becda, modify quota limit field type
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e35ed59becda -> bf0aec5ba2cf, add provider order
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade bf0aec5ba2cf -> 5022897aaceb, add model name in embedding
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 5022897aaceb -> 2c8af9671032, add_qa_document_language
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2c8af9671032 -> e8883b0148c9, add_dataset_model_name
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e8883b0148c9 -> 853f9b9cd3b6, add message price unit
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 853f9b9cd3b6 -> 4bcffcd64aa4, update_dataset_model_field_null_available
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4bcffcd64aa4 -> 6dcb43972bdc, add_dataset_retriever_resource
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 6dcb43972bdc -> 77e83833755c, add_app_config_retriever_resource
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 77e83833755c -> 6e2cfb077b04, add_dataset_collection_binding
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 6e2cfb077b04 -> ab23c11305d4, add dataset query variable at app model configs.
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade ab23c11305d4 -> 2e9819ca5b28, add_tenant_id_in_api_token
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2e9819ca5b28 -> b3a09c049e8e, add advanced prompt templates
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b3a09c049e8e -> 968fff4c0ab9, add_api_based_extension
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 968fff4c0ab9 -> a9836e3baeee, add external_data_tools in app model config
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a9836e3baeee -> 8fe468ba0ca5, add gpt4v supports
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8fe468ba0ca5 -> fca025d3b60f, add-dataset-retrieval-model
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade fca025d3b60f -> e1901f623fd0, add-annotation-reply
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e1901f623fd0 -> 46976cc39132, add-annotation-histoiry-score
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 46976cc39132 -> f2a6fc85e260, add_anntation_history_message_id
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f2a6fc85e260 -> 714aafe25d39, add_anntation_history_match_response
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 714aafe25d39 -> 246ba09cbbdb, add_app_anntation_setting
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 246ba09cbbdb -> 88072f0caa04, add custom config in tenant
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 88072f0caa04 -> 187385f442fc, modify provider model name length
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 187385f442fc -> 89c7899ca936, empty message
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 89c7899ca936 -> 3ef9b2b6bee6, add_assistant_app
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 3ef9b2b6bee6 -> ad472b61a054, add api provider icon
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade ad472b61a054 -> 8ec536f3c800, rename api provider credentials
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8ec536f3c800 -> 00bacef91f18, rename api provider description
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 00bacef91f18 -> f25003750af4, add created/updated at
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f25003750af4 -> c71211c8f604, add tool_invoke_model_log
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c71211c8f604 -> 114eed84c228, remove tool id from model invoke
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 114eed84c228 -> 4829e54d2fee, change message chain id to nullable
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4829e54d2fee -> 053da0c1d756, add api tool privacy
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 053da0c1d756 -> 4823da1d26cf, add tool file
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4823da1d26cf -> 9fafbd60eca1, add message file belongs to
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 9fafbd60eca1 -> 8ae9bc661daa, add tool conversation variables idx
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8ae9bc661daa -> 23db93619b9d, add message files into agent thought
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 23db93619b9d -> de95f5c77138, migration serpapi_api_key
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade de95f5c77138 -> b24be59fbb04, empty message
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b24be59fbb04 -> dfb3b7f477da, add-tool-index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade dfb3b7f477da -> 380c6aa5a70d, add tool labels to agent thought
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 380c6aa5a70d -> 16830a790f0f, empty message
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 16830a790f0f -> a8f9b3c45e4a, add_tenant_id_db_index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a8f9b3c45e4a -> 17b5ab037c40, add-keyworg-table-storage-type
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 17b5ab037c40 -> a8d7385a7b66, add-embeddings-provider-name
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a8d7385a7b66 -> b289e2408ee2, add workflow
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b289e2408ee2 -> cc04d0998d4d, set model config column nullable
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade cc04d0998d4d -> f9107f83abab, add desc for apps
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f9107f83abab -> 42e85ed5564d, conversation columns set nullable
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 42e85ed5564d -> b5429b71023c, messages columns set nullable
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b5429b71023c -> 563cf8bf777b, enable tool file without conversation id
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 563cf8bf777b -> e2eacc9a1b63, add status for message
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e2eacc9a1b63 -> c3311b089690, add tool meta
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c3311b089690 -> 3c7cac9521c6, add-tags-and-binding-table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 3c7cac9521c6 -> 47cc7df8c4f3, modify default model name length
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 47cc7df8c4f3 -> 5fda94355fce, Custom Disclaimer
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 5fda94355fce -> 7bdef072e63a, add workflow tool
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7bdef072e63a -> 3b18fea55204, add tool label bings
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 3b18fea55204 -> 9e98fbaffb88, add workflow tool version
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 9e98fbaffb88 -> 03f98355ba0e, add workflow tool label and tool bindings idx
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 03f98355ba0e -> 64a70a7aab8b, add workflow run index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 64a70a7aab8b -> 4e99a8df00ff, add load balancing
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4e99a8df00ff -> 7b45942e39bb, add-api-key-auth-binding
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7b45942e39bb -> 4ff534e1eb11, add workflow to site
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4ff534e1eb11 -> b69ca54b9208, add chatbot color theme
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4ff534e1eb11 -> 04c602f5dc9b, update AppModelConfig and add table TracingAppConfig
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 04c602f5dc9b -> c031d46af369, remove app model config trace config and rename trace app config
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c031d46af369 -> 2a3aebbbf4bb, add app tracing
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2a3aebbbf4bb, b69ca54b9208 -> 63f9175e515b, merge branches
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 63f9175e515b -> b2602e131636, add workflow_run_id index for message
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b2602e131636 -> 7e6a8693e07a, add table dataset_permissions
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7e6a8693e07a -> 161cadc1af8d, add dataset permission tenant id
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 161cadc1af8d -> 408176b91ad3, 'add_max_active_requests'
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 408176b91ad3 -> fecff1c3da27, remove extra tracing app config table and add idx_dataset_permissions_tenant_id
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade fecff1c3da27 -> 6e957a32015b, add-embedding-cache-created_at_index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 6e957a32015b -> 8e5588e6412e, add environment variable to workflow model
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8e5588e6412e -> 53bf8af60645, update model
+ssrf_proxy-1        | [ENTRYPOINT] re-create snakeoil self-signed certificate removed in the build process
+ssrf_proxy-1        | [ENTRYPOINT] replacing environment variables in the templates
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/squid.conf (depth 0)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_common.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_sandbox_proxy.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_allow_private.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Created PID file (/run/squid.pid)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+ssrf_proxy-1        | 2026/11/05 10:35:36| Creating missing swap directories
+ssrf_proxy-1        | 2026/11/05 10:35:36| No cache_dir stores are configured.
+ssrf_proxy-1        | 2026/11/05 10:35:36| Removing PID file (/run/squid.pid)
+ssrf_proxy-1        | [ENTRYPOINT] starting squid
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/squid.conf (depth 0)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_common.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 53bf8af60645 -> eeb2e349e6ac, increase max model_name length
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade eeb2e349e6ac -> 1787fbae959a, update tools original_url length
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 1787fbae959a -> 63a83fcf12ba, support conversation variables
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 63a83fcf12ba -> 8782057ff0dc, add conversations.dialogue_count
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8782057ff0dc -> a6be81136580, app and site icon type
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a6be81136580 -> 2dbe42621d96, rename workflow__conversation_variables to workflow_conversation_variables
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2dbe42621d96 -> d0187d6a88dd, add created_by and updated_by to app, modelconfig, and site
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d0187d6a88dd -> 030f4915f36a, add use_icon_as_answer_icon fields for app and site
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 030f4915f36a -> 675b5321501b, add node_execution_id into node_executions
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 675b5321501b -> d57ba9ebb251, add parent_message_id to messages
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d57ba9ebb251 -> 6af6a521a53e, update-retrieval-resource
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 6af6a521a53e -> 33f5fac87f29, external_knowledge_api
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 33f5fac87f29 -> d8e744d88ed6, fix wrong service-api history
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d8e744d88ed6 -> bbadea11becb, add name and size to tool_files
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade bbadea11becb -> 0251a1c768cc, add-tidb-auth-binding
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 0251a1c768cc -> 43fa78bc3b7d, add_white_list
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 43fa78bc3b7d -> d3f6769a94a3, Add upload_files.source_url
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d3f6769a94a3 -> 93ad8c19c40b, rename conversation variables index name
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 93ad8c19c40b -> f4d7ce70a7ca, update upload_files.source_url
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f4d7ce70a7ca -> d07474999927, update type of custom_disclaimer to TEXT
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d07474999927 -> 09a8d1878d9b, update workflows graph, features and updated_at
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 09a8d1878d9b -> 01d6889832f7, add_created_at_index_for_messages
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 01d6889832f7 -> cf8f4fc45278, add exceptions_count field to WorkflowRun model
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade cf8f4fc45278 -> 11b07f66c737, remove unused tool_providers
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 11b07f66c737 -> e1944c35e15e, add retry_index field to node-execution model
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e1944c35e15e -> d7999dfa4aae, remove workflow_node_executions.retry_index if exists
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d7999dfa4aae -> e19037032219, parent-child-index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e19037032219 -> 923752d42eb6, add_auto_disabled_dataset_logs
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 923752d42eb6 -> a91b476a53de, change workflow_runs.total_tokens to bigint
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a91b476a53de -> ddcc8bbef391, increase max length of builtin tool provider
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade ddcc8bbef391 -> 08ec4f75af5e, add_tenant_plugin_permisisons
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 08ec4f75af5e -> 4413929e1ec2, extend_provider_name_column
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4413929e1ec2 -> 5511c782ee4c, extend provider column
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 5511c782ee4c -> ee79d9b1c156, add marked_name and marked_comment in workflows
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade ee79d9b1c156 -> f051706725cc, add_rate_limit_logs
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f051706725cc -> d20049ed0af6, add_metadata_function
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d20049ed0af6 -> 6a9f914f656c, change documentsegment and childchunk indexes
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 6a9f914f656c -> d28f2004b072, add index for workflow_conversation_variables.conversation_id
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d28f2004b072 -> 2adcbe1f5dfb, add WorkflowDraftVariable model
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2adcbe1f5dfb -> 4474872b0ee6, `workflow_draft_varaibles` add `node_execution_id` column, add an index for `workflow_node_executions`.
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4474872b0ee6 -> 0ab65e1cc7fa, remove sequence_number from workflow_runs
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 0ab65e1cc7fa -> 58eb7bdb93fe, add mcp server tool and app server
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 58eb7bdb93fe -> 1c9ba48be8e4, add uuidv7 function in SQL
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 1c9ba48be8e4 -> 71f5020c6470, tool oauth
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 71f5020c6470 -> 1a83934ad6d1, update models
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 1a83934ad6d1 -> 375fe79ead14, oauth_refresh_token
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 375fe79ead14 -> 8bcc02c9bd07, add_tenant_plugin_autoupgrade_table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8bcc02c9bd07 -> 532b3f888abf, manual dataset field update
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 532b3f888abf -> fa8b0fa6f407, add timeout for tool_mcp_providers
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade fa8b0fa6f407 -> e8446f481c1e, Add provider multi credential support
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e8446f481c1e -> 0e154742a5fa, Add provider model multi credential support
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 0e154742a5fa -> 8d289573e1da, empty message
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8d289573e1da -> b95962a3885c, chore: add workflow app log run id index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b95962a3885c -> c20211f18133, add_headers_to_mcp_provider
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c20211f18133 -> cf7c38a32b2d, Add credential status for provider table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade cf7c38a32b2d -> 68519ad5cd18, knowledge_pipeline_migrate
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 68519ad5cd18 -> d98acf217d43, add app_mode for messsage
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d98acf217d43 -> ae662b25d9bc, remove-builtin-template-user
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-aarch64/asm_avx2/include/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-aarch64/asm_avx2/include/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-aarch64/asm_avx2/include/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-aarch64/asm_avx2/include/openssl/crmf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/crypto/buildinf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/der_digests.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/der_dsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/der_ecx.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/der_rsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/der_wrap.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/der_sm2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/providers/common/include/prov/der_ec.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/progs.h
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade ae662b25d9bc -> 03f8dcbc611e, add WorkflowPause model
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/crypto/
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_sandbox_proxy.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_allow_private.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Created PID file (/run/squid.pid)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+ssrf_proxy-1        | 2026/11/05 10:35:36| Creating missing swap directories
+ssrf_proxy-1        | 2026/11/05 10:35:36| No cache_dir stores are configured.
+ssrf_proxy-1        | 2026/11/05 10:35:36| Removing PID file (/run/squid.pid)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/squid.conf (depth 0)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_common.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '0.0.0.0/8' is a subnetwork of (A) '0.0.0.0/0'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '0.0.0.0/0' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '0.0.0.0/8' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: (B) '::1' is a subnetwork of (A) '::/96'
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: because of this '::/96' is ignored to keep splay tree searching predictable
+ssrf_proxy-1        | 2026/11/05 10:35:36| WARNING: You should probably remove '::1' from the ACL named 'to_private_networks'
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_sandbox_proxy.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Processing Configuration File: /etc/squid/dify_allow_private.conf (depth 1)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Created PID file (/run/squid.pid)
+ssrf_proxy-1        | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+ssrf_proxy-1        | 2026/11/05 10:35:36| Starting Squid Cache version 6.13 for x86_64-pc-linux-gnu...
+ssrf_proxy-1        | 2026/11/05 10:35:36| Service Name: squid
+ssrf_proxy-1        | 2026/11/05 10:35:36| Process ID 46
+ssrf_proxy-1        | 2026/11/05 10:35:36| Process Roles: master worker
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 03f8dcbc611e -> 669ffd70119c, introduce_trigger
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 669ffd70119c -> 09cfdda155d1, mysql adaptation
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 09cfdda155d1 -> 7bb281b7a422, Add workflow_pauses_reasons table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7bb281b7a422 -> d57accd375ae, support-multi-modal
+ssrf_proxy-1        | 2026/11/05 10:35:36| With 65536 file descriptors available
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d57accd375ae -> 03ea244985ce, add type column not null default tool
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/crypto/bn_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/crypto/dso_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/opensslv.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/ess.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/ocsp.h
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 03ea244985ce -> 7df29de0f6be, add credit pool
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7df29de0f6be -> 905527cc8fd3, add workflow_run_created_at_id_idx
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 905527cc8fd3 -> 3334862ee907, feat: add created_at id index to messages
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 3334862ee907 -> 288345cd01d1, change workflow node execution workflow_run index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 288345cd01d1 -> 9e6fa5cbcd80, make message annotation question not nullable
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 9e6fa5cbcd80 -> f9f6d18a37f9, add table explore banner and trial
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f9f6d18a37f9 -> 9d77545f524e, create workflow_archive_logs
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 9d77545f524e -> 788d3099ae3a, add summary index feature
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 788d3099ae3a -> e8c3b3c46151, Add human input related db models
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e8c3b3c46151 -> c3df22613c99, drop server_default for app trail related tables
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c3df22613c99 -> f55813ffe2c8, add unique constraint to tenant_default_models
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/srp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/x509_vfy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/cms.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/x509v3.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/asn1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/safestack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/lhash.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/crypto.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/cmp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/ct.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/x509.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/ui.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/fipskey.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/pkcs7.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/bio.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm/include/openssl/crmf.h
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f55813ffe2c8 -> fce013ca180e, fix index to optimize message clean job performance
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade fce013ca180e -> e288952f2994, add partial indexes on conversations for app_id with created_at and updated_at
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e288952f2994 -> 0ec65df55790, add indexes for human_input_forms query patterns
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 0ec65df55790 -> 6b5f9f8b1a2c, add user_id and switch workflow_draft_variables unique key to user scope
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 6b5f9f8b1a2c -> 8574b23a38fd, add qdrant_endpoint to tidb_auth_bindings
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8574b23a38fd -> 227822d22895, Add workflow comments table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 227822d22895 -> a4f2d8c9b731, add recommended app categories
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a4f2d8c9b731 -> c6a9f4b12d3e, add agent domain models
+ssrf_proxy-1        | 2026/11/05 10:35:36| Initializing IP Cache...
+ssrf_proxy-1        | 2026/11/05 10:35:36| DNS IPv6 socket created at [::], FD 8
+ssrf_proxy-1        | 2026/11/05 10:35:36| DNS IPv4 socket created at 0.0.0.0, FD 9
+ssrf_proxy-1        | 2026/11/05 10:35:36| Adding nameserver 127.0.0.11 from /etc/resolv.conf
+ssrf_proxy-1        | 2026/11/05 10:35:36| Adding domain r3gv55co0vserpzgji3gvzdlob.gx.internal.cloudapp.net from /etc/resolv.conf
+ssrf_proxy-1        | 2026/11/05 10:35:36| Adding ndots 1 from /etc/resolv.conf
+ssrf_proxy-1        | 2026/11/05 10:35:36| Logfile: opening log daemon:/var/log/squid/access.log
+ssrf_proxy-1        | 2026/11/05 10:35:36| Logfile Daemon: opening log /var/log/squid/access.log
+ssrf_proxy-1        | 2026/11/05 10:35:36| Local cache digest enabled; rebuild/rewrite every 3600/3600 sec
+ssrf_proxy-1        | 2026/11/05 10:35:36| Store logging disabled
+ssrf_proxy-1        | 2026/11/05 10:35:36| Swap maxSize 0 + 262144 KB, estimated 20164 objects
+ssrf_proxy-1        | 2026/11/05 10:35:36| Target number of buckets: 1008
+ssrf_proxy-1        | 2026/11/05 10:35:36| Using 8192 Store buckets
+ssrf_proxy-1        | 2026/11/05 10:35:36| Max Mem  size: 262144 KB
+ssrf_proxy-1        | 2026/11/05 10:35:36| Max Swap size: 0 KB
+ssrf_proxy-1        | 2026/11/05 10:35:36| Using Least Load store dir selection
+ssrf_proxy-1        | 2026/11/05 10:35:36| Set Current Directory to /var/spool/squid
+ssrf_proxy-1        | 2026/11/05 10:35:36| Finished loading MIME types and icons.
+ssrf_proxy-1        | 2026/11/05 10:35:36| HTCP Disabled.
+ssrf_proxy-1        | 2026/11/05 10:35:36| Pinger socket opened on FD 14
+ssrf_proxy-1        | 2026/11/05 10:35:36| Squid plugin modules loaded: 0
+ssrf_proxy-1        | 2026/11/05 10:35:36| Adaptation support is off.
+ssrf_proxy-1        | 2026/11/05 10:35:36| Accepting HTTP Socket connections at conn3 local=[::]:3128 remote=[::] FD 12 flags=9
+ssrf_proxy-1        |     listening port: 3128
+ssrf_proxy-1        | 2026/11/05 10:35:36 pinger| Initialising ICMP pinger ...
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c6a9f4b12d3e -> f8b6b7e9c421, add agent config revisions
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f8b6b7e9c421 -> 97e2e1a644e8, add workflow_version to workflow_agent_node_bindings
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 97e2e1a644e8 -> d4a5e1f3c9b7, add oauth_access_tokens table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d4a5e1f3c9b7 -> 7885bd53f9a9, add workflow agent runtime sessions
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7885bd53f9a9 -> a1b2c3d4e5f6, add credential visibility and permission table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> 121e7346074d, unify agent runtime sessions table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 121e7346074d -> 8d4c2a1b9f03, Add human input upload token and file association tables
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 8d4c2a1b9f03 -> 2b3c4d5e6f70, add customized snippets
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2b3c4d5e6f70 -> 3df4dbcc1e21, add identity mode to mcp tool provider
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 3df4dbcc1e21 -> 7bad07dc267d, add agent_drive_files (agent drive KV)
+ssrf_proxy-1        | 2026/11/05 10:35:36 pinger| ICMP socket opened.
+ssrf_proxy-1        | 2026/11/05 10:35:36 pinger| ICMPv6 socket opened
+ssrf_proxy-1        | 2026/11/05 10:35:37| storeLateRelease: released 0 objects
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/crypto/buildinf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/der_digests.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/der_dsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/der_ecx.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/der_rsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/der_wrap.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/der_sm2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/providers/common/include/prov/der_ec.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/progs.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/crypto/bn_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/crypto/dso_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/opensslv.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/ess.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/ocsp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/srp.h
+ssrf_proxy-1        | 1793875005.696    461 172.21.0.12 TCP_MISS/200 357 POST http://museum:8080/v1/prepare - HIER_DIRECT/172.31.92.7 application/json
+ssrf_proxy-1        | 1793875006.089     54 172.21.0.12 TCP_MISS/200 1179 POST http://museum:8080/v1/remember - HIER_DIRECT/172.31.92.7 application/json
+ssrf_proxy-1        | 1793875006.666     32 172.21.0.12 TCP_MISS/200 1596 POST http://museum:8080/v1/prepare - HIER_DIRECT/172.31.92.7 application/json
+ssrf_proxy-1        | 1793875007.227     43 172.21.0.12 TCP_MISS/200 1274 POST http://museum:8080/v1/remember - HIER_DIRECT/172.31.92.7 application/json
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7bad07dc267d -> 0b2f2c8a9d1e, add agent role
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 0b2f2c8a9d1e -> 9f4b7c2d1a80, add agent active config has model
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 9f4b7c2d1a80 -> b7c2d9e8a1f4, add tenant account join last opened at
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b7c2d9e8a1f4 -> f6a7b8c9d012, add plugin auto upgrade category
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d012 -> f5e8a9c0d2b3, add learn dify flag to recommended apps
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f5e8a9c0d2b3 -> c4d5e6f7a8b9, add app stars
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c4d5e6f7a8b9 -> c167a72a00eb, add ask_human pause correlation to agent_runtime_sessions
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c167a72a00eb -> d2f1a4b8c3e0, add conversation_id to human_input_forms for agent v2 chat hitl
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d2f1a4b8c3e0 -> a7c4e9d2f681, add resource maintainers
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a7c4e9d2f681 -> 4f7b2c8d9a10, normalize legacy end user type
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 4f7b2c8d9a10 -> b2515f9d4c2a, agent drive skill metadata refactor
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b2515f9d4c2a -> c8f4a6b2d3e1, add agent debug conversations
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c8f4a6b2d3e1 -> d9e8f7a6b5c4, add cloud only flag to recommended apps
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d9e8f7a6b5c4 -> a6f1c9d2e8b4, add input placeholder to sites
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a6f1c9d2e8b4 -> e4f5a6b7c8d9, add agent config drafts
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e4f5a6b7c8d9 -> a2b3c4d5e6f7, add agent backing app id
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a2b3c4d5e6f7 -> c3d4e5f6a7b8, add agent active config is published
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade c3d4e5f6a7b8 -> 7a1c2d9e4b60, add workflow run archive bundle index table
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 7a1c2d9e4b60 -> 3c9f8e2a1d7b, add workflow-run archive bundle cursor indexes
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 3c9f8e2a1d7b -> b8c9d0e1f2a3, add step by step tour state
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade b8c9d0e1f2a3 -> d2825e7b9c10, scope agent debug conversations by draft type
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/x509_vfy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/cms.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/x509v3.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/asn1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/safestack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/lhash.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/crypto.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/cmp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/ct.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/x509.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/ui.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/fipskey.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/pkcs7.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/bio.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/no-asm/include/openssl/crmf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/crypto/buildinf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/der_digests.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/der_dsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/der_ecx.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/der_rsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/der_wrap.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/der_sm2.h
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade d2825e7b9c10 -> 6f5a9c2d8e1b, add telemetry fields to dify_setups
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 6f5a9c2d8e1b -> 2f39536b3feb, add agent home snapshot ledger
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 2f39536b3feb -> f6e4c5686857, replace agent runtime sessions with workspaces and bindings
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f6e4c5686857 -> e4708db55c1d, make home snapshot references nullable
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade e4708db55c1d -> a1c7f4e9b3d2, add workflow version number
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a1c7f4e9b3d2 -> f3a9c2d17b4e, add oauth provider app auto_authorize
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade f3a9c2d17b4e -> 56124e050600, add conversation cleanup index
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 56124e050600 -> 89919253ca7a, remove agent drive
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 89919253ca7a -> fbdfcf5f5a6e, clean legacy agent soul files
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade fbdfcf5f5a6e -> 925e75620b69, simplify agent v2 output contract
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 925e75620b69 -> a4f8d2c9e1b0, add workspace skill management
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade a4f8d2c9e1b0 -> 9b7c6d5e4f3a, add normalized email to accounts
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 9b7c6d5e4f3a -> 5578e028b2f2, migrate legacy model types
+api_websocket-1     | INFO  [alembic.runtime.migration] Running upgrade 5578e028b2f2 -> c3f1a9b2e6d4, add dataset_api_token_bindings
+api_websocket-1     | Database migration successful!
+api_websocket-1     | [2026-11-05 10:36:23 +0000] [1] [INFO] Starting gunicorn 26.2.0
+api_websocket-1     | [2026-11-05 10:36:23 +0000] [1] [INFO] Listening at: http://0.0.0.0:5001 (1)
+api_websocket-1     | [2026-11-05 10:36:23 +0000] [1] [INFO] Using worker: geventwebsocket.gunicorn.workers.GeventWebSocketWorker
+api_websocket-1     | [2026-11-05 10:36:23 +0000] [21] [INFO] Booting worker with pid: 21
+api_websocket-1     | gRPC patched with gevent.
+api_websocket-1     | psycopg2 patched with gevent.
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/providers/common/include/prov/der_ec.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/progs.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/crypto/bn_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/crypto/dso_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/opensslv.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/ess.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/ocsp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/srp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/x509_vfy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/cms.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/x509v3.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/asn1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/safestack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/lhash.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/crypto.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/cmp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/ct.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/x509.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/ui.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/fipskey.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/pkcs7.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/bio.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-armv4/asm_avx2/include/openssl/crmf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/crypto/buildinf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/der_digests.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/der_dsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/der_ecx.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/der_rsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/der_wrap.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/der_sm2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/providers/common/include/prov/der_ec.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/progs.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/crypto/bn_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/crypto/dso_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/opensslv.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/ess.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/ocsp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/srp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/x509_vfy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/cms.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/x509v3.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/asn1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/safestack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/lhash.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/crypto.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/cmp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/ct.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/x509.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/ui.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/fipskey.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/pkcs7.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/bio.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm/include/openssl/crmf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/crypto/buildinf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/der_digests.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/der_dsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/der_ecx.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/der_rsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/der_wrap.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/der_sm2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/providers/common/include/prov/der_ec.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/progs.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/crypto/bn_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/crypto/dso_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/opensslv.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/ess.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/ocsp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/srp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/x509_vfy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/cms.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/x509v3.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/asn1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/safestack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/lhash.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/crypto.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/cmp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/ct.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/x509.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/ui.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/fipskey.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/pkcs7.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/bio.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/no-asm/include/openssl/crmf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/crypto/buildinf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/der_digests.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/der_dsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/der_ecx.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/der_rsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/der_wrap.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/der_sm2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/providers/common/include/prov/der_ec.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/progs.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/crypto/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/crypto/bn_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/crypto/dso_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/opensslv.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/ess.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/ocsp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/srp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/x509_vfy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/cms.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/x509v3.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/asn1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/safestack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/lhash.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/crypto.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/cmp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/ct.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/x509.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/ui.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/fipskey.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/pkcs7.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/bio.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/archs/linux-x86_64/asm_avx2/include/openssl/crmf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/params.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/conf_api.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/configuration_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/opensslconf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/conftypes.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/uierr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ec.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ebcdic.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ess.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/tls1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/modes.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/evperr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cms_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/dso_conf_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509_vfy_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/decoder.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/symhacks.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/self_test.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/md2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ecerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/engine.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ocsp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/tserr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/srp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/dso_conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ct_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/bn_conf_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/http.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509_vfy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cms.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ossl_typ.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ui_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/lhash_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cterr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/srp_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/opensslv_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/core_object.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/fips_names.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/rc2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/decodererr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs12_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/blowfish.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/sslerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/des.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/bnerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/opensslv_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cms_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/randerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ocsperr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/lhash_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/aes.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/proverr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ess_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/conf_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/safestack_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/conf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509v3.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/prov_ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/core.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/conf_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs7_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cmac.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ts.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs7err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/safestack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/lhash.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/encodererr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/objects.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/bio_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ssl.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/buffererr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/txt_db.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/whrlpool.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/rsaerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/crmf_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/kdferr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ssl_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509v3_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/srtp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/err_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/crypto.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/storeerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/configuration_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/safestack_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/stack.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/idea.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/buffer.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/core_dispatch.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/camellia.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1t_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cast.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/bn_conf_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ocsp_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/types.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/trace.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cmp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/rsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/evp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/hmac.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ct.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cmserr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/kdf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/opensslconf_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ui_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1_mac.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/sslerr_legacy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ui.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/bioerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/store.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/fipskey.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/objectserr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs7_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ecdsa.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/dh.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/dtls1.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs7.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/seed.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/srp_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/macros.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/comperr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/dso_conf_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509v3_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/md4.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cmp_util.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cmperr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cryptoerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/mdc2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/fipskey_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/rand.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/sha.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/async.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/e_os2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ecdh.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/md5.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pem2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/dherr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/conferr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/bio.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/crypto_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cmp_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs12err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/obj_mac.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/encoder.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/comp.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pem.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/provider.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/crmf_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ssl_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/esserr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/bn.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ssl2.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/httperr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/cryptoerr_legacy.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ess_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/ocsp_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/engineerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/crmferr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/rc5.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1t.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs12_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/configuration.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pkcs12.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/asn1t_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/pemerr.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509_asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/err_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/crmf.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509_vfy_no-asm.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/x509v3err.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/openssl/param_build.h
+sandbox-1           | node-v20.20.0-linux-x64/include/node/v8-callbacks.h
+sandbox-1           | node-v20.20.0-linux-x64/README.md
+sandbox-1           | {"time":"2026-11-05T10:35:37.863986328Z","level":"INFO","msg":"initializing nodejs runner environment"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.887726671Z","level":"INFO","msg":"nodejs runner environment initialized"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.888180448Z","level":"INFO","msg":"initializing python runner environment"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889365Z","level":"INFO","msg":"network has been enabled"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.88937834Z","level":"INFO","msg":"using https proxy","proxy":"http://ssrf_proxy:3128"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889402626Z","level":"INFO","msg":"using http proxy","proxy":"http://ssrf_proxy:3128"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889419402Z","level":"INFO","msg":"config init success"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889433183Z","level":"ERROR","msg":"failed to setup runner dependencies","err":"open dependencies/python-requirements.txt: no such file or directory"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889447775Z","level":"INFO","msg":"runner dependencies init success"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889505602Z","level":"INFO","msg":"setting max requests","max":50}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889513214Z","level":"INFO","msg":"setting max workers","max":4}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889558232Z","level":"INFO","msg":"installing python dependencies"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889582438Z","level":"INFO","msg":"python dependencies installed"}
+sandbox-1           | {"time":"2026-11-05T10:35:37.889586615Z","level":"INFO","msg":"initializing python dependencies sandbox"}
+sandbox-1           | [GIN] 2026/11/05 - 10:36:06 | 200 |      37.567µs |             ::1 | GET      "/health"
+sandbox-1           | {"time":"2026-11-05T10:36:07.680498542Z","level":"WARN","msg":"python lib path is not available","path":"/usr/local/lib/python3.14"}
+sandbox-1           | {"time":"2026-11-05T10:36:07.680558733Z","level":"WARN","msg":"python lib path is not available","path":"/usr/lib/python3.14"}
+sandbox-1           | {"time":"2026-11-05T10:36:07.680572934Z","level":"WARN","msg":"python lib path is not available","path":"/usr/lib/python3"}
+sandbox-1           | {"time":"2026-11-05T10:36:30.523756514Z","level":"WARN","msg":"python lib path is not available","path":"/etc/nsswitch.conf"}
+sandbox-1           | {"time":"2026-11-05T10:36:30.555844844Z","level":"WARN","msg":"python lib path is not available","path":"/run/systemd/resolve/stub-resolv.conf"}
+sandbox-1           | {"time":"2026-11-05T10:36:30.555892576Z","level":"WARN","msg":"python lib path is not available","path":"/run/resolvconf/resolv.conf"}
+sandbox-1           | {"time":"2026-11-05T10:36:30.555901109Z","level":"WARN","msg":"python lib path is not available","path":"/etc/localtime"}
+sandbox-1           | {"time":"2026-11-05T10:36:34.641748316Z","level":"WARN","msg":"python lib path is not available","path":"/etc/timezone"}
+sandbox-1           | {"time":"2026-11-05T10:36:34.64231882Z","level":"INFO","msg":"python dependencies sandbox initialized"}
+sandbox-1           | [GIN] 2026/11/05 - 10:36:36 | 200 |      37.857µs |             ::1 | GET      "/health"
+sandbox-1           | {"time":"2026-11-05T10:36:44.898461677Z","level":"INFO","msg":"sandbox UID passwd entries created","range":"10000-10999"}
+sandbox-1           | [GIN] 2026/11/05 - 10:36:44 | 200 |   67.923074ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:45 | 200 |   43.142169ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:45 | 200 |   43.962045ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:45 | 200 |   42.141496ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:45 | 200 |   42.157702ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:46 | 200 |    42.35341ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:46 | 200 |   42.195027ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:46 | 200 |   41.528914ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:46 | 200 |   46.054676ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:46 | 200 |   42.887843ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:47 | 200 |   44.646936ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:47 | 200 |    51.30135ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:47 | 200 |   41.369341ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:47 | 200 |   41.651865ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:48 | 200 |   41.961735ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:48 | 200 |   44.847749ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:48 | 200 |   44.702349ms |      172.18.0.8 | POST     "/v1/sandbox/run"
+sandbox-1           | [GIN] 2026/11/05 - 10:36:48 | 200 |   42.385285ms |      172.18.0.8 | POST     "/v1/sandbox/run"

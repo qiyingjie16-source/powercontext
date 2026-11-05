@@ -1,0 +1,57 @@
+{
+  "kind": "real_dify_plugin_install",
+  "created_at": "2026-11-05T10:36:40.658194+00:00",
+  "plugin": "langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4",
+  "install_response": {
+    "all_installed": false,
+    "task_id": "01a1ab48-3d4d-7a35-be01-ebe0998cc764",
+    "task": null
+  },
+  "status_history": [
+    {
+      "at": "2026-11-05T10:36:40.667535+00:00",
+      "status": "running",
+      "completed_plugins": 0,
+      "total_plugins": 1
+    },
+    {
+      "at": "2026-11-05T10:36:43.677034+00:00",
+      "status": "success",
+      "completed_plugins": 1,
+      "total_plugins": 1
+    }
+  ],
+  "result": "provider_ready",
+  "credentials_included": false,
+  "task": {
+    "id": "01a1ab48-3d4d-7a35-be01-ebe0998cc764",
+    "created_at": "2026-11-05T10:36:40.653672Z",
+    "updated_at": "2026-11-05T10:36:43.305513Z",
+    "status": "success",
+    "total_plugins": 1,
+    "completed_plugins": 1,
+    "plugins": [
+      {
+        "plugin_unique_identifier": "langgenius/openai_api_compatible:0.0.72@87f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4",
+        "plugin_id": "langgenius/openai_api_compatible",
+        "status": "success",
+        "message": "installed",
+        "icon": "fb1d7c05088e34ecabd0e087ebcfd929be9aad785b5e21e0577c2aa82acf7ae0.svg",
+        "labels": {
+          "en_US": "OpenAI-API-compatible",
+          "zh_Hans": "OpenAI-API-compatible",
+          "pt_BR": "OpenAI-API-compatible",
+          "ja_JP": "OpenAI-API-compatible"
+        },
+        "source": "marketplace"
+      }
+    ]
+  },
+  "provider": "langgenius/openai_api_compatible/openai_api_compatible",
+  "observed_providers": [
+    "langgenius/openai_api_compatible/openai_api_compatible"
+  ],
+  "installed_model_ids": [
+    "langgenius/openai_api_compatible"
+  ]
+}

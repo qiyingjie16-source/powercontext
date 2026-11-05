@@ -1,0 +1,18 @@
+NAME                                    IMAGE                                        COMMAND                  SERVICE            CREATED              STATUS                        PORTS
+memory-museum-dify-agent_backend-1      langgenius/dify-agent-backend:1.17.1         "uvicorn dify_agent.…"   agent_backend      About a minute ago   Up About a minute             5050/tcp
+memory-museum-dify-agent_ssrf_proxy-1   ubuntu/squid:latest                          "sh -c 'cp /docker-e…"   agent_ssrf_proxy   About a minute ago   Up About a minute             3128/tcp
+memory-museum-dify-api-1                langgenius/dify-api:1.17.1                   "/bin/bash /entrypoi…"   api                About a minute ago   Up About a minute (healthy)   5001/tcp
+memory-museum-dify-api_websocket-1      langgenius/dify-api:1.17.1                   "/bin/bash /entrypoi…"   api_websocket      About a minute ago   Up About a minute             5001/tcp
+memory-museum-dify-db_postgres-1        postgres:15-alpine                           "docker-entrypoint.s…"   db_postgres        About a minute ago   Up About a minute (healthy)   5432/tcp
+memory-museum-dify-local_sandbox-1      langgenius/dify-agent-local-sandbox:1.17.1   "/usr/bin/tini -g --…"   local_sandbox      About a minute ago   Up About a minute (healthy)
+memory-museum-dify-nginx-1              nginx:latest                                 "sh -c 'cp /docker-e…"   nginx              About a minute ago   Up About a minute             127.0.0.1:18080->80/tcp, 127.0.0.1:18443->443/tcp
+memory-museum-dify-plugin_daemon-1      langgenius/dify-plugin-daemon:0.6.10-local   "/usr/bin/tini -g --…"   plugin_daemon      About a minute ago   Up About a minute             127.0.0.1:15003->5003/tcp
+memory-museum-dify-redis-1              redis:6-alpine                               "docker-entrypoint.s…"   redis              About a minute ago   Up About a minute (healthy)   6379/tcp
+memory-museum-dify-sandbox-1            langgenius/dify-sandbox:0.2.15               "/entrypoint.sh"         sandbox            About a minute ago   Up About a minute (healthy)
+memory-museum-dify-ssrf_proxy-1         ubuntu/squid:latest                          "sh -c 'cp /docker-e…"   ssrf_proxy         About a minute ago   Up About a minute             3128/tcp
+memory-museum-dify-web-1                langgenius/dify-web:1.17.1                   "/bin/sh ./entrypoin…"   web                About a minute ago   Up About a minute             3000/tcp
+memory-museum-dify-worker-1             langgenius/dify-api:1.17.1                   "/bin/bash /entrypoi…"   worker             About a minute ago   Up About a minute             5001/tcp
+memory-museum-dify-worker_beat-1        langgenius/dify-api:1.17.1                   "/bin/bash /entrypoi…"   worker_beat        About a minute ago   Up About a minute             5001/tcp
+NAME                           IMAGE                                 COMMAND                  SERVICE        CREATED          STATUS                    PORTS
+memory-museum-museum-1         memory-museum-backend:0.1.0           "/app/.venv/bin/uvic…"   museum         15 seconds ago   Up 9 seconds (healthy)    127.0.0.1:18081->8080/tcp
+memory-museum-powercontext-1   memory-museum-powercontext:729dc4c5   "powercontext server…"   powercontext   16 seconds ago   Up 15 seconds (healthy)   127.0.0.1:18082->8000/tcp

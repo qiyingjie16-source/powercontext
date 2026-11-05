@@ -126,7 +126,7 @@ uv run --project backend --group dev python scripts/build_dsl.py `
 5. 使用真实模型时，在 Dify 控制台配置对应的 provider；`configure_dify.py`
    的 fixture 配置用于自动化 E2E。
 
-模型 API Key 只保存在本机 Dify 配置中，不进入 DSL、源码或证据。
+模型 API Key 保存在本机 Dify 配置中；DSL、源码和证据使用占位配置。
 
 ## 技术结合证据
 
@@ -148,7 +148,7 @@ uv run --project backend --group dev python scripts/build_dsl.py `
 /apps/{app_id}/workflow-runs/{workflow_run_id}/node-executions
 ```
 
-读取同一运行的真实节点输出，而不是从模型回答反推记忆是否生效。
+读取同一运行的真实节点输出，并把节点数据与 SSE 聊天回答分别归档。
 
 ## 安全与失败处理
 
@@ -177,8 +177,9 @@ uv run --with graphon==0.7.0 --python 3.12 python validation\validate_dify_nodes
   --output evidence\dify-node-schema.json
 ```
 
-GitHub Actions 工作流 `Dify Memory Museum E2E` 也执行同一真实引擎链路，
-并上传 `dify-e2e.json`、SSE transcript、Compose 状态和服务日志。
+[GitHub Actions 运行 #7](https://github.com/qiyingjie16-source/powercontext/actions/runs/42011438340)
+已完整通过，并归档 `dify-e2e.json`、两轮 SSE transcript、Compose 状态、
+Dify API/Worker、插件守护进程和博物馆服务日志。
 
 ## 运行边界与扩展
 

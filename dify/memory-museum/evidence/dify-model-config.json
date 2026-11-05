@@ -1,0 +1,12 @@
+{
+  "kind": "real_dify_fixture_model_configuration",
+  "created_at": "2026-11-05T10:36:43.718592+00:00",
+  "provider": "langgenius/openai_api_compatible/openai_api_compatible",
+  "model": "museum-fixture-v1",
+  "model_execution_mode": "deterministic_fixture",
+  "result": "configured",
+  "credentials_included": false,
+  "response": {
+    "result": "success"
+  }
+}

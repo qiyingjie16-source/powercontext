@@ -1,0 +1,199 @@
+api-1  | Running migrations
+api-1  | Preparing database migration...
+api-1  | Database migration skipped
+api-1  | [2026-11-05 10:36:18 +0000] [1] [INFO] Starting gunicorn 26.2.0
+api-1  | [2026-11-05 10:36:18 +0000] [1] [INFO] Listening at: http://0.0.0.0:5001 (1)
+api-1  | [2026-11-05 10:36:18 +0000] [1] [INFO] Using worker: gevent
+api-1  | [2026-11-05 10:36:18 +0000] [55] [INFO] Booting worker with pid: 55
+api-1  | gRPC patched with gevent.
+api-1  | psycopg2 patched with gevent.
+api-1  | 2026-11-05 10:36:39.798 INFO [Dummy-1] [_client.py:1025] bcd881c9a227591589efc1effeb0faa0 - HTTP Request: POST https://otel.dify.ai/v1/events "HTTP/1.1 202 Accepted"
+api-1  | 2026-11-05 10:36:39.833 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/fetch/manifest?plugin_unique_identifier=langgenius%2Fopenai_api_compatible%3A0.0.72%4087f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:40.216 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: GET https://marketplace.dify.ai/api/v1/plugins/download-url?unique_identifier=langgenius%2Fopenai_api_compatible%3A0.0.72%4087f3c4c7acee9ff03ac2c04ba8191edc5ea87cd53e36af1bbf1ccd13f00352a4 "HTTP/1.1 302 Found"
+api-1  | 2026-11-05 10:36:40.596 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: GET https://dify-plugin-saas.305dbc7da819eb47bb3f3f3bc8927046.r2.cloudflarestorage.com/langgenius/packages/openai_api_compatible/versions/0.0.72.difypkg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=[REDACTED]&X-Amz-Date=20261105T100509Z&X-Amz-Expires=18000&X-Amz-SignedHeaders=host&response-content-type=application%2Foctet-stream&x-id=GetObject&X-Amz-Signature=[REDACTED] "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:40.648 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/upload/package "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:40.654 INFO [Dummy-2] [_client.py:1025] 1e0a1b83c8745e34bbb1dd28606f78f9 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/identifiers "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:40.664 INFO [Dummy-3] [_client.py:1025] a31f2da3f23a5cd58d4fd51a5206cbdb - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:43.674 INFO [Dummy-4] [_client.py:1025] a4784240bbce5e6ea816c967b2a8758d - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/install/tasks/01a1ab48-3d4d-7a35-be01-ebe0998cc764 "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:43.691 INFO [Dummy-5] [_client.py:1025] 30c175766dac5ed992dc3c7809a7b677 - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/models?page=1&page_size=256 "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:43.694 INFO [Dummy-5] [_client.py:1025] 30c175766dac5ed992dc3c7809a7b677 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/installation/fetch/batch "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:43.716 INFO [Dummy-6] [_client.py:1025] c6d5f173dfb85f45b3dea2f2e886d087 - HTTP Request: GET http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/management/installation/ids?category=model "HTTP/1.1 200 OK"
+api-1  | 2026-11-05 10:36:43.751 INFO [Dummy-7] [_client.py:1025] c7da8e3010205a1a8b442381056642bc - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/validate_model_credentials "HTTP/1.1 200 OK"
+worker-1  | Running migrations
+worker-1  | Preparing database migration...
+worker-1  | Database migration skipped
+worker-1  | Starting Celery worker with queues: api_token,dataset,dataset_summary,priority_dataset,priority_pipeline,pipeline,mail,ops_trace,app_deletion,app_rbac,plugin,workflow_storage,conversation,workflow,schedule_poller,schedule_executor,triggered_workflow_dispatcher,trigger_refresh_publisher,trigger_refresh_executor,retention,workflow_based_app_execution
+worker-1  | gRPC patched with gevent.
+worker-1  | psycopg2 patched with gevent.
+worker-1  |
+worker-1  |  -------------- celery@06b802719def v5.6.3 (recovery)
+worker-1  | --- ***** -----
+worker-1  | -- ******* ---- Linux-7.0.0-1017-azure-x86_64-with-glibc2.36 2026-11-05 10:36:32
+worker-1  | - *** --- * ---
+worker-1  | - ** ---------- [config]
+worker-1  | - ** ---------- .> app:         app_factory:0x7f283ddf4680
+worker-1  | - ** ---------- .> transport:   redis://:**@redis:6379/1
+worker-1  | - ** ---------- .> results:     redis://:**@redis:6379/1
+worker-1  | - *** --- * --- .> concurrency: 4 (gevent)
+worker-1  | -- ******* ---- .> task events: OFF (enable -E to monitor tasks in this worker)
+worker-1  | --- ***** -----
+worker-1  |  -------------- [queues]
+worker-1  |                 .> api_token        exchange=api_token(direct) key=api_token
+worker-1  |                 .> app_deletion     exchange=app_deletion(direct) key=app_deletion
+worker-1  |                 .> app_rbac         exchange=app_rbac(direct) key=app_rbac
+worker-1  |                 .> conversation     exchange=conversation(direct) key=conversation
+worker-1  |                 .> dataset          exchange=dataset(direct) key=dataset
+worker-1  |                 .> dataset_summary  exchange=dataset_summary(direct) key=dataset_summary
+worker-1  |                 .> mail             exchange=mail(direct) key=mail
+worker-1  |                 .> ops_trace        exchange=ops_trace(direct) key=ops_trace
+worker-1  |                 .> pipeline         exchange=pipeline(direct) key=pipeline
+worker-1  |                 .> plugin           exchange=plugin(direct) key=plugin
+worker-1  |                 .> priority_dataset exchange=priority_dataset(direct) key=priority_dataset
+worker-1  |                 .> priority_pipeline exchange=priority_pipeline(direct) key=priority_pipeline
+worker-1  |                 .> retention        exchange=retention(direct) key=retention
+worker-1  |                 .> schedule_executor exchange=schedule_executor(direct) key=schedule_executor
+worker-1  |                 .> schedule_poller  exchange=schedule_poller(direct) key=schedule_poller
+worker-1  |                 .> trigger_refresh_executor exchange=trigger_refresh_executor(direct) key=trigger_refresh_executor
+worker-1  |                 .> trigger_refresh_publisher exchange=trigger_refresh_publisher(direct) key=trigger_refresh_publisher
+worker-1  |                 .> triggered_workflow_dispatcher exchange=triggered_workflow_dispatcher(direct) key=triggered_workflow_dispatcher
+worker-1  |                 .> workflow         exchange=workflow(direct) key=workflow
+worker-1  |                 .> workflow_based_app_execution exchange=workflow_based_app_execution(direct) key=workflow_based_app_execution
+worker-1  |                 .> workflow_storage exchange=workflow_storage(direct) key=workflow_storage
+worker-1  |
+worker-1  | [tasks]
+worker-1  |   . community_telemetry.send_heartbeat
+worker-1  |   . human_input_form_timeout.check_and_resume
+worker-1  |   . resume_agent_app_execution
+worker-1  |   . resume_app_execution
+worker-1  |   . resume_workflow_execution
+worker-1  |   . schedule.check_upgradable_plugin_task.check_upgradable_plugin_task
+worker-1  |   . schedule.clean_oauth_access_tokens_task.clean_oauth_access_tokens_task
+worker-1  |   . schedule.trigger_provider_refresh_task.trigger_provider_refresh
+worker-1  |   . schedule.update_api_token_last_used_task.batch_update_api_token_last_used
+worker-1  |   . schedule.workflow_schedule_task.poll_workflow_schedules
+worker-1  |   . tasks.add_document_to_index_task.add_document_to_index_task
+worker-1  |   . tasks.annotation.add_annotation_to_index_task.add_annotation_to_index_task
+worker-1  |   . tasks.annotation.batch_import_annotations_task.batch_import_annotations_task
+worker-1  |   . tasks.annotation.delete_annotation_index_task.delete_annotation_index_task
+worker-1  |   . tasks.annotation.disable_annotation_reply_task.disable_annotation_reply_task
+worker-1  |   . tasks.annotation.enable_annotation_reply_task.enable_annotation_reply_task
+worker-1  |   . tasks.annotation.update_annotation_to_index_task.update_annotation_to_index_task
+worker-1  |   . tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task
+worker-1  |   . tasks.async_workflow_tasks.execute_workflow_professional
+worker-1  |   . tasks.async_workflow_tasks.execute_workflow_sandbox
+worker-1  |   . tasks.async_workflow_tasks.execute_workflow_team
+worker-1  |   . tasks.batch_clean_document_task.batch_clean_document_task
+worker-1  |   . tasks.batch_create_segment_to_index_task.batch_create_segment_to_index_task
+worker-1  |   . tasks.clean_dataset_task.clean_dataset_task
+worker-1  |   . tasks.clean_document_task.clean_document_task
+worker-1  |   . tasks.clean_notion_document_task.clean_notion_document_task
+worker-1  |   . tasks.collect_agent_resources_task.collect_agent_resources
+worker-1  |   . tasks.deal_dataset_index_update_task.deal_dataset_index_update_task
+worker-1  |   . tasks.deal_dataset_vector_index_task.deal_dataset_vector_index_task
+worker-1  |   . tasks.delete_account_task.delete_account_task
+worker-1  |   . tasks.delete_conversation_task.delete_conversation_related_data
+worker-1  |   . tasks.delete_conversation_task.sweep_deleted_conversations
+worker-1  |   . tasks.delete_segment_from_index_task.delete_segment_from_index_task
+worker-1  |   . tasks.disable_segment_from_index_task.disable_segment_from_index_task
+worker-1  |   . tasks.disable_segments_from_index_task.disable_segments_from_index_task
+worker-1  |   . tasks.document_indexing_sync_task.document_indexing_sync_task
+worker-1  |   . tasks.document_indexing_task.document_indexing_task
+worker-1  |   . tasks.document_indexing_task.normal_document_indexing_task
+worker-1  |   . tasks.document_indexing_task.priority_document_indexing_task
+worker-1  |   . tasks.document_indexing_update_task.document_indexing_update_task
+worker-1  |   . tasks.duplicate_document_indexing_task.duplicate_document_indexing_task
+worker-1  |   . tasks.duplicate_document_indexing_task.normal_duplicate_document_indexing_task
+worker-1  |   . tasks.duplicate_document_indexing_task.priority_duplicate_document_indexing_task
+worker-1  |   . tasks.enable_segments_to_index_task.enable_segments_to_index_task
+worker-1  |   . tasks.generate_summary_index_task.generate_summary_index_task
+worker-1  |   . tasks.initialize_created_app_rbac_access_task.initialize_created_app_rbac_access_task
+worker-1  |   . tasks.initialize_created_app_rbac_access_task.sync_joined_workspace_member_rbac_access_task
+worker-1  |   . tasks.install_default_plugins_task.configure_default_models_task
+worker-1  |   . tasks.install_default_plugins_task.install_default_plugins_task
+worker-1  |   . tasks.mail_account_deletion_task.send_account_deletion_verification_code
+worker-1  |   . tasks.mail_account_deletion_task.send_deletion_success_task
+worker-1  |   . tasks.mail_change_mail_task.send_change_mail_completed_notification_task
+worker-1  |   . tasks.mail_change_mail_task.send_change_mail_task
+worker-1  |   . tasks.mail_email_code_login.send_email_code_login_mail_task
+worker-1  |   . tasks.mail_human_input_delivery_task.dispatch_human_input_email_task
+worker-1  |   . tasks.mail_inner_task.send_inner_email_task
+worker-1  |   . tasks.mail_invite_member_task.send_invite_member_mail_task
+worker-1  |   . tasks.mail_owner_transfer_task.send_new_owner_transfer_notify_email_task
+worker-1  |   . tasks.mail_owner_transfer_task.send_old_owner_transfer_notify_email_task
+worker-1  |   . tasks.mail_owner_transfer_task.send_owner_transfer_confirm_task
+worker-1  |   . tasks.mail_register_task.send_email_register_mail_task
+worker-1  |   . tasks.mail_register_task.send_email_register_mail_task_when_account_exist
+worker-1  |   . tasks.mail_reset_password_task.send_reset_password_mail_task
+worker-1  |   . tasks.mail_reset_password_task.send_reset_password_mail_task_when_account_not_exist
+worker-1  |   . tasks.mail_workflow_comment_task.send_workflow_comment_mention_email_task
+worker-1  |   . tasks.new_agent_beta_task.ensure_new_agent_beta_participation_task
+worker-1  |   . tasks.ops_trace_task.process_trace_tasks
+worker-1  |   . tasks.process_tenant_plugin_autoupgrade_check_task.process_tenant_plugin_autoupgrade_check_task
+worker-1  |   . tasks.rag_pipeline.priority_rag_pipeline_run_task.priority_rag_pipeline_run_task
+worker-1  |   . tasks.rag_pipeline.rag_pipeline_run_task.rag_pipeline_run_task
+worker-1  |   . tasks.recover_document_indexing_task.recover_document_indexing_task
+worker-1  |   . tasks.refresh_billing_vector_space_task.refresh_billing_vector_space_task
+worker-1  |   . tasks.regenerate_summary_index_task.regenerate_summary_index_task
+worker-1  |   . tasks.remove_app_and_related_data_task.remove_app_and_related_data_task
+worker-1  |   . tasks.remove_document_from_index_task.remove_document_from_index_task
+worker-1  |   . tasks.retry_document_indexing_task.retry_document_indexing_task
+worker-1  |   . tasks.sync_website_document_indexing_task.sync_website_document_indexing_task
+worker-1  |   . tasks.trigger_processing_tasks.dispatch_triggered_workflows_async
+worker-1  |   . tasks.trigger_subscription_refresh_tasks.trigger_subscription_refresh
+worker-1  |   . tasks.workflow_execution_tasks.save_workflow_execution_task
+worker-1  |   . tasks.workflow_node_execution_tasks.save_workflow_node_execution_task
+worker-1  |   . tasks.workflow_run_archive_download_tasks.prepare_workflow_run_archive_download_task
+worker-1  |   . tasks.workflow_schedule_tasks.run_schedule_trigger
+worker-1  |
+worker-1  | 2026-11-05 10:36:32.411 INFO [MainThread] [connection.py:22]  - Connected to redis://:**@redis:6379/1
+worker-1  | 2026-11-05 10:36:32.418 INFO [MainThread] [mingle.py:40]  - mingle: searching for neighbors
+worker-1  | 2026-11-05 10:36:33.541 INFO [MainThread] [mingle.py:49]  - mingle: all alone
+worker-1  | 2026-11-05 10:36:33.592 INFO [MainThread] [worker.py:182]  - celery@06b802719def ready.
+worker-1  | 2026-11-05 10:36:33.601 INFO [MainThread] [strategy.py:161]  - Task community_telemetry.send_heartbeat[eb49ca8b-31fe-4acc-8cbc-5f94d3d4931c] received
+worker-1  | 2026-11-05 10:36:33.608 INFO [Dummy-1] [pidbox.py:111]  - pidbox: Connected to redis://:**@redis:6379/1.
+worker-1  | 2026-11-05 10:36:34.384 INFO [Dummy-2] [trace.py:128] 4b67208b13a855acb99c572420559a50 - Task community_telemetry.send_heartbeat[eb49ca8b-31fe-4acc-8cbc-5f94d3d4931c] succeeded in 0.780778812000051s: None
+worker-1  | 2026-11-05 10:36:44.393 INFO [MainThread] [strategy.py:161]  - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[57ccaccd-5886-432a-8860-65c5786e7a5c] received
+worker-1  | 2026-11-05 10:36:44.394 INFO [Dummy-3] [workflow_execute_task.py:478] 5779fc684a175cf59aea20245954956b - workflow_based_app_execution_task run with params: app_id='645058e4-bc3b-44e5-a745-e20f5b816de1' workflow_id='1fba22fc-65af-4794-ac9a-bdbcd66f4d9c' tenant_id='5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' app_mode=<AppMode.ADVANCED_CHAT: 'advanced-chat'> user=_EndUser(TYPE=<_UserType.END_USER: 'end_user'>, end_user_id='26037463-0075-4537-9ea3-e5c8579b5c77') args={'inputs': {}, 'query': '我把一片香菜忘在冰箱冷冻层，第二天它硬得像一枚绿色书签。', 'response_mode': 'streaming', 'retriever_from': 'dev', 'auto_generate_name': True} invoke_from=<InvokeFrom.SERVICE_API: 'service-api'> streaming=True call_depth=0 root_node_id=None workflow_run_id='505ac722-4eb3-4fba-a2c4-d585f9627e0f'
+worker-1  | 2026-11-05 10:36:44.739 INFO [Thread-5 (_generate_worker)] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:44.945 INFO [GraphWorker-0] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.092 INFO [GraphWorker-0] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.572 INFO [Thread-6] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.589 INFO [Thread-6] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.696 INFO [GraphWorker-1] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://museum:8080/v1/prepare "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.784 INFO [GraphWorker-2] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.850 INFO [GraphWorker-3] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.930 INFO [GraphWorker-2] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:45.988 INFO [GraphWorker-0] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.089 INFO [GraphWorker-2] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://museum:8080/v1/remember "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.148 INFO [GraphWorker-1] [_client.py:1025] 5779fc684a175cf59aea20245954956b - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.216 INFO [Dummy-3] [execution_coordinator.py:163] 5779fc684a175cf59aea20245954956b - App response listener detached while execution continues task=c7318b83-6df3-4f14-bb4b-a20782b63b34 attempt=380ff30a-c5c6-4e0b-b2d5-cd1d85bf285f
+worker-1  | 2026-11-05 10:36:46.232 INFO [Dummy-3] [trace.py:128] 5779fc684a175cf59aea20245954956b - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[57ccaccd-5886-432a-8860-65c5786e7a5c] succeeded in 1.8381229889999986s: None
+worker-1  | 2026-11-05 10:36:46.261 INFO [MainThread] [strategy.py:161]  - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[27850520-6b3e-4c8c-94fd-0115074c1ab6] received
+worker-1  | 2026-11-05 10:36:46.262 INFO [Dummy-8] [workflow_execute_task.py:478] 48dfe6368b0d5b46adcbd60355e2b938 - workflow_based_app_execution_task run with params: app_id='645058e4-bc3b-44e5-a745-e20f5b816de1' workflow_id='1fba22fc-65af-4794-ac9a-bdbcd66f4d9c' tenant_id='5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' app_mode=<AppMode.ADVANCED_CHAT: 'advanced-chat'> user=_EndUser(TYPE=<_UserType.END_USER: 'end_user'>, end_user_id='26037463-0075-4537-9ea3-e5c8579b5c77') args={'inputs': {}, 'query': '我又从冰箱拿出了那片香菜标本，它看起来像在等一个结局。', 'response_mode': 'streaming', 'retriever_from': 'dev', 'auto_generate_name': True} invoke_from=<InvokeFrom.SERVICE_API: 'service-api'> streaming=True call_depth=0 root_node_id=None workflow_run_id='e73af9b9-660d-4128-b652-c9710556147c'
+worker-1  | 2026-11-05 10:36:46.471 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.618 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.666 INFO [GraphWorker-1] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://museum:8080/v1/prepare "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.767 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.878 INFO [GraphWorker-1] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:46.982 INFO [GraphWorker-3] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.087 INFO [GraphWorker-2] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.227 INFO [GraphWorker-1] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://museum:8080/v1/remember "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.303 INFO [Thread-10] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.329 INFO [GraphWorker-0] [_client.py:1025] 48dfe6368b0d5b46adcbd60355e2b938 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.470 INFO [Dummy-8] [execution_coordinator.py:163] 48dfe6368b0d5b46adcbd60355e2b938 - App response listener detached while execution continues task=d46ffbac-937a-4478-ad32-0646d765ac42 attempt=63d69a8a-5c0e-483b-8b57-318dd2add2d5
+worker-1  | 2026-11-05 10:36:47.490 INFO [Dummy-8] [trace.py:128] 48dfe6368b0d5b46adcbd60355e2b938 - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[27850520-6b3e-4c8c-94fd-0115074c1ab6] succeeded in 1.2284067200000095s: None
+worker-1  | 2026-11-05 10:36:47.505 INFO [MainThread] [strategy.py:161]  - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[a4ff0488-68a0-4170-bbfc-3f0c109a4c97] received
+worker-1  | 2026-11-05 10:36:47.506 INFO [Dummy-12] [workflow_execute_task.py:478] 151b7d44b4465e84a58140270f22a138 - workflow_based_app_execution_task run with params: app_id='645058e4-bc3b-44e5-a745-e20f5b816de1' workflow_id='1fba22fc-65af-4794-ac9a-bdbcd66f4d9c' tenant_id='5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb' app_mode=<AppMode.ADVANCED_CHAT: 'advanced-chat'> user=_EndUser(TYPE=<_UserType.END_USER: 'end_user'>, end_user_id='55201ad3-a3a4-4554-89ff-54c29846d24c') args={'inputs': {}, 'query': '冰箱里的香菜绿色书签', 'response_mode': 'streaming', 'retriever_from': 'dev', 'auto_generate_name': True} invoke_from=<InvokeFrom.SERVICE_API: 'service-api'> streaming=True call_depth=0 root_node_id=None workflow_run_id='5ba7b941-0d31-46a2-9318-53b0e4c6f1aa'
+worker-1  | 2026-11-05 10:36:47.573 INFO [Thread-13 (_generate_worker)] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/model/schema "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.727 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.872 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:47.934 INFO [GraphWorker-1] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://museum:8080/v1/prepare "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:48.018 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:48.104 INFO [GraphWorker-2] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:48.167 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:48.240 INFO [GraphWorker-3] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:48.357 INFO [GraphWorker-2] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://museum:8080/v1/remember "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:48.415 INFO [GraphWorker-0] [_client.py:1025] 151b7d44b4465e84a58140270f22a138 - HTTP Request: POST http://sandbox:8194/v1/sandbox/run "HTTP/1.1 200 OK"
+worker-1  | 2026-11-05 10:36:48.474 INFO [Dummy-12] [execution_coordinator.py:163] 151b7d44b4465e84a58140270f22a138 - App response listener detached while execution continues task=3468114a-b1b1-4d8c-909c-a2df183251d1 attempt=5c967a37-af3c-4484-84a8-b36bd2b576f5
+worker-1  | 2026-11-05 10:36:48.489 INFO [Dummy-12] [trace.py:128] 151b7d44b4465e84a58140270f22a138 - Task tasks.app_generate.workflow_execute_task.workflow_based_app_execution_task[a4ff0488-68a0-4170-bbfc-3f0c109a4c97] succeeded in 0.9833593320000205s: None
+worker-1  | 2026-11-05 10:36:48.552 INFO [Thread-14] [_client.py:1025]  - HTTP Request: POST http://plugin_daemon:5002/plugin/5c13e1db-78f9-49b9-ba7e-6aef03e2d4bb/dispatch/llm/invoke "HTTP/1.1 200 OK"
